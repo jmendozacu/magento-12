@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AW_ARUnitSalesbyzipcode>
+            <version>1.0.8</version><platform>ce</platform>
+        </AW_ARUnitSalesbyzipcode>
+    </modules>
+    <global>
+        <helpers>
+            <awunitsalesbyzipcode>
+                    <class>AW_Advancedreports_Helper</class>
+            </awunitsalesbyzipcode>
+        </helpers>
+    </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <AW_ARUnitSalesbyzipcode>
+                    <files>
+                        <default>AW_Advancedreports.csv</default>
+                    </files>
+                </AW_ARUnitSalesbyzipcode>
+            </modules>
+        </translate>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

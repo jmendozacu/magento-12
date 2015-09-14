@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<additional>
+    <manufacturer>
+        <title>Sales by Manufacturer</title>
+        <sort_order>11</sort_order>
+        <required_version>2.6.3</required_version>
+        <active>true</active>
+    </manufacturer>
+</additional>
+ 

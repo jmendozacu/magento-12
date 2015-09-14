@@ -1,0 +1,82 @@
+<?php
+/**
+ * aheadWorks Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://ecommerce.aheadworks.com/AW-LICENSE.txt
+ *
+ * =================================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * =================================================================
+ * This software is designed to work with Magento community edition and
+ * its use on an edition other than specified is prohibited. aheadWorks does not
+ * provide extension support in case of incorrect edition use.
+ * =================================================================
+ *
+ * @category   AW
+ * @package    AW_Advancedreports
+ * @version    2.6.3
+ * @copyright  Copyright (c) 2010-2012 aheadWorks Co. (http://www.aheadworks.com)
+ * @license    http://ecommerce.aheadworks.com/AW-LICENSE.txt
+ */
+?><div class="pager_container">
+    <div class="pager">
+        <?php $_curPage  = $this->getCollection()->getCurPage() ?>
+        <?php $_pageSize  = $this->getCollection()->getPageSize() ?>
+        <?php $_lastPage = $this->getCollection()->getLastPageNumber() ?>
+        <div class="f-left">
+            <span>
+                <?php echo $this->__('Showing %d ', $this->getFirstEntry()) ?>
+                <?php echo $this->__('to %d ', $this->getLastEntry()) ?>
+                <?php echo $this->__('of %d entries', $this->getCollection()->getSize()) ?>
+            </span>
+        </div>
+
+
+        <?php $_pageList  = $this->getPageList() ?>
+        <div class="f-left">
+            <?php if($_curPage>1): ?>
+                <a href="#" title="<?php echo $this->__('Previous page') ?>" onclick="<?php echo $this->getJsObjectName() ?>.setPage('<?php echo ($_curPage-1) ?>');return false;"><img src="<?php echo $this->getSkinUrl('aw_advancedreports/images/range_left.png') ?>" alt="Go to Previous page" class="arrow"/></a>
+            <?php else: ?>
+                <img src="<?php echo $this->getSkinUrl('aw_advancedreports/images/range_left.png') ?>" alt="Go to Previous page" class="arrow"/>
+            <?php endif; ?>
+
+            <ul class="page_container">
+                <?php foreach ($_pageList as $page): ?>
+                    <?php if ($page != null): ?>
+                        <li class="page_item<?php if($_curPage == $page): ?> active<?php endif; ?>" onclick="<?php echo $this->getJsObjectName() ?>.setPage('<?php echo $page?>');return false;">
+                            <?php echo $page?>
+                        </li>
+                    <?php else: ?>
+                        <li class="page_item page_item_disabled">
+                            ...
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+
+            <?php if($_curPage < $_lastPage): ?>
+                <a href="#" title="<?php echo $this->__('Next page') ?>" onclick="<?php echo $this->getJsObjectName() ?>.setPage('<?php echo ($_curPage+1) ?>');return false;"><img src="<?php echo $this->getSkinUrl('aw_advancedreports/images/range_right.png') ?>" alt="Go to Next page" class="arrow"/></a>
+            <?php else: ?>
+                <img src="<?php echo $this->getSkinUrl('aw_advancedreports/images/range_right.png') ?>" alt="Go to Previous page" class="arrow"/>
+            <?php endif; ?>
+        </div>
+
+        <div class="f-left">
+            <?php echo $this->__('View by') ?>
+            <input type="hidden" name="<?php echo $this->getVarNameLimit() ?>" id="page_range" value="<?php echo $_pageSize ?>"/>
+            <ul class="page_range_container">
+                <li class="page_range_item<?php if($_pageSize == 20): ?> active<?php endif; ?>" onclick="reloadForPageRange(20)">20</li>
+                <li class="page_range_item<?php if($_pageSize == 30): ?> active<?php endif; ?>" onclick="reloadForPageRange(30)">30</li>
+                <li class="page_range_item<?php if($_pageSize == 50): ?> active<?php endif; ?>" onclick="reloadForPageRange(50)">50</li>
+                <li class="page_range_item<?php if($_pageSize == 100): ?> active<?php endif; ?>" onclick="reloadForPageRange(100)">100</li>
+                <li class="page_range_item<?php if($_pageSize == 200): ?> active<?php endif; ?>" onclick="reloadForPageRange(200)">200</li>
+            </ul>
+        </div>
+        <span id="<?php echo $this->getHtmlId() ?>-total-count" class="no-display"><?php echo $this->getCollection()->getSize() ?></span>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+ 
+    <modules>
+        <DJ_ContactCaptcha>
+          <version>0.1.0</version>
+        </DJ_ContactCaptcha>
+    </modules>
+ 
+    <!--override controller class-->
+    <frontend>
+        <routers>
+            <over_ride> <!--any name-->
+                <use>standard</use>
+                <args>
+                    <module>DJ_ContactCaptcha</module>
+                    <frontName>contacts2</frontName>
+                </args>
+            </over_ride>
+        </routers>
+    </frontend>
+ 
+    <default>
+        <customer>
+                <captcha>
+                        <type>zend</type>
+                        <enable>0</enable>
+                        <font>linlibertine</font>
+                        <mode>after_fail</mode>
+                        <forms>user_forgotpassword</forms>
+                        <failed_attempts_login>3</failed_attempts_login>
+                        <failed_attempts_ip>1000</failed_attempts_ip>
+                        <timeout>7</timeout>
+                        <length>4-5</length>
+                        <symbols>ABCDEFGHJKMnpqrstuvwxyz23456789</symbols>
+                        <case_sensitive>0</case_sensitive>
+                        <always_for>
+                                <contact_form>1</contact_form>
+                        </always_for>
+                </captcha>
+        </customer>
+        <captcha  translate="label">
+                <fonts>
+                        <linlibertine>
+                                <label>LinLibertine</label>
+                                <path>lib/LinLibertineFont/LinLibertine_Bd-2.8.1.ttf</path>
+                        </linlibertine>
+                </fonts>
+                <frontend>
+                        <areas>
+                                 <contact_form> <!--added-->
+                                        <label>Contact Us</label>
+                                </contact_form>
+                        </areas>
+                </frontend>
+        </captcha>
+    </default>
+</config>

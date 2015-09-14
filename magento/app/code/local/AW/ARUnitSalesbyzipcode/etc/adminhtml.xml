@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <report>
+                        <children>
+                            <advancedreports>
+                                <children>
+                                    <salesbyzipcode>
+                                        <title>Sales by ZIP Code</title>
+                                        <sort_order>96</sort_order>
+                                    </salesbyzipcode>
+                                </children>
+                            </advancedreports>
+                        </children>
+                    </report>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <awall translate="label" module="advancedreports">
+            <label>aheadWorks Extensions</label>
+            <sort_order>300</sort_order>
+        </awall>
+    </tabs>
+    <sections>
+        <advancedreports translate="label" module="advancedreports">
+            <label>Advanced Reports</label>
+            <tab>awall</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>200</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <chart_options translate="label">
+                    <label>Charts Options</label>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <sort_order>1</sort_order>
+                    <fields>
+                        <show_chart translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </show_chart>
+                        <height translate="label">
+                            <label>Height (px)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Maximum height is 300 px</comment>
+                        </height>
+                        <chart_color translate="label">
+                            <label>Chart color</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </chart_color>
+                        <font_color translate="label">
+                            <label>Font color</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </font_color>
+                        <font_size translate="label">
+                            <label>Font size (px)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </font_size>
+                        <background_color translate="label">
+                            <label>Background color</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </background_color>
+                    </fields>
+                </chart_options>
+                <configuration translate="label">
+                    <label>Configuration</label>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <sort_order>3</sort_order>
+                    <fields>
+                        <process_orders translate="label">
+                            <label>Process orders</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>advancedreports/system_config_source_statuses</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </process_orders>
+                        <order_datefilter translate="label">
+                            <label>Select orders by</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>advancedreports/system_config_source_datefilter</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_datefilter>
+                        <crossreport_filters translate="label">
+                            <label>Save date range when navigating between reports</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </crossreport_filters>
+                        <recently_filter_count translate="label">
+                            <label>Number of latest custom date ranges</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </recently_filter_count>
+                    </fields>
+                </configuration>
+                <additional translate="label">
+                    <label>Units</label>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <sort_order>4</sort_order>
+                    <frontend_type>text</frontend_type>
+                    <frontend_model>advancedreports/system_config_form_fieldset_additional_reports</frontend_model>
+                </additional>
+                <sheduled_email translate="label">
+                    <label>Scheduled Email Reports</label>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <sort_order>3</sort_order>
+                    <fields>
+                        <export_list translate="label">
+                            <label>Reports to Export</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>advancedreports/system_config_source_export</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </export_list>
+                        <export_email translate="label">
+                            <label>Email Recipients</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Use comma to add several Emails. Leave empty to disable.</comment>
+                        </export_email>
+                        <export_period translate="label">
+                            <label>Period</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>advancedreports/system_config_source_periods</source_model>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </export_period>
+                        <group_by translate="label">
+                            <label>Group By</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>advancedreports/system_config_source_group</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </group_by>
+                        <frequency translate="label">
+                            <label>Frequency</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>advancedreports/system_config_source_frequency</source_model>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </frequency>
+                        <weekdays translate="label">
+                            <label>Days of Week</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>advancedreports/system_config_source_weekdays</source_model>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <frequency>1</frequency>
+                            </depends>
+                        </weekdays>
+                        <month_period translate="label">
+                            <label>Day of Month</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>advancedreports/system_config_source_monthdays</source_model>
+                            <sort_order>35</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <depends>
+                                <frequency>2</frequency>
+                            </depends>
+                        </month_period>
+                        <time_period translate="label">
+                            <label>At</label>
+                            <frontend_type>time</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </time_period>
+                        <file_format translate="label">
+                            <label>File Format</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>advancedreports/system_config_source_formats</source_model>
+                            <sort_order>45</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </file_format>
+                        <export_backup translate="label">
+                            <label>Copy all sent reports to this folder</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Path to saved reports must be relative to your website root. This folder should be writable. Leave empty to disable.</comment>
+                        </export_backup>
+                        <email_sender translate="label">
+                            <label>Email Sender</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_identity</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </email_sender>
+                        <email_template translate="label">
+                            <label>Email Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </email_template>
+                    </fields>
+                </sheduled_email>
+            </groups>
+        </advancedreports>
+    </sections>
+</config>

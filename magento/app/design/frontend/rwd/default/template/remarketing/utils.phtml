@@ -1,0 +1,16 @@
+﻿
+<script type="text/javascript">
+    Listrak_Remarketing = new function() {
+        this.updateCart = function() {
+            <?php if (Mage::helper('remarketing')->scaEnabled()) { ?>
+                new Ajax.Request('<?php echo Mage::getUrl('remarketing/ajax/cart')?>');
+            <?php } ?>
+        };
+
+        this.track = function() {
+            <?php if (Mage::helper('remarketing')->scaEnabled()) { ?>
+                new Ajax.Request('<?php echo Mage::getUrl('remarketing/ajax/tracking')?>');
+            <?php } ?>
+        };
+    };
+</script>

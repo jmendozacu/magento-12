@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AW_ARUnitNewvsreturning>
+            <version>1.0.9</version><platform>ce</platform>
+        </AW_ARUnitNewvsreturning>
+    </modules>
+    <global>
+        <helpers>
+            <awunitnewvsreturning>
+                    <class>AW_Advancedreports_Helper</class>
+            </awunitnewvsreturning>
+        </helpers>
+    </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <AW_ARUnitNewvsreturning>
+                    <files>
+                        <default>AW_Advancedreports.csv</default>
+                    </files>
+                </AW_ARUnitNewvsreturning>
+            </modules>
+        </translate>
+    </adminhtml>
+</config>

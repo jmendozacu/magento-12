@@ -1,0 +1,9 @@
+﻿
+<script type="text/javascript">
+    (function (d, s, id, url) {
+        var js, ljs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id; js.src = url;
+        ljs.parentNode.insertBefore(js, ljs);
+    })(document, 'script', 'ltkSDK', '<?php echo Mage::helper('remarketing')->onescriptSrc() ?>');
+</script>

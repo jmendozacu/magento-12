@@ -1,0 +1,67 @@
+"Add after","Add after"
+"Add Rule","Add Rule"
+"Allow the second factor to be the verification code only or verification code and IP address. IP addresses are configured in the extension configuration page.","Allow the second factor to be the verification code only or verification code and IP address. IP addresses are configured in the extension configuration page."
+"Authentication Information","Authentication Information"
+Authenticator,Authenticator
+"Authenticator Code","Authenticator Code"
+"Authenticator Code or IP Addresss","Authenticator Code or IP Addresss"
+"Both (two-factor)","Both (two-factor)"
+"Click the ""Two-Factor Settings"" tab to modify Two-Factor Authentication settings","Click the ""Two-Factor Settings"" tab to modify Two-Factor Authentication settings"
+Configuration,Configuration
+Created,Created
+Delete,Delete
+"Deleting user is currently not supported","Deleting user is currently not supported"
+"Enable or disable rate limiting","Enable or disable rate limiting"
+Extendware,Extendware
+Failed,Failed
+General,General
+ID,ID
+"If disabled, then logging in will require a password no matter what the configuration is for the user account.","If disabled, then logging in will require a password no matter what the configuration is for the user account."
+"If enabled, then the verification code box will not be shown if the IP address does not require the verification code.","If enabled, then the verification code box will not be shown if the IP address does not require the verification code."
+"If you enabled verification code authentication / change secret key you must enter the current time-based passcode as appears in your Google authenticator app in order to save these changes.","If you enabled verification code authentication / change secret key you must enter the current time-based passcode as appears in your Google authenticator app in order to save these changes."
+"Invalid User Name or Password or Verification Code.","Invalid User Name or Password or Verification Code."
+"IP Address","IP Address"
+"IP Rule","IP Rule"
+Label,Label
+"List of IP address rules. A variety of rules are supported, such as 222.222.*.105, 222.222.222.100-205. Input one rule per item.","List of IP address rules. A variety of rules are supported, such as 222.222.*.105, 222.222.222.100-205. Input one rule per item."
+"Login Logs","Login Logs"
+"Logins from these IP addresses may not need enter the google authenticator code.","Logins from these IP addresses may not need enter the google authenticator code."
+"Logins from your IP address are not allowed.","Logins from your IP address are not allowed."
+"Logins MUST match IP addresses of these rules. This is useful for requiring logins from your office. <b>Warning:</b> Entering rules incorrectly here or losing access to the IP address will make it so logins are not possible while the extension is enabled.","Logins MUST match IP addresses of these rules. This is useful for requiring logins from your office. <b>Warning:</b> Entering rules incorrectly here or losing access to the IP address will make it so logins are not possible while the extension is enabled."
+Logs,Logs
+Main,Main
+"Manage Users","Manage Users"
+"Max Attempts","Max Attempts"
+"Missing data for item","Missing data for item"
+Mode,Mode
+"Password only","Password only"
+"Period Magnitude (secs)","Period Magnitude (secs)"
+"Please <u>read the help descriptions, field descriptions, fieldset descriptions, and user guides</u> so you may configure this extension to suit your needs.","Please <u>read the help descriptions, field descriptions, fieldset descriptions, and user guides</u> so you may configure this extension to suit your needs."
+"QR Code","QR Code"
+"Rate Limiting","Rate Limiting"
+"Required IP Rules","Required IP Rules"
+"Scan this QR code by Google Authenticator to automatically add the account","Scan this QR code by Google Authenticator to automatically add the account"
+"Secret Key","Secret Key"
+Settings,Settings
+"Smart Verification Code Input","Smart Verification Code Input"
+"Software has been successfully saved","Software has been successfully saved"
+Status,Status
+Success,Success
+"The maximum attempts within the period until the IP address will be temporarily restricted from attempting more logins.","The maximum attempts within the period until the IP address will be temporarily restricted from attempting more logins."
+"The number of seconds that the current number of attempts is calculated from. If set to 60, then Max Attempts will be compared to the number of attempts within the last 60 seconds.","The number of seconds that the current number of attempts is calculated from. If set to 60, then Max Attempts will be compared to the number of attempts within the last 60 seconds."
+"The user authentication data could not be saved.","The user authentication data could not be saved."
+"The user authentication data has been saved.","The user authentication data has been saved."
+"This secret key will need to be given to the Google Authenticator (or other authenticator) so that your one time-based codes can be generated. Click away from field box to update QR Code.","This secret key will need to be given to the Google Authenticator (or other authenticator) so that your one time-based codes can be generated. Click away from field box to update QR Code."
+"Tolerance is needed because your authenticator application and your server might not be exactly in sync. <b>Warning: </b>Setting this too low can lock you out of the admin.","Tolerance is needed because your authenticator application and your server might not be exactly in sync. <b>Warning: </b>Setting this too low can lock you out of the admin."
+"Tolerance Level","Tolerance Level"
+"Two Factor IP Rules","Two Factor IP Rules"
+"Two-Factor Mode","Two-Factor Mode"
+"Two-Factor Settings","Two-Factor Settings"
+Username,Username
+Users,Users
+"Verification Code","Verification Code"
+"Verification code only","Verification code only"
+"Verification code refers to the code given by Google Authenticator. If Password is selected, then the user will not need to provide a verification code.","Verification code refers to the code given by Google Authenticator. If Password is selected, then the user will not need to provide a verification code."
+"Verification Code:","Verification Code:"
+"You are making too many login attempts. Please wait a while before trying again.","You are making too many login attempts. Please wait a while before trying again."
+"You must enter a correct verification code in order to use verification code authenticaton.","You must enter a correct verification code in order to use verification code authenticaton."

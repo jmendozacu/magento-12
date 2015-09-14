@@ -1,0 +1,65 @@
+<style type="text/css">
+	.mid-part{ background-color: #ededed}
+</style>
+<div class="innerwhite">
+	
+	<?php if(isset($_SESSION['custom_id']) && $_SESSION['custom_id'] == '1') : ?>
+		<div id="messages_product_view"><ul class="messages"><li class="success-msg"><ul><li><span>Your inquiry was submitted and will be responded to as soon as possible. Thank you for contacting us.</span></li></ul></li></ul></div>
+	<?php endif ?>
+
+	<?php if(isset($_SESSION['custom_id']) && $_SESSION['custom_id'] == '0') : ?>
+		<div id="messages_product_view"><ul class="messages"><li class="error-msg"><ul><li><span>There is some problem submitting your inquiry. please try again.</span></li></ul></li></ul></div>
+	<?php endif ?>
+
+    <div class="page-title">
+        <h2 class="pagenamehd">Contact Us</h2>
+    </div>
+    <div class="privacymain">
+        <form action="<?php echo Mage::getBaseUrl(); ?>customform/index/index/" id="contactForm" method="post">
+            <div class="fieldset cont-main">
+                <div class="contform">
+                        <div class="contfrmrow">
+                            
+                            <div class="leftfild">
+                                <label>FIRSTNAME</label>
+                                <input name="firstname" class="input-text validation-failed inptxtfld" id="name" title="Name" value="" type="text">
+                            </div>
+
+                            <div class="rightfild">
+                                <label>LASTNAME</label>
+                                <input name="lastname" class="input-text validation-failed inptxtfld" id="name" title="Name" value="" type="text">
+                            </div>
+
+                        </div>
+                        <div class="contfrmrow">                        
+                           	<div class="leftfild">
+                                <label>EMAIL ID*</label>
+                                <input required name="email" class="input-text required-entry validate-email inptxtfld" id="email" title="Email" value="" type="text">                 
+                            </div>
+                            <div class="rightfild">
+                                <label>TELEPHONE</label>
+                                <input name="phone" class="cont-inpt-bg inptxtfld" id="phone" title=" Telephone" value="" type="text">
+                            </div>
+                        </div>
+                        <div class="contfrmrow">                        
+                           
+                                <label>Address</label>
+                                <textarea name="address" class="input-text textariaconr" id="comment" title="Comment" cols="5" rows="3"></textarea>                         
+                        </div>
+                       
+                        <div class="contfrmrow">
+                            <div class="cntfrmtxt">
+                                <p class="required requied_text">* Required Fields</p>
+                                
+                            </div>
+                            <div class="subbtncont">
+                                 <button type="submit" title="Submit" class="button cont-btn contactbtn"><span><span class="cont-green-box">Submit</span></span></button>
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+            
+        </form>
+    </div>
+</div>

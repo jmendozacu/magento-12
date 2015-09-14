@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <newvsreturning>
+        <title>New vs Returning Customers</title>
+        <action>advancedreports_admin/additional_report/index/name/newvsreturning</action>
+        <type>customer</type>
+        <sort_order>10</sort_order>
+    </newvsreturning>
+</reports>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_permissions_user_edit>
+        <reference name="head">
+            <action method="addJs"><script>extendware/ewauthenticator/qrcode.js</script></action>
+            <action method="addJs"><script>extendware/ewauthenticator/html5-qrcode.js</script></action>
+            <action method="addJs"><script>extendware/ewauthenticator/general.js</script></action>
+        </reference>
+    </adminhtml_permissions_user_edit>
+</layout>

@@ -1,0 +1,2 @@
+Event.observe(window,"load",function(){$("ewauthenticator_secret_key").up().up().next().down().next().insert({top:'<div id="ewauthenticator_qrcode"></div>'});$("ewauthenticator_qrcode").update(showQRCode("otpauth://totp/"+$("user_username").value+"@"+window.location.hostname+"?secret="+$("ewauthenticator_secret_key").value));Event.observe("ewauthenticator_secret_key","change",function(a){$("ewauthenticator_qrcode").update(showQRCode("otpauth://totp/"+$("user_username").value+"@"+window.location.hostname+
+"?secret="+$("ewauthenticator_secret_key").value))})});

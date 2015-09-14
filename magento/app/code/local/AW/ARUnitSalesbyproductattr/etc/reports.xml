@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <salesbyproductattr>
+        <title>by Product Attributes</title>
+        <action>advancedreports_admin/additional_report/index/name/salesbyproductattr</action>
+        <type>sales</type>
+        <sort_order>40</sort_order>
+    </salesbyproductattr>
+</reports>

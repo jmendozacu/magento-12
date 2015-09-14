@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <salesbypaymenttype>
+        <title>by Payment Type</title>
+        <action>advancedreports_admin/additional_report/index/name/salesbypaymenttype</action>
+        <type>sales</type>
+        <sort_order>70</sort_order>
+    </salesbypaymenttype>
+</reports>

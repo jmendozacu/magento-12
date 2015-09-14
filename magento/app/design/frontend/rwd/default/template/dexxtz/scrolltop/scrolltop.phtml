@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * Copyright [2014] [Dexxtz]
+ *
+ * @package   Dexxtz_Scrolltop
+ * @author    Dexxtz
+ * @license   http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+?>
+<?php $helper = Mage::helper('scrolltop'); ?>
+
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('dexxtz/scrolltop/js/dexxtz.js');?>"></script>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		scrollTop('<?php echo $helper->getDistanceShow(); ?>', '<?php echo $helper->getSpeedScrolling(); ?>');
+	});
+</script>
+
+<style type="text/css" media="all">
+	.dextz-scrolltop { <?php echo $helper->getPositionStyle(); ?> }
+	<?php echo $helper->getContentStyle(); ?>
+</style>
+
+<a class="dextz-scrolltop" href="javascript:void(0)">
+	<?php echo $helper->getScrollContent(); ?>
+</a>

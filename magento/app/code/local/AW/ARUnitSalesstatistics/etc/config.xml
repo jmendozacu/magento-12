@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AW_ARUnitSalesstatistics>
+            <version>1.0.10</version>
+        </AW_ARUnitSalesstatistics>
+    </modules>
+    <global>
+        <helpers>
+            <awunitsalesstatistics>
+                    <class>AW_Advancedreports_Helper</class>
+            </awunitsalesstatistics>
+        </helpers>
+    </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <AW_ARUnitSalesstatistics>
+                    <files>
+                        <default>AW_Advancedreports.csv</default>
+                    </files>
+                </AW_ARUnitSalesstatistics>
+            </modules>
+        </translate>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

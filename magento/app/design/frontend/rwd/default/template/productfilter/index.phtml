@@ -1,0 +1,50 @@
+<?php
+	$minPrice = 0; $maxPrice = 0; $rootCategoryId = 74;
+	if(Mage::getSingleton('core/session')->getMinPriceTmp()){
+		$minPrice = Mage::getSingleton('core/session')->getMinPriceTmp();
+	}
+	if(Mage::getSingleton('core/session')->getMaxPriceTmp()){
+		$maxPrice = Mage::getSingleton('core/session')->getMaxPriceTmp();
+	}
+	if(Mage::getSingleton('core/session')->getRootCategoryId()){
+		$rootCategoryId = Mage::getSingleton('core/session')->getRootCategoryId();
+	}
+?>
+<div class="chweb_layered_dt">
+    <span style="float:left;">Price</span>
+    <span class="clearfilter clearprice" style="float:right; display:none;">
+        <a title="Clear Filter" style="cursor:pointer;" onclick="clearPriceFilter('<?php echo $rootCategoryId; ?>','<?php echo $minPrice; ?>','<?php echo $maxPrice; ?>');">
+            <img src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+        </a>
+    </span>
+</div>
+
+<div id="chweb_layered_price">
+    <ol>
+        <li style="width:100%;">
+            $<span id="price_range_from"><?php echo $minPrice; ?></span>-$<span id="price_range_to"><?php echo $maxPrice; ?></span>
+        </li>
+    </ol>
+</div>
+<div class="slider-div" style="width:175px;">
+  <input class="slider" data-slider-max="<?php echo $maxPrice; ?>" data-slider-min="<?php echo $minPrice; ?>" data-slider-value="[<?php echo $minPrice; ?>,<?php echo $maxPrice; ?>]" type="text" />
+</div>
+<style type="text/css">
+	.slider-horizontal{width:175px !important;}
+</style>
+<script>
+	var mySlider = jQuery('.slider');
+	(function() {
+	jQuery(function() {
+	    return mySlider.slider()
+	    .on('slideStop', function(ev){
+	        var val = ev.value;
+	        var value1 = val[0];
+	        var value2 = val[1];
+	        jQuery('#price_range_from').html(value1);
+	        jQuery('#price_range_to').html(value2);
+	        filterByPrice('<?php echo $rootCategoryId; ?>',value1,value2);
+	    });
+	  });
+	}).call(this);
+</script>

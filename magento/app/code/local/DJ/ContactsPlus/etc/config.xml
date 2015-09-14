@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <DJ_ContactsPlus>
+            <version>0.1.0</version>
+        </DJ_ContactsPlus>
+    </modules>
+    <frontend>
+        <routers>
+            <contactsplus>
+                <use>standard</use>
+                <args>
+                    <module>DJ_ContactsPlus</module>
+                    <frontName>contactsplus</frontName>
+                </args>
+            </contactsplus>
+			    <!-- Sets Mage_Contacts route to MyNameSpace_ContactsPlus -->              
+            <contacts>
+                <args>
+                    <modules>
+                        <DJ_ContactsPlus before="Mage_Contacts">DJ_ContactsPlus</DJ_ContactsPlus>
+                    </modules>
+                </args>
+            </contacts> 
+        </routers>
+		    <!-- Sets layout config file (essential for this to work) -->   
+
+		<layout>
+            <updates>
+                <contactsplus>
+                    <file>contactsplus.xml</file>
+                </contactsplus>
+            </updates>
+        </layout>        
+    </frontend>
+   <global>
+    <!-- Sets a helper class for the module, when overriding contacts this is also essential. -->   
+        <helpers>
+            <contactsplus>
+                <class>DJ_ContactsPlus_Helper</class>
+            </contactsplus>
+        </helpers>        
+    </global>
+</config>

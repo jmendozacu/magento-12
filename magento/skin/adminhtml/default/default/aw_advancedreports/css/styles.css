@@ -1,0 +1,745 @@
+.aw_arep_reports_list {
+    float: left;
+    width: 250px;
+    background: #f3f3f3;
+}
+
+#store_switcher {
+    width: 100%;
+    height: 30px;
+}
+
+.aw_arep_reports_list .switcher {
+    border: 0;
+    border-bottom: 1px solid #c1c0c0;
+    background: none;
+    padding: 15px;
+}
+
+.reports_list_item {
+    font-size: 13px;
+    margin-bottom: 1px;
+    padding-left: 25px;
+    height: 30px;
+}
+
+.reports_list_item.report_active {
+    background: #5c95e6;
+}
+
+.reports_list_item.report_active a {
+    color: #fff;
+}
+
+.reports_title {
+    font-size: 13px;
+    padding: 0 0 0 25px;
+}
+
+.reports_title span {
+    display: block;
+    font-weight: bold;
+    width: 100%;
+    border-top: 1px solid #c1c0c0;
+    padding: 15px 0;
+    margin-top: 15px;
+}
+
+.reports_list_item:hover {
+    background: #cccccc;
+    cursor: pointer;
+}
+
+.reports_list_item:active {
+    background: #4774b3 !important;
+}
+
+.reports_list_item:active a{
+    color: #fff;
+}
+
+.reports_list_item a {
+    color: #000;
+    text-decoration: none;
+    display: block;
+    height: 21px;
+    padding-top: 5px;
+}
+
+.aw_arep_report_grid {
+    margin: 0 0 0 280px;
+}
+
+.aw_arep_reports_dashbord {
+}
+
+.aw_arep_reports_dashbord thead tr {
+    width: 1300px;
+    float: left;
+    font-size: 23px;
+    color: #282828;
+}
+
+.aw_arep_reports_dashbord thead  {
+    width: 1300px;
+    display: inline-block;
+}
+
+.aw_dashbord_col_left {
+    border: 10px solid #fff;
+    border-top: 0;
+    border-left: 0;
+}
+
+.aw_dashbord_col_right {
+    border: 10px solid #fff;
+    border-top: 0;
+    border-right: 0;
+}
+
+
+.aw-arep-export {
+    float: right;
+}
+
+.aw-arep-setup {
+    float: right;
+    width: 115px;
+    height: 20px;
+    text-align: left;
+    background: #d7d7d7 url('../images/customize_icon.png') no-repeat 90% center;
+    margin-left: 3px;
+    padding: 6px 0 4px 10px;
+    position: relative;
+    border-radius: 2px;
+}
+
+.aw-arep-setup:hover {
+    box-shadow: 0px 1px 5px #999;
+    background: #cccccc url('../images/customize_icon.png') no-repeat 90% center;
+}
+
+.aw-arep-setup:active {
+    box-shadow: 0px 1px 5px #999;
+    background: #b3b3b3 url('../images/customize_icon.png') no-repeat 90% center;
+}
+
+.aw-arep-setup a {
+    text-decoration: none;
+    color: #282828;
+    font-weight: bold;
+}
+
+ul.aw-column-container {
+    margin: 5px;
+}
+
+.aw-column-overlay.show {
+    display: block !important;
+}
+
+.aw-column-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    cursor: pointer;
+    z-index: 90;
+}
+
+.aw-column {
+    position: relative;
+    height: 100px;
+    float: left;
+    border: 1px solid #D1CFCF;
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+
+.aw-column input.text.over, .aw-column input.text:focus {
+    border-color: #ED6502 #A04300 #A04300 #ED6502;
+}
+
+.aw-column input.text {
+    margin-bottom: 9px;
+    margin-top: 10px;
+    width: 90%;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #AAAAAA #C8C8C8 #C8C8C8 #AAAAAA;
+    border-style: solid;
+    border-width: 1px;
+    font: 12px arial, helvetica, sans-serif;
+}
+
+.aw-column .aw-header {
+    padding: 5px 10px;
+    background: url("../../images/sort_row_bg.gif") repeat-x scroll 0 50% transparent;
+    text-align: center;
+    border-color: #F9F9F9 #D1CFCF #F9F9F9 #F9F9F9;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.aw-column .aw-header span {
+    color: #67767E;
+}
+
+.aw-column .aw-header.over span {
+    color: #ED6502;
+}
+
+/* Sku advisor section */
+.aw_arep_sku_dropdown {
+    background-color: #FFFFFF;
+    border: 1px solid #d7d7d7;
+    display: none;
+    height: 0px;
+    left: 36px;
+    position: absolute;
+    top: 29px;
+    z-index: 10;
+    text-align: center;
+    width: 128px;
+}
+
+#product_sku_dropdown ul li {
+    padding-left: 3px;
+    padding-top: 1px;
+    cursor: pointer;
+}
+
+#product_sku_dropdown ul li span span.search {
+    background-color: #f8e515;
+}
+
+#product_sku_dropdown ul li.active {
+    background-color: #CDDDDD;
+}
+
+.aw_arep_sku_li_overlay {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 122px;
+    z-index: 1000;
+}
+
+.aw_arep_sku_loader {
+    background: url("../images/ajax-loader.gif") repeat-x scroll 0 0 #FFFFFF;
+    display: none;
+    height: 16px;
+    position: absolute;
+    right: 9px;
+    top: 7px;
+    width: 16px;
+}
+
+.aw_arep_sku_loader.display,
+.aw_arep_sku_dropdown.display {
+    display: block;
+}
+
+.aw_arep_sku_container {
+    position: relative;
+    clear: both;
+    margin-top: 15px;
+}
+
+.aw_arep_sku_container input.input-text {
+    width: 118px;
+    height: 18px;
+    padding: 5px;
+    margin-left: 5px;
+    color: #a8a8a8;
+    border-color: #d7d7d7;
+}
+
+.aw_arep_sku_container input.loading {
+    padding-right: 20px;
+    width: 100px;
+}
+
+#custom_date_range {
+    width: 164px;
+    padding: 5px 10px;
+}
+
+.grid table tr th,
+.grid table tr td {
+    border: none !important;
+    color: #282828 !important;
+    font-size: 13px !important;
+    vertical-align: middle;
+    padding: 0 5px;
+}
+
+.grid table tr.filter th {
+    vertical-align: top;
+}
+
+
+.grid tr.headings {
+    background: #d7d7d7 !important;
+    height: 30px;
+}
+
+.grid tr.headings th {
+    text-align: center !important;
+}
+
+.grid tr.headings th a {
+    color: #282828 !important;
+}
+
+.grid tr.headings th a:hover {
+    color: #282828 !important;
+}
+
+.grid table {
+    border-radius: 3px;
+    border-color: #d7d7d7;
+}
+
+.grid table tbody tr{
+    background: #eaeaea;
+    height: 40px;
+}
+
+.grid table tbody tr.even{
+    background: #ffffff;
+}
+
+.report_period_item,
+.report_param_selector_item {
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border: 1px solid #cccccc;
+    border-bottom-color: #b3b3b3;
+    color: #333333;
+    display: inline-block;
+    padding: 4px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    font-weight: bold;
+    position: relative;
+    margin-left: -1px;
+    background: #ffffff;
+}
+
+.report_period_item:hover,
+.report_param_selector_item:hover {
+    background: #e5e5e5;
+}
+
+.report_period_item:active,
+.report_param_selector_item:active {
+    background: #4774b3;
+    color: #fff;
+}
+
+.report_period_item.active,
+.report_param_selector_item.active {
+    background: #5c95e6;
+    color: #fff;
+}
+
+.report_period_item.active:hover,
+.report_param_selector_item.active:hover {
+    background: #5c95e6;
+}
+
+#report_periods_list,
+#param_selector_list {
+    position: relative;
+    display: inline-block;
+    font-size: 0;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#report_periods_list>.report_period_item:first-child,
+#param_selector_list>.report_param_selector_item:first-child,
+#report_detail_list>.report_period_item:first-child {
+    margin-left: 0;
+    -webkit-border-top-left-radius: 4px;
+    -moz-border-radius-topleft: 4px;
+    border-top-left-radius: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#report_periods_list>.report_period_item:last-child,
+#param_selector_list>.report_param_selector_item:last-child,
+#report_detail_list>.report_period_item:last-child {
+    -webkit-border-top-right-radius: 4px;
+    -moz-border-radius-topright: 4px;
+    border-top-right-radius: 4px;
+    -webkit-border-bottom-right-radius: 4px;
+    -moz-border-radius-bottomright: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.page_container,
+.page_range_container {
+    display: inline-block;
+}
+
+.page_container .page_item,
+.page_range_container .page_range_item {
+    color: #adadad;
+    display: inline-block;
+    padding: 6px 0;
+    width: 25px;
+    text-align: center;
+}
+
+.page_container .page_item:hover,
+.page_range_container .page_range_item:hover {
+    cursor: pointer;
+    background: #d7d7d7;
+    color: #fff;
+}
+
+.page_container .page_item.active,
+.page_range_container .page_range_item.active {
+    background: #d7d7d7;
+    color: #fff;
+}
+
+.page_container .page_item.page_item_disabled:hover {
+    cursor: inherit;
+    background: inherit;
+    color: #888888;
+}
+
+.pager_container {
+    margin: 15px 0;
+    display: inline-block;
+}
+
+.pager {
+    color: #888888;
+}
+
+.pager .arrow {
+    opacity: 0.5;
+}
+
+.pager .f-left {
+    margin-right: 15px;
+    display: inline-block;
+}
+
+.pager .f-left span {
+    padding: 6px 0;
+    display: inline-block;
+}
+
+.grid table {
+    border-bottom: 1px solid #cbd3d4 !important;
+}
+
+.grid table tfoot tr {
+    background: #d7d7d7 !important;
+    height: 30px;
+}
+
+.aw-arep-export .export_list {
+    display: none;
+    position: absolute;
+    width: 125px;
+    border: 1px solid #d7d7d7;
+    background: #ffffff;
+}
+
+.aw-arep-export .export_list.active {
+    box-shadow: 0px 1px 2px #999;
+    display: block;
+}
+
+.aw-arep-export .export_list .export_list_item {
+    height: 20px;
+    color: #282828;
+    padding: 5px;
+}
+
+.aw-arep-export .export_list .export_list_item:hover {
+    color: #5498dc;
+    cursor: pointer;
+}
+
+.aw-arep-export .export_button {
+    width: 100px;
+    height: 30px;
+    background: #5498dc url('../images/bottom_arrow_white.png') no-repeat 85% center !important;
+    border: 0 !important;
+    padding: 0 15px;
+    text-align: left !important;
+    border-radius: 2px;
+}
+
+.aw-arep-export .export_button:hover {
+    box-shadow: 0px 1px 5px #999;
+    background: #5285cc url('../images/bottom_arrow_white.png') no-repeat 85% center !important;
+}
+
+.aw-arep-export .export_button.active {
+    box-shadow: 0px 1px 5px #999;
+    background: #4774b3 url('../images/bottom_arrow_white.png') no-repeat 85% center !important;
+}
+
+.aw-arep-settings {
+    margin: 15px 2px 15px 0;
+    height: 30px;
+}
+
+.aw-arep-settings.f-right {
+    display: inline-block;
+}
+
+#aw_chart_container {
+    float: left;
+    margin-top: 15px;
+}
+
+.report_period_box {
+    float: right;
+}
+
+.param_selector_box {
+    float: left;
+}
+
+.report_detail_box {
+    clear: both;
+    padding-top: 10px;
+    text-align: left;
+}
+
+.report-title {
+    float: left;
+    text-align: left;
+}
+
+.report-title .icon-head {
+    font-size: 23px;
+    padding-left: 0;
+    color: #282828;
+}
+
+.arep-button-set {
+    text-align: left;
+    margin-top: 47px;
+}
+
+.arep-button-set.product-grid {
+    margin: 15px 0 0 0;
+}
+
+.arep-button-set.product-grid .scalable.task{
+    width: 130px;
+    display: inline-block;
+    margin: 0;
+}
+
+.arep-button-set .scalable.task {
+    width: 100%;
+    height: 30px;
+    border: 0;
+    background: #5498dc;
+    padding: 0;
+    display: block;
+    margin: 0;
+    border-radius: 2px;
+}
+
+.arep-button-set .scalable.task:hover {
+    box-shadow: 0px 1px 5px #999;
+    background: #5285cc;
+}
+
+.arep-button-set .scalable.task:active {
+    box-shadow: 0px 1px 5px #999;
+    background: #4774b3;
+}
+
+.arep-button-set .arep-hide-calendar-button.scalable.task:hover {
+    box-shadow: 0px 1px 5px #999;
+    background: #cccccc;
+}
+
+.arep-button-set .arep-hide-calendar-button.scalable.task:active {
+    box-shadow: 0px 1px 5px #999;
+    background: #b3b3b3;
+}
+
+.arep-button-set .arep-hide-calendar-button.scalable.task {
+    background: #d7d7d7;
+    margin-top: 9px;
+}
+
+#period_date_from,
+#period_date_to {
+    display: block;
+    width: 100px;
+    margin-top: 5px;
+    padding: 5px 20px 5px 10px;
+    background: url(../images/date_range_icon.png) no-repeat 90% 50%;
+    border: 1px solid #c8c8c8;
+}
+
+#period_date_from {
+    margin-right: 15px;
+}
+
+#fields div label {
+    width: 50px;
+    display: inline-block;
+    color: #282828;
+    text-align: left;
+}
+
+.grid tr.headings th a.sort-arrow-asc,
+.grid tr.headings th a.sort-arrow-desc {
+    background: none;
+    border-bottom: 0;
+    border-right: 0;
+}
+
+.grid tr.headings th a.sort-arrow-asc span.sort-title:hover,
+.grid tr.headings th a.not-sort span.sort-title:hover,
+.grid tr.headings th a.sort-arrow-asc:hover span.sort-title,
+.grid tr.headings th a.not-sort:hover span.sort-title {
+    color: #282828;
+}
+
+.grid tr.headings th a.sort-arrow-asc span.sort-title {
+    color: #000;
+    background-position: right 50%;
+    background-repeat: no-repeat;
+    padding: 3px 12px 2px 8px;
+    background-image: url(../images/sort-arrow-asc-active.png);
+}
+
+.grid tr.headings th a.not-sort span.sort-title {
+    background-position: right 50%;
+    background-repeat: no-repeat;
+    padding: 3px 12px 2px 8px;
+    background-image: url(../images/sort-arrow-asc.png);
+}
+
+.grid tr.headings th a.sort-arrow-desc span.sort-title:hover,
+.grid tr.headings th a.sort-arrow-desc:hover span.sort-title {
+    color: #ea7601;
+}
+
+.grid tr.headings th a.sort-arrow-desc span.sort-title {
+    color: #000;
+    background-position: right 50%;
+    background-repeat: no-repeat;
+    padding: 3px 12px 2px 8px;
+    background-image: url(../images/sort-arrow-desc-active.png);
+}
+
+.grid tr.filter {
+    background: #d7d7d7;
+}
+
+.grid tr.filter .range-line.date img {
+    display: block;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: url("../images/datepicker.png") 5px 0 no-repeat;
+    width: 10px;
+    height: 17px;
+    padding-left: 27px;
+}
+
+.grid tr.filter .range-line.date img:hover {
+    background-position: 5px -56px;
+}
+
+.aw_dashbord_row {
+    float: left;
+    color: #282828;
+}
+
+.aw_dashbord_col_left,
+.aw_dashbord_col_right {
+    height: 375px;
+    background: #f9f9f9;
+    margin: 0 10px 10px 10px;
+}
+
+.arep-dashboard-report-grid {
+    width: 300px;
+}
+
+.arep-dashboard-report-grid tr td {
+    height: 30px;
+}
+
+.arep-dashboard-report-grid .field-number {
+    width: 35px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.arep-dashboard-report-grid .field-label {
+    width: 135px;
+    vertical-align: middle;
+}
+
+.arep-dashboard-report-grid .field-currency {
+    width: 100px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.aw_dashbord_row h3 {
+    padding: 10px 0 0 10px;
+    color: #282828;
+}
+
+.aw_dashbord_row p {
+    padding: 10px;
+}
+
+.arep-profit-margin-box {
+    height: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    background: #d7d7d7;
+    margin-right: 5px;
+}
+
+.arep-sorted-percent {
+    color: #888;
+    margin-left: 5px;
+}
+
+.report-title .icon-head {
+    white-space: nowrap;
+}
+
+.grid tr.filter .range div.date {
+    min-width: 140px !important;
+}
+
+.grid tr.filter .range input {
+    width: 65px !important;
+}
+
+.grid tr.filter .range .range-line {
+    min-width: 115px !important;
+}
+
+.column-period-header {
+    min-width: 200px;
+}

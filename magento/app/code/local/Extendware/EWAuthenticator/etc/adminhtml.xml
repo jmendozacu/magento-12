@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<config>
+	<extendware>
+		<quickaccess>
+			<ewauthenticator>
+                <resource>extendware/ewauthenticator</resource>
+				<children>
+					<users translate="title" module="ewauthenticator">
+						<title>Users</title>
+						<action>adminhtml/permissions_user/index</action>
+						<resource>system/acl/users</resource>
+						<sort_order>1</sort_order>
+					</users>
+					<log translate="title" module="ewauthenticator">
+						<title>Logs</title>
+						<action>extendware_ewauthenticator/adminhtml_log</action>
+						<resource>extendware/ewauthenticator/log</resource>
+						<sort_order>2</sort_order>
+					</log>
+				</children>
+				<title/>
+			</ewauthenticator>
+		</quickaccess>
+	</extendware>
+	<menu></menu>
+	<acl>
+		<resources>
+            <admin>
+                <children>
+                    <extendware translate="title" module="ewauthenticator">
+                    	<title>Extendware</title>
+                    	<sort_order>0</sort_order>
+                        <children>
+                        	<ewauthenticator translate="title" module="ewauthenticator">
+                        		<title>Authenticator</title>
+                        		<children>
+                        			<log translate="title">
+                        				<title>Logs</title>
+			            			</log>
+                        			<settings translate="title">
+                        				<title>Settings</title>
+                        				<children>
+				                            <main translate="title">
+				                                <title>Main</title>
+				                                <children>
+					                                <ewauthenticator translate="title">
+						                                <title>General</title>
+						                            </ewauthenticator>
+					                            </children>
+				                            </main>
+			                            </children>
+			            			</settings>
+			            		</children>
+			            	</ewauthenticator>
+                        </children>
+                    </extendware>
+                </children>
+            </admin>
+        </resources>
+	</acl>
+</config>

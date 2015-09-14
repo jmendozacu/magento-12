@@ -1,0 +1,1950 @@
+<div class="ajax-cover-img ajax-loader" style="display:none;"></div>
+<div class="ajax-cover ajax-loader" style="display:none; opacity: 0.9;"></div>
+
+<script type="text/javascript">
+jQuery('.ajax-loader').show();
+var width = $j(window).width();
+window.onload = function () {
+  jQuery('.ajax-loader').hide();
+}
+</script>
+<?php 
+/*
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ */
+
+?>
+<style type="text/css">
+.blender-slider {
+  height: 570px !important;
+}
+#mysidebarmenu ul li ul {
+  overflow-y: auto;
+  max-height: 570px;
+  display: block;
+  width: 308px;
+}
+</style>
+<?php
+    
+    
+
+    
+    $iProductID = '';
+    $iProductID1 = '';/*7480*/
+    $iProductID2 = '';
+    $default_flv_per = '';
+    $default_flv1_per = '';
+    $default_flv2_per = '';
+    $initialproductid = 0;
+    $initialproductid1 = 0;
+    $initialproductid2 = 0;
+    $icartID = '';
+    $iBlenderId = '';
+    $default_size = '12ML';
+    $default_nicotine_level = '0MG';
+    $size_option_id = '';
+    $nicotine_option_id = '';
+    $desc_option_id = '';
+    $detail_option_id = '';
+    $size_array= array();
+    $nicotine_array= array();
+    $blender_description = '';
+    $blender_detail = '';
+    $ext_shot_id = '';
+    $blend_name = 'My Blend';
+
+    $product_color_array = array(
+        '80'=>'#0000FF',
+        '108'=>'#DF0101',
+        '115'=>'#7A32AE',
+        '90'=>'#EDEA60',
+        '106'=>'#654321',
+        '107'=>'#0E7B22',
+        '109'=>'#E046BC',
+        '112'=>'#F0B74F',
+        '116','#FCFCFF'
+    );
+
+    //Get Custom Product
+    $sku                = 'custom_eliquid_blender'; 
+    $custom_product     = Mage::getModel('catalog/product')->loadByAttribute('sku', $sku);
+    $iCustomProductID   = $custom_product->getID();
+    $mainPrice          = $custom_product->getPrice();
+    //Get Bottle size and Nicotine Strenght    
+    $productCollection = Mage::getModel("catalog/product")->load($iCustomProductID); 
+
+    $i = 1; 
+    foreach ($productCollection->getOptions() as $value) { 
+        $j = 0;
+        $option_type = $value->getType();
+
+        if($option_type != 'area'){
+            foreach ($value->getValues() as $key) {
+                if($key->getPrice() != '0'){
+                    $size_option_id = $key->getOptionId();
+                    $size_array[$j]['option_type_id'] = $key->getOptionTypeId();
+                    $size_array[$j]['title'] = $key->getTitle();
+                    $size_array[$j]['option_id']  = $key->getOptionId();
+                    $size_array[$j]['price']  = $key->getPrice();
+                    $j++;
+                }
+                else{
+                    $nicotine_option_id = $key->getOptionId();
+                    $nicotine_array[$j]['title']  = $key->getTitle();
+                    $nicotine_array[$j]['option_type_id']  = $key->getOptionTypeId();
+                    $nicotine_array[$j]['option_id']  = $key->getOptionId();
+                    $j++;
+                }
+            }
+        }
+        else{
+            $options_sku = $value->getSku();
+            if($options_sku == 'Blender_Description'){
+                $desc_option_id = $value->getOptionId();
+            }
+            if($options_sku == 'Blender_Detail'){
+                $detail_option_id = $value->getOptionId();
+            }
+        }
+        
+    }
+    
+    //Get Params if pass from url
+    $params = $this->getRequest()->getParams();
+    if(isset($params['product_id'])){
+        $iProductID = $params['product_id'];    
+    }
+    if(isset($params['cart_id'])){
+        $icartID = $params['cart_id'];    
+    }
+    if(isset($params['blender_id'])){
+        $iBlenderId = $params['blender_id'];
+    }
+    
+    if(isset($iBlenderId) && $iBlenderId != ''){
+        $read = Mage::getSingleton( 'core/resource' )->getConnection( 'core_read' ); 
+        $productTable = 'eliquid_blender';
+        $select = $read->select()->from($productTable, array('*'))->where('id=?',$iBlenderId);
+
+        $rowArray =$read->fetchRow($select);
+        if(isset($rowArray) && !empty($rowArray)){
+          if(isset($rowArray['product_id1']) && $rowArray['product_id1'] != '0' && $rowArray['product_id1'] != ''){
+            $iProductID = $rowArray['product_id1'];
+          }
+          if(isset($rowArray['product_id2']) && $rowArray['product_id2'] != '0' && $rowArray['product_id2'] != ''){
+            $iProductID1 = $rowArray['product_id2'];
+          }
+          if(isset($rowArray['product_id3']) && $rowArray['product_id3'] != '0' && $rowArray['product_id3'] != ''){
+            $iProductID2 = $rowArray['product_id3'];
+          }
+          if(isset($rowArray['product1_per']) && $rowArray['product1_per'] != '0' && $rowArray['product1_per'] != ''){
+            $default_flv_per = $rowArray['product1_per'];
+          }
+          if(isset($rowArray['product2_per']) && $rowArray['product2_per'] != '0' && $rowArray['product2_per'] != ''){
+            $default_flv1_per = $rowArray['product2_per'];
+          }
+          if(isset($rowArray['product3_per']) && $rowArray['product3_per'] != '0' && $rowArray['product3_per']!= ''){
+            $default_flv2_per = $rowArray['product3_per'];
+          }
+          if(isset($rowArray['size']) && $rowArray['size'] != ''){
+            $default_size = $rowArray['size'];
+          }
+          if(isset($rowArray['nicotine']) && $rowArray['nicotine'] != ''){
+            $default_nicotine_level = $rowArray['nicotine'];
+          }
+          if(isset($rowArray['blender_name']) && $rowArray['blender_name'] != ''){
+            $blend_name = $rowArray['blender_name'];
+          }
+          if(isset($rowArray['extra_shot_id']) && $rowArray['extra_shot_id'] != ''){
+            $ext_shot_id = $rowArray['extra_shot_id'];
+          }
+        }
+  
+    }
+    
+
+    //Get Cart Detail if cart id is set
+    if(isset($icartID) && $icartID != ''){
+        $cart = Mage::getModel('checkout/cart')->getQuote();
+        foreach ($cart->getAllItems() as $item) {
+            $ItemId = $item->getId();
+            if($icartID == $ItemId){
+                $productId = $item->getProduct()->getId();  
+                $_customOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
+                if(isset($_customOptions) && !empty($_customOptions)){
+                    foreach ($_customOptions['options'] as $key) {
+                        $option_id = $key['option_id'];
+                        if($option_id == $detail_option_id){
+                            $blender_detail = $key['value'];
+                            $product_shot = explode('/', $blender_detail);
+                            $blender_detail_array = explode(',', $product_shot['0']);
+                            if(isset($blender_detail_array) && !empty($blender_detail_array)){
+                                $product_cnt = '0';
+                                foreach ($blender_detail_array as $key) {
+                                    if($key != ''){
+                                        $id_per = explode('-', $key);
+                                        if($product_cnt == 0){
+                                            $iProductID = $id_per['0'];
+                                            $default_flv_per = str_replace('%', ' ', $id_per['1']);
+                                        }
+                                        if($product_cnt == 1){
+                                            $iProductID1 = $id_per['0'];
+                                            $default_flv1_per = str_replace('%', ' ', $id_per['1']);
+                                        }
+                                        if($product_cnt == 2){
+                                            $iProductID2 = $id_per['0'];
+                                            $default_flv2_per = str_replace('%', ' ', $id_per['1']);   
+                                        }
+                                        $product_cnt++;
+                                    }
+                                }
+                            }
+                            if(isset($product_shot['1']) && $product_shot['1'] != ''){
+
+                                $txt = explode(':', $product_shot['1']);
+                                $lbl = trim($txt['0']);
+                                if($lbl == 'Blend'){
+                                    $blend_name = $txt['1'];
+                                }
+                                else{
+                                    $ext_shot_id = $txt['1'];    
+                                }
+                                
+                            }
+                            if(isset($product_shot['2']) && $product_shot['2'] != ''){
+                                $txt = explode(':', $product_shot['2']);
+                                $lbl = trim($txt['0']);
+                                if($lbl == 'Blend'){
+                                    $blend_name = $txt['1'];
+                                }
+                                else{
+                                    $ext_shot_id = $txt['1'];    
+                                }
+                            }
+
+                        }
+                        if($option_id == $nicotine_option_id){
+                            $nicotine_level = $key['value'];
+                            $nicotine = explode('-', $nicotine_level);
+                            $default_nicotine_level = trim($nicotine['0']);
+                        }
+                        if($option_id == $size_option_id){
+                            $default_size = trim(str_replace('BOTTLE', ' ', $key['value']));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    $_product           = Mage::getModel('catalog/product')->load($iProductID); 
+    $custom_product     = Mage::getModel('catalog/product')->load($iCustomProductID); 
+    $category_id        = '';
+    $all_category_id    = $_product->getCategoryIds();
+
+    if(isset($all_category_id['2'])){
+        $category_id = $all_category_id['2'];
+    }
+    else{
+        $category_id = $all_category_id;   
+    }
+
+    $_cat = Mage::getModel('catalog/category')->setStoreId(Mage::app()->getStore()->getId())->load($category_id);
+    $selected_cat_name = $_cat->getName();
+
+    $bottle_img = 'eliquid_'.$category_id.'.png';
+    
+    $product_color = $product_color_array[$category_id];
+    
+    $bottle_img_path = 'images/blender/'.$bottle_img;
+    
+    //Get Flover by Category id & other attribute
+    $category       = Mage::getModel('catalog/category')->setStoreId(Mage::app()->getStore()->getId())->load($category_id);
+    $flavors        = $category->getName();
+    $price          = $_product->getPrice();
+?>
+
+<?php 
+$product = Mage::getModel('catalog/product')->load($iCustomProductID); 
+$url = Mage::helper('checkout/cart')->getAddUrl($product); ?>
+
+<!-- ADD TO CART FORM -->
+<form  action="<?php echo $url; ?>" id="product_addtocart_form" method="post">
+    <input type="hidden" name="<?php echo 'options['.$nicotine_array[0]["option_id"].']' ?>" id="form_option_nicotine" value="<?php echo $nicotine_array['0']['option_type_id']; ?>">
+    <input type="hidden" name="<?php echo 'options['.$size_array[0]["option_id"].']' ?>" id="form_option_size" value="<?php echo $size_array['0']['option_type_id']; ?>">
+    <input type="hidden" name="qty" id="form_quantity" value="1" />
+    <input type="hidden" name="options[<?php echo $desc_option_id; ?>]" id="form_description" value="" />
+    <input type="hidden" name="options[<?php echo $detail_option_id; ?>]" id="form_detail" value="" />
+    
+    <input type="hidden" name="product" id="" value="<?php echo $iCustomProductID; ?>" />
+</form>
+
+<div class="builder_main">
+  <input type="hidden" id="selected_flover" value="<?php echo $selected_cat_name; ?>">
+  <input type="hidden" id="flaver1_per" value="">
+  <input type="hidden" id="flaver2_per" value="">
+  <input type="hidden" id="flaver3_per" value="">
+  <div class="tabtoprow">
+  <div class="transparant-bottel3" style="">
+    <em><span class='shots_dropper'><img src="<?php echo $this->getSkinUrl('images/transparant-bottel3.png'); ?>"></span></em>
+  </div>
+  </div>
+  <div class="tabmidpart">
+    <div id="main-slider" class="liquid-slider blender-slider">
+      <div>
+        <h2 class="title">SIZE</h2>
+        <div class="select-bottle">
+          <div class="sizelefpart">
+            <div class="sizehdname">
+              <h3>ChOOSE size</h3>
+              <h4>Choose your bottle size.</h4>
+            </div>
+            <div class="bottlewrap">
+              <div class="bottel_one"> 
+                  <a onclick="return set_bottle_size(this.id);" id="one" option-id="<?php echo $size_array['0']['option_id']; ?>" option-type-id="<?php echo $size_array['0']['option_type_id']; ?>" class="bottlepic" price="<?php echo $mainPrice + sprintf ("%.2f", $size_array['0']['price']);?>" size="12"  href="#"> <img src="<?php echo $this->getSkinUrl('images/blender/bottel-one.png'); ?>"> </a>
+                  <div class="gmbot"><?php echo str_replace('BOTTLE','',$size_array['0']['title']); ?></div>
+                  <div class="eqbottelprice">$<?php echo $mainPrice + sprintf ("%.2f", $size_array['0']['price']);  ?></div>
+              </div>
+              <div class="bottel_two"> 
+                  <a onclick="return set_bottle_size(this.id);" id="two" option-id="<?php echo $size_array['1']['option_id']; ?>" option-type-id="<?php echo $size_array['1']['option_type_id']; ?>"  class="bottlepic" href="#" price="<?php echo $mainPrice + sprintf ("%.2f", $size_array['1']['price']);  ?>" size="30"> <img src="<?php echo $this->getSkinUrl('images/blender/bottel-two.png'); ?>"> </a>
+                  <div class="gmbot"><?php echo str_replace('BOTTLE','',$size_array['1']['title']); ?></div>
+                  <div class="eqbottelprice">$<?php echo $mainPrice + sprintf ("%.2f", $size_array['1']['price']); ?></div>
+              </div>
+              <div class="bottel_three"> 
+                  <a onclick="return set_bottle_size(this.id);" id="three" option-id="<?php echo $size_array['2']['option_id']; ?>" option-type-id="<?php echo $size_array['2']['option_type_id']; ?>"  class="bottlepic" price="<?php echo $mainPrice + sprintf ("%.2f", $size_array['2']['price']);  ?>" size="50" href="#"> <img src="<?php echo $this->getSkinUrl('images/blender/bottel-three.png'); ?>"> </a>
+                  <div class="gmbot"><?php echo str_replace('BOTTLE','',$size_array['2']['title']); ?></div>
+                  <div class="eqbottelprice">$<?php echo $mainPrice + sprintf ("%.2f", $size_array['2']['price']);  ?></div>
+              </div>
+          </div>
+          </div>
+          <div class="sizerightpart">
+            <div class="greenequwp">
+              <div class="greenbottel">
+                <!-- <div class="tspbotpt"><img src="<?php echo $this->getSkinUrl($bottle_img_path); ?>"></div> -->
+                <!-- <div class="canvas-right-img"> -->
+                <div id='sub_block_2_size'>
+                  <div class="botte-img"><img src='<?php echo $this->getSkinUrl('images/blender/transparant-bottel.png'); ?>'></div>
+                    <div id="top_extra_size" style='height:5px;margin-top:151px;border-radius:29px 29px 36px 37px;background-color:#FFF;'></div>
+                    <div id="outsidediv_size" style='height:326px;margin-top:152px;background-color:<?php echo $product_color;?>'></div>
+                <!-- </div> -->
+              </div>
+              </div>
+              <div class="rightboxbot">
+                <div class="addcatsps">
+                  <input type="text" value="My Blend" class="brdtypenam" id='custom_product_name' placeholder="Name Your Brand" onblur='custom_product_name_func(this.id);' style='color:#2a3f8e;font-weight:bold;font-size: 18px;padding: 0 5%;width: 100% !important;'>
+                </div>
+                <ul class="lqutinfo">
+                  <li><strong>SIZE:</strong> <span id="size_size_span">0</span><span> ML</span></li>
+                  <li><strong>NICOTINE:</strong> <span class="size_nicotine_span" id="size_nicotine_span">0mg Ultra Light</span></li>
+                      <li><div id='choose_size_fl1' style='display:none;'><strong>FLVR 1:</strong> <span id='choose_size_name_fl1'>Lemon Tea</span><span id='choose_size_percentage_fl1'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('1');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> -->
+                  </span></div></li>
+                  <li><div id='choose_size_fl2' style='display:none;'><strong>FLVR 2:</strong> <span id='choose_size_name_fl2'>Cucumber</span><span id='choose_size_percentage_fl2'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('2');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span></div></li>
+                  <li><div id='choose_size_fl3' style='display:none;'><strong>FLVR 3:</strong> <span id='choose_size_name_fl3'>Grape</span><span id='choose_size_percentage_fl3'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('3');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span>
+                  </div></li>
+                </ul>
+                <div class="priceaddcatwp">
+              <h4 id="size_main_price">$00.00</h4>
+              <button class="addbtncat newaddcat" type="submit"  onclick="return add_to_cart(this);">ADD TO CART</button>
+            </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 class="title">FLAVORS</h2>
+        <div class="sizelefpart secndptllk">
+          <div class="leftnavfav">
+            <nav id="mysidebarmenu" class="amazonmenu">
+              <?php 
+                $parentCategoryId = 79;
+                $cat = Mage::getModel('catalog/category')->load($parentCategoryId);
+                $subcats = $cat->getChildren();
+
+                /*$catcolorarr = array(array('id'=>80,'all_colors'=>array('#08088A','#0000FF','#5858FA')),array('id'=>108,'all_colors'=>array('#610B0B','#DF0101','#FA5858')),array('id'=>115,'all_colors'=>array('#370C56','#7A32AE','#B077D8')),array('id'=>90,'all_colors'=>array('#FDF900','#EDEA60','#EFEEAE')),array('id'=>106,'all_colors'=>array('#323121','#555539','#8A895C')),array('id'=>107,'all_colors'=>array('#05320E','#0E7B22','#44BB59')),array('id'=>109,'all_colors'=>array('#FC03C2','#E046BC','CF8DC0')),array('id'=>112,'all_colors'=>array('#FFA600','#F0B74F','#F6D495')),array('id'=>116,'all_colors'=>array('#E2E2F8','#FCFCFF','#E7E7EB')));*/
+
+                $catcolorarr = array(array('id'=>80,'all_colors'=>array('#0000FF','#08088A','#5858FA')),array('id'=>108,'all_colors'=>array('#DF0101','#610B0B','#FA5858')),array('id'=>115,'all_colors'=>array('#7A32AE','#370C56','#B077D8')),array('id'=>90,'all_colors'=>array('#EDEA60','#FDF900','#EFEEAE')),array('id'=>106,'all_colors'=>array('#866442','#654321','#B5997D')),array('id'=>107,'all_colors'=>array('#0E7B22','#05320E','#44BB59')),array('id'=>109,'all_colors'=>array('#E046BC','#FC03C2','CF8DC0')),array('id'=>112,'all_colors'=>array('#F0B74F','#FFA600','#F6D495')),array('id'=>116,'all_colors'=>array('#FCFCFF','#E2E2F8','#E7E7EB')));                
+
+              ?>
+              <ul>
+                <?php $cnt = 1; foreach(explode(',',$subcats) as $subCatid) : ?>
+                <?php 
+                  $_category = Mage::getModel('catalog/category')->load($subCatid);
+                  $category_id = $_category->getID();
+                  $catagory_model = Mage::getModel('catalog/category')->load($category_id); 
+                  $collection = Mage::getResourceModel('catalog/product_collection');
+                  $collection->addCategoryFilter($catagory_model);
+                  $collection->addAttributeToFilter('status',1);
+                  $collection->addAttributeToSelect(array('name','url','small_image'));
+                  $collection->addStoreFilter(); 
+
+              ?>
+                <?php if($_category->getIsActive()) : ?>
+                <li class="hassub"><a href="javascript:void(0)"><?php echo str_replace('Flavors', '', $_category->getName()); ?> <?php echo '('.$collection->count().')'; ?> </a>
+                  <ul class="issub" style="display: none; z-index: 1011;">
+                    <?php if(!empty($collection)) : ?>
+                    <?php foreach ($collection as $product) : 
+                        for($clr=0;$clr<count($catcolorarr);$clr++){
+                            if($catcolorarr[$clr]['id']==$category_id){
+                                $colorcode = $catcolorarr[$clr]['all_colors']['0'];
+                                $colorcode2 = $catcolorarr[$clr]['all_colors']['1'];
+                                $colorcode3 = $catcolorarr[$clr]['all_colors']['2'];
+                            }
+                        }
+                        $product_id = $product->getID();
+                        if($product_id==$iProductID){
+                            $initialproductid = $cnt;
+                        }
+                        if($product_id==$iProductID1){
+                            $initialproductid1 = $cnt;
+                        }
+                        if($product_id==$iProductID2){
+                            $initialproductid2 = $cnt;
+                        }
+                    ?>
+                    
+                    <li> 
+                        <a id="<?php echo $cnt;?>img"  onclick="callMarkImageFunc(this.id);" href="javascript:void(0)" cat-id="<?php echo $category_id; ?>">
+                            <div class="prdnavpic flvimg"> 
+                                <img src="<?php echo Mage::helper('catalog/image')->init($product, 'small_image')->resize(75,75); ?>" style='position: relative;' /> <img src='<?php echo $this->getSkinUrl('images/checkbox-selected2.png'); ?>' style='position:absolute; top:0px; left:0px; display:none;' id='<?php echo $cnt;?>flvforeimage'  class="correctimg"> 
+                            </div>
+                            <div class="prdnavhd">
+                                <input class="flv <?php echo $cnt;?>check" id='flv<?php echo $cnt;?>' type="checkbox" name="flavour[]" color="<?php echo $colorcode;?>" colortwo="<?php echo $colorcode2;?>" colorthree="<?php echo $colorcode3;?>" size="50" nicotine="5" title="<?php echo $product->getName();?>" product-id="<?php echo $product->getID();?>" style='display:none;'>
+                                <?php echo $product->getName();?>
+                            </div>
+                        </a> 
+                    </li>
+                    <?php $cnt++; endforeach ?>
+                    <?php endif ?>
+                  </ul>
+                </li>
+                <?php endif ?>
+                <?php endforeach ?>
+              </ul>
+            </nav>
+          </div>
+          <!--<div class="hdtbstar">fd</div>--> 
+        </div>
+        <div class="flvhdmain">
+          <h3>ChoOSE FLAVORS</h3>
+          <h4>SELECT UP TO THREE.</h4>
+          <!-- <a class="chooseformebtn" href="#">CHOOSE FOR ME</a> --> </div>
+        <div class="sizerightpart flvrgtptbot">
+          <?php /*?><div class="canvas_block">
+                        <div class="canarrowone"><img src="<?php echo $this->getSkinUrl('images/up-down-colorfill.png'); ?>"></div>
+                        <div class="canarrowtwo"><img src="<?php echo $this->getSkinUrl('images/up-down-colorfill.png'); ?>"></div>
+                    </div><?php */?>
+          <div class="color_bottle">
+            <div class="main-div">
+                <div class="canvas-left-lart" id='canvas_block'>
+                    <div id="canvas_draggable_div" style='height:360px;width:30px;'>
+                      
+                        <p id="draggable" style="display:none;"><img src="<?php echo $this->getSkinUrl('images/up-down-colorfill1.png'); ?>" style="width:49px !important; height:22px !important; padding:0 !important;">
+                        </p>
+
+                        <p id="draggable2" style="display:none;"><img src="<?php echo $this->getSkinUrl('images/up-down-colorfill1.png'); ?>" style="width:49px !important; height:22px !important; padding:0 !important;">
+                        </p>
+                      
+                    </div>
+                </div>
+              <div class="canvas-right-img">
+                <div id='sub_block_2'>
+                  <div class="botte-img"><img src='<?php echo $this->getSkinUrl('images/blender/transparant-bottel.png'); ?>'></div>
+                    <div id="top_extra_flvr" style='height:5px;margin-top:151px;border-radius:29px 29px 36px 37px;background-color:#FFF;'></div>
+                    <div id="outsidediv" style='border-radius:29px 29px 36px 37px;height:326px;background-color:<?php echo $product_color;?>'></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="clorinfo_flaver adnewcolflow">
+            <div class="brdnameinp"><!--<input type="text" class="brdtypenam" placeholder="Name Your Brand">-->
+              <!-- <label class="brdtypenam labcolor" for="mycustombrand_flavor">My Blend</label> -->
+              <input value="My Blend" type="text" class="brdtypenam" id='custom_product_name_flavors' placeholder="Name Your Brand" onblur='custom_product_name_func(this.id);' style='color:#2a3f8e;font-weight:bold;font-size: 18px;padding: 0 5%;width: 100% !important;'>
+            </div>
+            <ul class="lqutinfo">
+              <li><strong>SIZE:</strong> <span id="flover_size_span">0</span><span> ML</span></li>
+              <li><strong>NICOTINE:</strong> <span class="nicotin_span" id="flover_nicotine_span">0mg Ultra Light</span></li>
+              <li><div id='choose_flavor_fl1' style='display:none;'><strong>FLVR 1:</strong> <span id='choose_flavor_name_fl1'>Lemon Tea</span><span id='choose_flavor_percentage_fl1'></span> <span class="flavourbtn"><a href="javascript:void(0)" onclick="callCloseFlavour('1');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a>
+              </span></div></li>
+              <li><div id='choose_flavor_fl2' style='display:none;'><strong>FLVR 2:</strong> <span id='choose_flavor_name_fl2'>Cucumber</span><span id='choose_flavor_percentage_fl2'></span> <span class="flavourbtn"><a href="javascript:void(0)" onclick="callCloseFlavour('2');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a></span></div></li>
+              <li><div id='choose_flavor_fl3' style='display:none;'><strong>FLVR 3:</strong> <span id='choose_flavor_name_fl3'>Grape</span><span id='choose_flavor_percentage_fl3'></span> <span class="flavourbtn"><a href="javascript:void(0)" onclick="callCloseFlavour('3');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a></span>
+              </div></li>
+            </ul>
+            <div class="priceaddcatwp">
+            <h4 id="flover_main_price">$00.00</h4>
+            <button class="addbtncat newaddcat" onclick="return add_to_cart(this);" type="submit">ADD TO CART</button>
+          </div>
+          </div>
+          <!--<div class="priceaddcatwp">
+            <h4 id="flover_main_price">$00.00</h4>
+            <button class="addbtncat" onclick="return add_to_cart(this);" type="submit">ADD TO CART</button>
+          </div>-->
+        </div>
+      </div>
+      <div>
+        <h2 class="title">NICOTINE LEVEL</h2>
+        <div class="select-bottle">
+          <div class="sizelefpart">
+            <div class="sizehdname">
+              <h3>NICOTINE LEVEL</h3>
+              <h4>Choose your nicotine level.</h4>
+            </div>
+            <div class="nicotine-level">
+              <div class="nicotin-wrap">
+                <div class="outer-gmbot">
+                  <div id="nicotine_mg" class="gmbot-nicotin">00 mg</div>
+                </div>
+                <div class="bottom-line"><img src='<?php echo $this->getSkinUrl('images/line-text-bottom.jpg'); ?>'></div>
+                <div id="nicotine_price" class="eqbottelprice">$00.00</div>
+                <div class="outer-nicotin-div">
+                  <ul class="nicotin-strenght">
+                    <?php
+                                $nicotine_color = array(
+                                  '0MG'=>'#d4d9e8',
+                                  '3MG'=>'#bcc3dc',
+                                  '6MG'=>'#a9b2cf',
+                                  '11MG'=>'#6c7ab1',
+                                  '18MG'=>'#5263a3',
+                                  '24MG'=>'#2a3f8e',
+                              );
+                                $mg_array = array();
+                                foreach ($nicotine_array as $value) {
+                                    if($value['title'] != ''){ 
+                                        $label = $value['title'];
+                                        $mg_lbl = explode('-', $label);
+                                        $mg = trim($mg_lbl['0']);
+                                        $color = '';
+                                        if(isset($nicotine_color[$mg])){
+                                            $color = $nicotine_color[$mg];    
+                                        }
+                                        if($color != '' && !in_array($mg, $mg_array)){ ?>
+                                            <li id="li_<?php echo $mg; ?>"> 
+                                              <a option-id="<?php echo $value['option_id'] ?>" option-type-id="<?php echo $value['option_type_id'] ?>" onclick="return add_nicotin_level(this.id)" lable="<?php echo $label; ?>" id="<?php echo $mg; ?>" class="bottlepic" href="#">
+                                                  <div class="niocotine-color-div <?php if($mg == '0MG'){ echo 'active-nicotine'; } ?> " id="div_<?php echo $mg; ?>" style="background-color:<?php echo $color; ?>;width:60px;height:60px;"></div>
+                                              </a> 
+                                            </li>
+                                            <!-- <li id="li_<?php echo $mg; ?>"> 
+                                                <a option-id="<?php echo $value['option_id'] ?>" option-type-id="<?php echo $value['option_type_id'] ?>" onclick="return add_nicotin_level(this.id)" lable="<?php echo $label; ?>" id="<?php echo $mg; ?>" class="bottlepic" href="#">
+                                                    <div style="background-color:<?php echo $color; ?>;width:60px;height:60px;"></div>
+                                                </a> 
+                                            </li> -->
+                                        <?php array_push($mg_array, $mg);
+                                        }
+                                    }
+                                }
+                                ?>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sizerightpart flvrgtptbot">
+            <?php /*?><div class="canvas_block">
+                        <div class="canarrowone"><img src="<?php echo $this->getSkinUrl('images/up-down-colorfill.png'); ?>"></div>
+                        <div class="canarrowtwo"><img src="<?php echo $this->getSkinUrl('images/up-down-colorfill.png'); ?>"></div>
+                    </div><?php */?>
+            <div class="color_bottle">
+              <div class="main-div">
+                <div class="canvas-left-lart">
+                  
+                </div>
+                <div class="canvas-right-img">
+                  <div id='sub_block_2_nico'>
+                    <div class="botte-img"><img src='<?php echo $this->getSkinUrl('images/blender/transparant-bottel.png'); ?>'></div>
+                    <div id="top_extra_nico" style='height:5px;margin-top:151px;border-radius:29px 29px 36px 37px;background-color:#FFF;'></div>
+                    <div id="outsidediv_nico" style='border-radius:29px 29px 36px 37px;height:326px;background-color:<?php echo $product_color;?>'></div>
+            
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="clorinfo_flaver adnewcolflow">
+              <div class="brdnameinp"><!--<input type="text" class="brdtypenam" placeholder="Name Your Brand">-->
+                <!-- <label class="brdtypenam labcolor" for="mycustombrand_nicotin">My Blend</label> -->
+                <input value="My Blend" type="text" class="brdtypenam" id='custom_product_name_nicotin' placeholder="Name Your Brand" onblur='custom_product_name_func(this.id);' style='color:#2a3f8e;font-weight:bold;font-size: 18px;padding: 0 5%;width: 100% !important;'>
+              </div>
+              <ul class="lqutinfo">
+                <li><strong>SIZE:</strong> <span id="nicotine_size_span">0</span><span> ML</span></li>
+                <li><strong>NICOTINE:</strong> <span class="nicotin_span" id="nicotine_nicotine_span">0mg Ultra Light</span></li>
+                <li><div id='choose_nicotin_fl1' style='display:none;'><strong>FLVR 1:</strong> <span id='choose_nicotin_name_fl1'>Lemon Tea</span><span id='choose_nicotin_percentage_fl1'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('1');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span></div></li>
+                 <li><div id='choose_nicotin_fl2' style='display:none;'><strong>FLVR 2:</strong> <span id='choose_nicotin_name_fl2'>Cucumber</span><span id='choose_nicotin_percentage_fl2'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('2');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span></div></li>
+                <li><div id='choose_nicotin_fl3' style='display:none;'><strong>FLVR 3:</strong> <span id='choose_nicotin_name_fl3'>Grape</span><span id='choose_nicotin_percentage_fl3'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('3');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span></div></li>
+              </ul>
+              <div class="priceaddcatwp">
+              <h4 id="nicotine_main_price">$00.00</h4>
+              <button class="addbtncat newaddcat" onclick="return add_to_cart(this);" type="submit">ADD TO CART</button>
+            </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+<!--  Code for flavor shots here -->
+<div>
+    <h2 class="title">FLAVOR SHOT</h2>
+  <div class="flavor-shot-part">
+      <div class="flavor-shot-part-left">
+          <div class="sizehdname">
+              <h3>extra shot</h3>
+              <h4>Choose your extra shot.</h4>
+          </div>
+          <?php 
+          $category_id = 79;
+          $catagory_model = Mage::getModel('catalog/category')->load($category_id); 
+          $collection = Mage::getResourceModel('catalog/product_collection');
+          $collection->addCategoryFilter($catagory_model);
+          $collection->addAttributeToFilter('extra_shot','1');
+          $collection->addAttributeToSelect(array('name','url','small_image'));
+          $collection->getSelect()->limit(10,0);
+          $collection->addStoreFilter(); 
+      
+          ?>
+          <ul class="issub">
+              <?php foreach ($collection as $product) :
+              $p_id = $product->getID();
+                $all_cat_id = $product->getCategoryIds();
+                if(isset($all_cat_id['2'])){
+                    $category_id = $all_cat_id['2'];
+                }
+                else{
+                    $category_id = $all_cat_id;   
+                }
+              ?>
+              <li>
+                  <div id="" class="flavor-shot-img <?php echo $p_id.'_div'; ?>">
+                     <a  href="#" id="<?php echo $p_id; ?>" cat-id="<?php echo $category_id; ?>" product="<?php echo $product->getName(); ?>" onclick="return set_extra_shot(this.id);"> 
+                        <img src="<?php echo Mage::helper('catalog/image')->init($product, 'small_image')->resize(75,75)->setWatermarkImageOpacity(0); ?>" />
+                        
+                      </a>
+                  </div>
+                  <span><?php echo $product->getName(); ?></span> 
+              </li>
+              <?php endforeach ?>
+               <li>
+                  <div id="no_shot_div" class="flavor-shot-img newmousepointer">
+                      <a id="no_shot" href="#" onclick="return set_extra_shot(this.id);" product=""><img src="<?php echo $this->getSkinUrl('images/flavor-shot-img10.png'); ?>"></a>
+                  </div>
+                  <span>No Shot</span> 
+              </li>
+          </ul>
+      </div>
+      <div class="sizerightpart flvrgtptbot">
+          <div class="color_bottle">
+              <div class="main-div">
+                  <div class="canvas-left-lart">
+                      
+                  </div>
+                  <div class="canvas-right-img">
+                      <div id='sub_block_2_shot'>
+                          <div class="botte-img"><img id="flavor_shot_img" src='<?php echo $this->getSkinUrl('images/transparant-bottel2.png'); ?>'>
+                              <div class="dropshoticon80" style="display:none;"><span id='dropshoticon80'><img src='<?php echo $this->getSkinUrl('images/blender/shot/80.png'); ?>'></span></div>
+                                <div class='dropshoticon90' style="display:none;"><span id='dropshoticon90'><img src='<?php echo $this->getSkinUrl('images/blender/shot/90.png'); ?>'></span></div>
+                                <div class='dropshoticon106' style="display:none;"><span id='dropshoticon106'><img src='<?php echo $this->getSkinUrl('images/blender/shot/106.png'); ?>'></span></div>
+                                <div class='dropshoticon107' style="display:none;"><span id='dropshoticon107'><img src='<?php echo $this->getSkinUrl('images/blender/shot/107.png'); ?>'></span></div>
+                                <div class='dropshoticon108' style="display:none;"><span id='dropshoticon108'><img src='<?php echo $this->getSkinUrl('images/blender/shot/108.png'); ?>'></span></div>
+                                <div class='dropshoticon109' style="display:none;"><span id='dropshoticon109'><img src='<?php echo $this->getSkinUrl('images/blender/shot/109.png'); ?>'></span></div>
+                                <div class='dropshoticon112' style="display:none;"><span id='dropshoticon112'><img src='<?php echo $this->getSkinUrl('images/blender/shot/112.png'); ?>'></span></div>
+                                <div class='dropshoticon115' style="display:none;"><span id='dropshoticon115'><img src='<?php echo $this->getSkinUrl('images/blender/shot/115.png'); ?>'></span></div>
+                                <div class='dropshoticon107' style="display:none;"><span id='dropshoticon107'><img src='<?php echo $this->getSkinUrl('images/blender/shot/107.png'); ?>'></span></div>
+                                <div class='dropshoticon116' style="display:none;"><span id='dropshoticon116'><img src='<?php echo $this->getSkinUrl('images/blender/shot/116.png'); ?>'></span></div>
+                          </div>
+                            <div id="top_extra_shot" style='height:5px;margin-top:150px;border-radius:29px 29px 36px 37px;background-color:#FFF;'></div>
+                          <div id="outsidediv_shot" style='height:326px;border-radius:29px 29px 36px 37px;background-color:<?php echo $product_color;?>'></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div class="clorinfo_flaver adnewcolflow">
+              <div class="brdnameinp">
+                <input value="My Blend" type="text" class="brdtypenam" id='custom_product_name_shot' placeholder="Name Your Brand" onblur='custom_product_name_func(this.id);' style='color:#2a3f8e;font-weight:bold;font-size: 18px;padding: 0 5%;width: 100% !important;'>
+              </div>
+
+            <ul class="lqutinfo">
+                <li><strong>SIZE:</strong> <span id="shot_size_span">0</span><span> ML</span></li>
+                <li><strong>NICOTINE:</strong> <span class="nicotin_span" id="shot_nicotine_span">0mg Ultra Light</span></li>
+                    <li class="drop_span"><strong>FLVR SHOT:</strong> <span id="shot_drop_span"></span></li>
+                
+                <li><div id='choose_shot_fl1' style='display:none;'><strong>FLVR 1:</strong> <span id='choose_shot_name_fl1'>Lemon Tea</span><span id='choose_shot_percentage_fl1'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('1');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span></div></li>
+                <li><div id='choose_shot_fl2' style='display:none;'><strong>FLVR 2:</strong> <span id='choose_shot_name_fl2'>Cucumber</span><span id='choose_shot_percentage_fl2'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('2');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span></div></li>
+                <li><div id='choose_shot_fl3' style='display:none;'><strong>FLVR 3:</strong> <span id='choose_shot_name_fl3'>Grape</span><span id='choose_shot_percentage_fl3'></span> <span class="flavourbtn"><!-- <a href="#" onclick="callCloseFlavour('3');"><img src="<?php echo $this->getSkinUrl('images/flavour_close.png'); ?>"></a> --></span></div></li>
+            </ul>
+            <div class="priceaddcatwp">
+            <h4 id="shot_main_price">$00.00</h4>
+            <button class="addbtncat newaddcat" onclick="return add_to_cart(this);" type="submit">ADD TO CART</button>
+        </div>
+        </div>
+
+        
+    </div>
+  </div>
+</div>
+<!--  End of code for flavor shots here -->
+
+    <div>
+      <h2 class="title">Preview</h2>
+        <div class="finished-part">
+          <div class="finished-part-left">
+            <div class="sizehdname">
+              <h3 style="font-size:65px;">You are<br>
+                FINISHED!</h3>
+              <!-- <p class="finished-text-left">Lorem ipsum dolor sit amet, consectetur adipis <br>
+                cing elit, sed do eiusmod tempor incididunt.</p> -->
+            </div>
+            <!-- <div class="sizehdname">
+                <div id='fbshare'>  
+                    <img src="<?php echo $this->getSkinUrl('images/blender/facebook-share.png'); ?>" id='fbsharebldbtn' style='cursor:pointer;' title="Share on Facebook">
+                </div>
+                <div id='twittershare'> 
+                    <img src="<?php echo $this->getSkinUrl('images/blender/twitter-share.png'); ?>" id='twittersharebtn' style='cursor:pointer;' title="Share on Twitter">
+                </div>
+            </div> -->
+          </div>
+            <div class="finished-part-mid">
+                <div class="canvas-right-img-finished">
+                  <div id="sub_block_2_finished_last">
+                    <div class="botte-img">
+                        <img class="blend-image" src="<?php echo $this->getSkinUrl('images/blender/transparant-bottel_finished.png'); ?>">
+                        <h2 class="blend-image-name" id="blend_image_name">My Blend</h2>
+                    </div>
+                    <div id="top_extra_preview" style='height:5px;margin-top:150px;border-radius:29px 29px 36px 37px;background-color:#FFF;'></div>
+                    <div id="outsidediv_finished_last" class="new_outsidedivsingle" style="background-color:<?php echo $product_color;?>;"></div>
+                  </div>
+
+                </div>
+            </div>
+          <div class="finished-part-right">
+            <h3><span class='finished_custom_product_name'>MY BLEND</span></h3>
+            <ul>
+                <!-- <li class='prev_bottle_size'><a href="#"><span class='prev_bottle_size_span'>Lemon Tea</span></a></li> -->
+                <li class='finished_flv1'><a href="#"><span class='finished_flv1'>Lemon Tea</span></a></li>
+                <li class='finished_flv2'><a href="#"><span class='finished_flv2'>Cucumber</span></a></li>
+                <li class='finished_flv3'><a href="#"><span class='finished_flv3'>Grape</span></a></li>
+                <li class='nicotine_finished_li'><span class='nicotine_finished'>12MG</span></li>
+                <li class='shot_finished'><span class='shot_finished_product_name'></span></li>
+            </ul>
+            
+            <strong >
+                <span id="" class="finished_main_price">$00.00</span>
+            </strong> 
+                <span><a onclick="return add_to_cart(this);" id="" href="#">ADD TO CART</a></span> 
+            </div>
+            </div>
+        </div>
+
+        <div>
+            <h2 class="title"></h2>
+        </div>
+
+      </div>
+      <!-- --> 
+    </div>
+  </div>
+
+</div>
+<input type='hidden' id='initialid' value='<?php echo $initialproductid;?>'>
+<input type='hidden' id='initialid1' value='<?php echo $initialproductid1;?>'>
+<input type='hidden' id='initialid2' value='<?php echo $initialproductid2;?>'>
+
+<input type='hidden' id='default_flv_per' value='<?php echo $default_flv_per;?>'>
+<input type='hidden' id='default_flv1_per' value='<?php echo $default_flv1_per;?>'>
+<input type='hidden' id='default_flv2_per' value='<?php echo $default_flv2_per;?>'>
+
+<input type='hidden' id='initialcolor' value='<?php echo $product_color;?>'>
+<input type='hidden' id='select_product_id' value='<?php echo $iProductID;?>'>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/blender/blender.js'); ?>"></script> 
+<script src="<?php echo $this->getSkinUrl('js/blender/amazonmenu.js');?>"></script>
+    
+<script>
+    var base_url = '<?php echo Mage::getBaseUrl(); ?>';
+    var skin_url = '<?php echo $this->getSkinUrl("images/blender/"); ?>';
+    var default_product = $j('#select_product_id').val();
+    var custom_pro_title = $j('#custom_product_name').val();
+    var inviteurl = base_url+'eliquidblender/index/?product_id='+default_product;
+    var imgsrc = '';
+    var logourl = '<?php echo $this->getSkinUrl("images/logo.png");?>';
+    
+    console.log(logourl);
+
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      //alert(d.getElementById(id));
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=363822107149044&version=v2.0";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+    
+      
+    $j('#fbsharebldbtn').on('click',function(e){
+        //src = '<?php echo $this->getSkinUrl("images/blender/fb_transparant-bottel.png");?>';
+        
+        var eData1 = {
+          product_id1 : flv1_id,
+          product_id2 : flv2_id,
+          product_id3 : flv3_id,
+          product1_per : $j('#flaver1_per').val(),
+          product2_per : $j('#flaver2_per').val(),
+          product3_per : $j('#flaver3_per').val(),
+          blender_name : brand_name,
+          size : size_value,
+          nicotine : nocotine_value,
+          extra_shot_id : ext_shot_id,
+        };
+        
+        $j.ajax({
+          url:base_url+'eliquidblender/index/blenderdata',
+          type:'POST',
+          data:{data:eData1},
+          success:function(iBlenderId){
+            if(iBlenderId != ''){
+              inviteurl = base_url+'eliquidblender/index/?blender_id='+iBlenderId;
+              
+
+              FB.ui({
+                method: 'feed',
+                name: $j('#custom_product_name').val(),
+                link: inviteurl,
+                picture: logourl,
+                description: 'Buy E-Cigarettes Online',
+                message: ''
+              });  
+
+            }
+          }
+        });
+
+        
+    });
+    
+     $j('#twittersharebtn').on('click',function(e){
+        //src = '<?php echo $this->getSkinUrl("images/blender/fb_transparant-bottel.png");?>';
+
+        var eData1 = {
+          product_id1 : flv1_id,
+          product_id2 : flv2_id,
+          product_id3 : flv3_id,
+          product1_per : $j('#flaver1_per').val(),
+          product2_per : $j('#flaver2_per').val(),
+          product3_per : $j('#flaver3_per').val(),
+          blender_name : brand_name,
+          size : size_value,
+          nicotine : nocotine_value,
+          extra_shot_id : ext_shot_id,
+        };
+        
+        $j.ajax({
+          url:base_url+'eliquidblender/index/blenderdata',
+          type:'POST',
+          data:{data:eData1},
+          success:function(iBlenderId){
+            if(iBlenderId != ''){
+              inviteurl = encodeURIComponent(base_url+'eliquidblender/index/?blender_id='+iBlenderId);
+              //var invitetext = "<a href='"+inviteurl+"'>Buy E-Cigaratte Online</a>"
+              //alert(invitetext);
+              window.open('http://www.twitter.com/share?text='+$j('#custom_product_name').val()+'&url='+inviteurl+'&hashtags=Buy E-Cigarettes Online&via=_Thevapestore&related=_Thevapestore','_blank','location=no');
+            }
+          }
+        });
+
+        
+    });
+
+
+
+    
+</script>
+
+<script>
+  
+  var custom_product_twitter='';
+  var firstdragicontoppos = 0;
+  var checkboxcheckedlen = 0;
+  var firstprocolor = secondprocolor = thirdprocolor = '';
+  var firstcolorid = secondcolorid = thirdcolorid = 0;
+
+    var default_size = '<?php echo $default_size; ?>';
+    var default_nicotine_level = '<?php echo $default_nicotine_level; ?>';
+    var ext_shot_id = '<?php echo $ext_shot_id; ?>';
+    var blend_name  = '<?php echo $blend_name; ?>';
+
+    var default_flv_per = $j('#default_flv_per').val();
+    var default_flv1_per = $j('#default_flv1_per').val();
+    var default_flv2_per = $j('#default_flv2_per').val();
+
+  $j(function() {
+
+    if(default_size == '50ML'){
+        set_bottle_size('three');    
+    }
+    else if(default_size == '30ML'){
+        set_bottle_size('two');    
+    }
+    else{
+        set_bottle_size('one');       
+    }
+
+    //Set Nicotine Level
+    add_nicotin_level(default_nicotine_level);
+    
+    //Set Flaver
+    var initialid1 = $j('#initialid1').val();
+    var initialid2 = $j('#initialid2').val();
+
+
+    callMarkImageFunc($j('#initialid').val());
+
+    if(initialid1 != '' && initialid1 != '0'){
+        callMarkImageFunc(initialid1);
+    }
+    if(initialid2 != '' && initialid2 != '0'){
+        callMarkImageFunc(initialid2);
+    }
+
+    set_default_per();
+
+    //Set Extra Shot 
+    if(ext_shot_id != ''){
+        set_extra_shot(ext_shot_id);    
+    }
+
+    //Set Blend Name
+    $j('#custom_product_name').val(blend_name);
+    custom_product_name_func('custom_product_name');
+
+    firstcolorid = $j('#initialid').val();
+    firstprocolor = $j('#initialcolor').val();
+    
+    $j( "#draggable" ).draggable({
+      containment: "parent",
+      drag: function( event, ui ) {
+        firstdragicontoppos = ui.position.top;
+        checkboxcheckedlen = $j('input[name="flavour[]"]:checked').length;
+
+        if(checkboxcheckedlen==2){
+          $j('#outsidediv_size').remove();
+            $j('#outsidediv').remove();
+            $j('#outsidediv_nico').remove();
+            $j('#outsidediv_shot').remove();
+            $j('#outsidediv_finished_last').remove();
+
+            $j('#innerdiv_size').remove();
+            $j('#innerdiv').remove();
+            $j('#innerdiv_nico').remove();
+            $j('#innerdiv_shot').remove();
+            $j('#innerdiv_finished_last').remove();
+
+            var totalheight = 344;
+            var firstproper = 0;
+            var secondproper = 0;
+            
+            $j('<div>', { 
+                id: 'outsidediv_size'
+            }).appendTo('#sub_block_2_size');
+
+            firstproper = Math.round((firstdragicontoppos*100)/totalheight);
+
+
+            // code for second percentage
+           /* var finalfirstproper = finalfirstrem = finalfirstdigit = 0;
+
+            finalfirstrem = parseInt(firstproper%10);
+            finalfirstdigit = parseInt(firstproper/10);
+
+            if(finalfirstrem>5){
+                finalfirstproper = (finalfirstdigit + 1);
+            }
+            else {
+                finalfirstproper = finalfirstdigit;
+            }
+
+            finalfirstproper = (finalfirstproper*10);*/
+            // end of code for second percentage
+
+            // code for second percentage
+            secondproper = (100-firstproper);
+            // end of code for second percentage
+
+            if(firstproper==secondproper){
+                $j('#choose_flavor_percentage_fl1').html(' Equal Mix');
+                $j('#choose_size_percentage_fl1').html(' Equal Mix');
+                $j('#choose_shot_percentage_fl1').html(' Equal Mix');
+                $j('#choose_nicotin_percentage_fl1').html(' Equal Mix');
+
+                $j('#choose_flavor_percentage_fl2').html(' Equal Mix');
+                $j('#choose_size_percentage_fl2').html(' Equal Mix');
+                $j('#choose_shot_percentage_fl2').html(' Equal Mix');
+                $j('#choose_nicotin_percentage_fl2').html(' Equal Mix');
+
+                $j('.finished_flv1').html(flv1+' (50%)');
+                $j('.finished_flv2').html(flv2+' (50%)');
+            }
+            else {
+                $j('#choose_flavor_percentage_fl1').html(' '+firstproper+' %');
+                $j('#choose_size_percentage_fl1').html(' '+firstproper+' %');
+                $j('#choose_shot_percentage_fl1').html(' '+firstproper+' %');
+                $j('#choose_nicotin_percentage_fl1').html(' '+firstproper+' %');
+
+                $j('#choose_flavor_percentage_fl2').html(' '+secondproper+' %');
+                $j('#choose_size_percentage_fl2').html(' '+secondproper+' %');
+                $j('#choose_shot_percentage_fl2').html(' '+secondproper+' %');
+                $j('#choose_nicotin_percentage_fl2').html(' '+secondproper+' %');
+
+                $j('.finished_flv1').html(flv1+' ('+firstproper+'%)');
+                $j('.finished_flv2').html(flv2+' ('+secondproper+'%)');
+            }
+
+            $j('#flaver1_per').val(firstproper);
+            $j('#flaver2_per').val(secondproper);
+
+            $j('#outsidediv_size').css('height',(firstdragicontoppos));
+            $j('#outsidediv_size').css('width','298px');
+            $j('#outsidediv_size').css('background-color',firstprocolor);
+            $j('#outsidediv_size').addClass('topradius');
+
+            $j('<div>', { 
+                id: 'outsidediv'
+            }).appendTo('#sub_block_2');
+            
+            $j('#outsidediv').css('height',(firstdragicontoppos));
+            $j('#outsidediv').css('width','298px');
+            $j('#outsidediv').css('background-color',firstprocolor);
+            $j('#outsidediv').addClass('topradius');
+
+            $j('<div>', { 
+                id: 'outsidediv_nico'
+            }).appendTo('#sub_block_2_nico');
+
+            $j('#outsidediv_nico').css('height',(firstdragicontoppos));
+            $j('#outsidediv_nico').css('width','298px');
+            $j('#outsidediv_nico').css('background-color',firstprocolor);
+            $j('#outsidediv_nico').addClass('topradius');
+
+            $j('<div>', { 
+                id: 'outsidediv_shot'
+            }).appendTo('#sub_block_2_shot');
+
+            $j('#outsidediv_shot').css('height',(firstdragicontoppos));
+            $j('#outsidediv_shot').css('width','298px');
+            $j('#outsidediv_shot').css('background-color',firstprocolor);
+            $j('#outsidediv_shot').addClass('topradius');
+
+
+            $j('<div>', { 
+                id: 'outsidediv_finished_last'
+            }).appendTo('#sub_block_2_finished_last');
+
+            $j('#outsidediv_finished_last').css('height',(firstdragicontoppos));
+            $j('#outsidediv_finished_last').css('width','298px');
+            $j('#outsidediv_finished_last').css('background-color',firstprocolor);
+            $j('#outsidediv_finished_last').addClass('topradius');
+            
+            $j('<div>', { 
+                id: 'innerdiv_size'
+            }).appendTo('#sub_block_2_size');
+            
+            $j('#innerdiv_size').css('height',(totalheight-firstdragicontoppos)); 
+            $j('#innerdiv_size').css('width','298px');
+            $j('#innerdiv_size').css('background-color',secondprocolor);
+            $j('#innerdiv_size').addClass('bottomradius');
+                
+
+            $j('<div>', { 
+                id: 'innerdiv'
+            }).appendTo('#sub_block_2');
+            
+            $j('#innerdiv').css('height',(totalheight-firstdragicontoppos)); 
+            $j('#innerdiv').css('width','298px');
+            $j('#innerdiv').css('background-color',secondprocolor);
+            $j('#innerdiv').addClass('bottomradius');
+
+
+            $j('<div>', { 
+                id: 'innerdiv_nico'
+            }).appendTo('#sub_block_2_nico');
+            
+            $j('#innerdiv_nico').css('height',(totalheight-firstdragicontoppos)); 
+            $j('#innerdiv_nico').css('width','298px');
+            $j('#innerdiv_nico').css('background-color',secondprocolor);
+            $j('#innerdiv_nico').addClass('bottomradius');
+
+
+            $j('<div>', { 
+                id: 'innerdiv_shot'
+            }).appendTo('#sub_block_2_shot');
+            
+            $j('#innerdiv_shot').css('height',(totalheight-firstdragicontoppos)); 
+            $j('#innerdiv_shot').css('width','298px');
+            $j('#innerdiv_shot').css('background-color',secondprocolor);
+            $j('#innerdiv_shot').addClass('bottomradius');
+
+            $j('<div>', { 
+                id: 'innerdiv_finished_last'
+            }).appendTo('#sub_block_2_finished_last');
+            
+            $j('#innerdiv_finished_last').css('height',(totalheight-firstdragicontoppos)); 
+            $j('#innerdiv_finished_last').css('width','298px');
+            $j('#innerdiv_finished_last').css('background-color',secondprocolor);
+            $j('#innerdiv_finished_last').addClass('bottomradius');
+            
+        } // end of if
+        else if(checkboxcheckedlen==3){
+            var totalheight = 344;
+            var subinnerdivheight = 0;
+            subinnerdivheight = $j('#subinnerdiv').height();
+            var firstdraglimit = 0;
+            firstdraglimit = totalheight - subinnerdivheight;
+            /*console.log(' firstdragicontoppos '+firstdragicontoppos+' firstdraglimit '+firstdraglimit);*/
+            if((firstdragicontoppos+40) < firstdraglimit){
+                console.log(firstdragicontoppos+25);
+                console.log(firstdraglimit);
+
+                /*$j('#outsidediv_size').remove();
+                $j('#outsidediv').remove();
+                $j('#outsidediv_nico').remove();
+                $j('#outsidediv_shot').remove();
+                $j('#outsidediv_finished_last').remove();
+
+                $j('#innerdiv_size').remove();
+                $j('#innerdiv').remove();
+                $j('#innerdiv_nico').remove();
+                $j('#innerdiv_shot').remove();
+                $j('#innerdiv_finished_last').remove();*/
+
+
+                firstproper = Math.round(((firstdragicontoppos)*100)/totalheight);
+                thirdproper = Math.round(((subinnerdivheight)*100)/totalheight);
+                secondproper = Math.round(100 - (firstproper+thirdproper));
+
+                // code for second percentage
+                var finalfirstproper = finalfirstrem = finalfirstdigit = 0;
+
+                finalfirstrem = parseInt(firstproper%10);
+                finalfirstdigit = parseInt(firstproper/10);
+
+                if(finalfirstrem>5){
+                    finalfirstproper = (finalfirstdigit + 1);
+                }
+                else {
+                    finalfirstproper = finalfirstdigit;
+                }
+
+                finalfirstproper = (finalfirstproper*10);
+                // end of code for second percentage
+
+                // code for third percentage
+                var finalthirdproper = finalthirdrem = finalthirddigit = 0;
+
+                finalthirdrem = parseInt(thirdproper%10);
+                finalthirddigit = parseInt(thirdproper/10);
+
+                if(finalthirdrem>5){
+                    finalthirdproper = (finalthirddigit + 1);
+                }
+                else {
+                    finalthirdproper = finalthirddigit;
+                }
+
+                finalthirdproper = (finalthirdproper*10);
+                // end of code for third percentage
+
+                // code for second percentage
+                var finalsecondproper = (100 - (finalfirstproper + finalthirdproper));
+                // end of code for second percentage
+
+
+                $j('#choose_flavor_percentage_fl1').html(' '+firstproper+' %');
+                $j('#choose_size_percentage_fl1').html(' '+firstproper+' %');
+                $j('#choose_shot_percentage_fl1').html(' '+firstproper+' %');
+                $j('#choose_nicotin_percentage_fl1').html(' '+firstproper+' %');
+
+                $j('#choose_flavor_percentage_fl2').html(' '+secondproper+' %');
+                $j('#choose_size_percentage_fl2').html(' '+secondproper+' %');
+                $j('#choose_shot_percentage_fl2').html(' '+secondproper+' %');
+                $j('#choose_nicotin_percentage_fl2').html(' '+secondproper+' %');
+
+                $j('#choose_flavor_percentage_fl3').html(' '+thirdproper+' %');
+                $j('#choose_size_percentage_fl3').html(' '+thirdproper+' %');
+                $j('#choose_shot_percentage_fl3').html(' '+thirdproper+' %');
+                $j('#choose_nicotin_percentage_fl3').html(' '+thirdproper+' %');
+
+                $j('.finished_flv1').html(flv1+' ('+firstproper+'%)');
+                $j('.finished_flv2').html(flv2+' ('+secondproper+'%)');
+                $j('.finished_flv3').html(flv3+' ('+thirdproper+'%)');
+                
+                /*flv1_per = firstproper;
+                flv1_per = secondproper;
+                flv1_per = thirdproper;*/
+                
+                $j('#flaver1_per').val(firstproper);
+                $j('#flaver2_per').val(secondproper);
+                $j('#flaver3_per').val(thirdproper);
+
+                $j('#outsidediv_size').remove();
+                $j('#outsidediv').remove();
+                $j('#outsidediv_nico').remove();
+                $j('#outsidediv_shot').remove();
+                $j('#outsidediv_finished_last').remove();
+
+                $j('#innerdiv_size').remove();
+                $j('#innerdiv').remove();
+                $j('#innerdiv_nico').remove();
+                $j('#innerdiv_shot').remove();
+                $j('#innerdiv_finished_last').remove();
+
+                $j('#subinnerdiv_size').remove();
+                $j('#subinnerdiv').remove();
+                $j('#subinnerdiv_nico').remove();
+                $j('#subinnerdiv_shot').remove();
+                $j('#subinnerdiv_finished_last').remove();
+
+                $j('<div>', { 
+                    id: 'outsidediv_size'   
+                }).appendTo('#sub_block_2_size');
+
+                $j('#outsidediv_size').css('height',(firstdragicontoppos));
+                $j('#outsidediv_size').css('width','298px');
+                $j('#outsidediv_size').css('background-color',firstprocolor);
+
+
+                $j('<div>', { 
+                    id: 'outsidediv'
+                }).appendTo('#sub_block_2');
+
+                $j('#outsidediv').css('height',(firstdragicontoppos));
+                $j('#outsidediv').css('width','298px');
+                $j('#outsidediv').css('background-color',firstprocolor);
+
+                $j('<div>', { 
+                    id: 'outsidediv_nico'
+                }).appendTo('#sub_block_2_nico');
+
+                $j('#outsidediv_nico').css('height',(firstdragicontoppos));
+                $j('#outsidediv_nico').css('width','298px');
+                $j('#outsidediv_nico').css('background-color',firstprocolor);
+
+                $j('<div>', { 
+                    id: 'outsidediv_shot'
+                }).appendTo('#sub_block_2_shot');
+
+                $j('#outsidediv_shot').css('height',(firstdragicontoppos));
+                $j('#outsidediv_shot').css('width','298px');
+                $j('#outsidediv_shot').css('background-color',firstprocolor);
+
+                $j('<div>', { 
+                    id: 'outsidediv_finished_last'
+                }).appendTo('#sub_block_2_finished_last');
+
+                $j('#outsidediv_finished_last').css('height',(firstdragicontoppos));
+                $j('#outsidediv_finished_last').css('width','298px');
+                $j('#outsidediv_finished_last').css('background-color',firstprocolor);
+
+                $j('<div>', { 
+                    id: 'innerdiv_size'
+                }).appendTo('#sub_block_2_size');
+
+                $j('#innerdiv_size').css('height',(totalheight-(firstdragicontoppos + subinnerdivheight))); 
+                $j('#innerdiv_size').css('width','298px');
+                $j('#innerdiv_size').css('background-color',secondprocolor);
+
+                $j('<div>', { 
+                    id: 'innerdiv'
+                }).appendTo('#sub_block_2');
+
+                $j('#innerdiv').css('height',(totalheight-(firstdragicontoppos + subinnerdivheight))); 
+                $j('#innerdiv').css('width','298px');
+                $j('#innerdiv').css('background-color',secondprocolor);
+
+
+                $j('<div>', { 
+                    id: 'innerdiv_nico'
+                }).appendTo('#sub_block_2_nico');
+
+                $j('#innerdiv_nico').css('height',(totalheight-(firstdragicontoppos + subinnerdivheight))); 
+                $j('#innerdiv_nico').css('width','298px');
+                $j('#innerdiv_nico').css('background-color',secondprocolor);
+
+                $j('<div>', { 
+                    id: 'innerdiv_shot'
+                }).appendTo('#sub_block_2_shot');
+
+                $j('#innerdiv_shot').css('height',(totalheight-(firstdragicontoppos + subinnerdivheight))); 
+                $j('#innerdiv_shot').css('width','298px');
+                $j('#innerdiv_shot').css('background-color',secondprocolor);
+
+                $j('<div>', { 
+                    id: 'innerdiv_finished_last'
+                }).appendTo('#sub_block_2_finished_last');
+
+                $j('#innerdiv_finished_last').css('height',(totalheight-(firstdragicontoppos + subinnerdivheight))); 
+                $j('#innerdiv_finished_last').css('width','298px');
+                $j('#innerdiv_finished_last').css('background-color',secondprocolor);
+
+                
+                $j('<div>', { 
+                    id: 'subinnerdiv_size'
+                }).appendTo('#sub_block_2_size');
+
+                $j('#subinnerdiv_size').css('height',subinnerdivheight);
+                $j('#subinnerdiv_size').css('width','298px');
+                $j('#subinnerdiv_size').css('background-color',thirdprocolor);
+
+                $j('<div>', { 
+                    id: 'subinnerdiv'
+                }).appendTo('#sub_block_2');
+
+                $j('#subinnerdiv').css('height',subinnerdivheight);
+                $j('#subinnerdiv').css('width','298px');
+                $j('#subinnerdiv').css('background-color',thirdprocolor);
+
+
+                $j('<div>', { 
+                    id: 'subinnerdiv_nico'
+                }).appendTo('#sub_block_2_nico');
+
+                $j('#subinnerdiv_nico').css('height',subinnerdivheight);
+                $j('#subinnerdiv_nico').css('width','298px');
+                $j('#subinnerdiv_nico').css('background-color',thirdprocolor);
+
+                $j('<div>', { 
+                    id: 'subinnerdiv_shot'
+                }).appendTo('#sub_block_2_shot');
+
+                $j('#subinnerdiv_shot').css('height',subinnerdivheight);
+                $j('#subinnerdiv_shot').css('width','298px');
+                $j('#subinnerdiv_shot').css('background-color',thirdprocolor);
+
+                $j('<div>', { 
+                    id: 'subinnerdiv_finished_last'
+                }).appendTo('#sub_block_2_finished_last');
+
+                $j('#subinnerdiv_finished_last').css('height',subinnerdivheight);
+                $j('#subinnerdiv_finished_last').css('width','298px');
+                $j('#subinnerdiv_finished_last').css('background-color',thirdprocolor);
+                return true;
+            } // limit end
+            else {
+                return false;
+            }
+        } // end of else if 3
+      }
+    });
+    
+    $j( "#draggable2" ).draggable({
+      containment: "parent",
+      drag: function( event, ui ) {
+        seconddragicontoppos = ui.position.top;
+        
+        checkboxcheckedlen = $j('input[name="flavour[]"]:checked').length;
+
+        var thirddivheightfin = $j('#subinnerdiv').height();
+
+        var seconddraglimit = $j('#outsidediv').height();
+
+        outerdivheight = $j('#outsidediv').height();
+
+        if(seconddragicontoppos < outerdivheight + 10){
+          var innerdivHeight = $j('#innerdiv').height();
+          var totalHeight = (innerdivHeight + outerdivheight) - 30;
+          console.log(totalHeight);
+          $j('#draggable2').css('top',totalHeight);
+          return false;
+        }
+        /*seconddragicontoppos > (seconddraglimit+20)*/
+        if(seconddragicontoppos > outerdivheight + 10){
+            if(checkboxcheckedlen==3){
+
+            var totalheight = 344;
+            /*var outerdivheight = 0;*/
+
+            /*==================Percentage Coding Start================*/
+
+            var subinnerdivheight = 0;
+            var firstdivheight = $j('#outsidediv').height();
+            var secdivheight = $j('#innerdiv').height();
+            subinnerdivheight = $j('#subinnerdiv').height();
+            var firstdraglimit = 0;
+            var totalheight1 = secdivheight + firstdivheight + subinnerdivheight;
+
+            firstproper = Math.round(((firstdivheight)*100)/totalheight);
+            thirdproper = Math.round(((subinnerdivheight)*100)/totalheight);
+            secondproper = Math.round(((secdivheight)*100)/totalheight);
+            
+            //First Div Per
+            var finalfirstproper = finalfirstrem = finalfirstdigit = 0;
+            finalfirstrem = parseInt(firstproper%10);
+            finalfirstdigit = parseInt(firstproper/10);
+            if(finalfirstrem>5){
+                finalfirstproper = (finalfirstdigit + 1);
+            }
+            else {
+                finalfirstproper = finalfirstdigit;
+            }
+            finalfirstproper = (finalfirstproper*10);
+
+            //Sec Div Per
+            var finalsecproper = finalsecrem = finalsecdigit = 0;
+            finalsecrem = parseInt(secondproper%10);
+            finalsecdigit = parseInt(secondproper/10);
+            if(finalsecrem>5){
+                finalsecproper = (finalsecdigit + 1);
+            }
+            else {
+                finalsecproper = finalsecdigit;
+            }
+            finalsecproper = (finalsecproper*10);           
+            
+            var finalthirdproper = 100 - (finalsecproper + finalfirstproper);
+
+            $j('#choose_flavor_percentage_fl1').html(' '+firstproper+' %');
+            $j('#choose_size_percentage_fl1').html(' '+firstproper+' %');
+            $j('#choose_shot_percentage_fl1').html(' '+firstproper+' %');
+            $j('#choose_nicotin_percentage_fl1').html(' '+firstproper+' %');
+
+            $j('#choose_flavor_percentage_fl2').html(' '+secondproper+' %');
+            $j('#choose_size_percentage_fl2').html(' '+secondproper+' %');
+            $j('#choose_shot_percentage_fl2').html(' '+secondproper+' %');
+            $j('#choose_nicotin_percentage_fl2').html(' '+secondproper+' %');
+
+            $j('#choose_flavor_percentage_fl3').html(' '+thirdproper+' %');
+            $j('#choose_size_percentage_fl3').html(' '+thirdproper+' %');
+            $j('#choose_shot_percentage_fl3').html(' '+thirdproper+' %');
+            $j('#choose_nicotin_percentage_fl3').html(' '+thirdproper+' %');
+
+            $j('.finished_flv1').html(flv1+' ('+firstproper+'%)');
+            $j('.finished_flv2').html(flv2+' ('+secondproper+'%)');
+            $j('.finished_flv3').html(flv3+' ('+thirdproper+'%)');
+
+            $j('#flaver1_per').val(firstproper);
+            $j('#flaver2_per').val(secondproper);
+            $j('#flaver3_per').val(thirdproper);
+
+            /*==================Percentage Coding End================*/
+            
+            $j('#outsidediv_size').remove();
+            $j('#outsidediv').remove();
+            $j('#outsidediv_nico').remove();
+            $j('#outsidediv_shot').remove();
+            $j('#outsidediv_finished_last').remove();
+
+            $j('#innerdiv_size').remove();
+            $j('#innerdiv').remove();
+            $j('#innerdiv_nico').remove();
+            $j('#innerdiv_shot').remove();
+            $j('#innerdiv_finished_last').remove();
+
+            $j('#subinnerdiv_size').remove();
+            $j('#subinnerdiv').remove();
+            $j('#subinnerdiv_nico').remove();
+            $j('#subinnerdiv_shot').remove();
+            $j('#subinnerdiv_finished_last').remove();
+
+            $j('<div>', { 
+                id: 'outsidediv_size'
+            }).appendTo('#sub_block_2_size');
+
+            $j('#outsidediv_size').css('height',outerdivheight);
+            $j('#outsidediv_size').css('width','298px');
+            $j('#outsidediv_size').css('background-color',firstprocolor);
+
+            $j('<div>', { 
+                id: 'outsidediv'
+            }).appendTo('#sub_block_2');
+
+            $j('#outsidediv').css('height',outerdivheight);
+            $j('#outsidediv').css('width','298px');
+            $j('#outsidediv').css('background-color',firstprocolor);
+
+            $j('<div>', { 
+                id: 'outsidediv_nico'
+            }).appendTo('#sub_block_2_nico');
+
+            $j('#outsidediv_nico').css('height',outerdivheight);
+            $j('#outsidediv_nico').css('width','298px');
+            $j('#outsidediv_nico').css('background-color',firstprocolor);
+
+            $j('<div>', { 
+                id: 'outsidediv_shot'
+            }).appendTo('#sub_block_2_shot');
+
+            $j('#outsidediv_shot').css('height',outerdivheight);
+            $j('#outsidediv_shot').css('width','298px');
+            $j('#outsidediv_shot').css('background-color',firstprocolor);
+
+            $j('<div>', { 
+                id: 'outsidediv_finished_last'
+            }).appendTo('#sub_block_2_finished_last');
+
+            $j('#outsidediv_finished_last').css('height',outerdivheight);
+            $j('#outsidediv_finished_last').css('width','298px');
+            $j('#outsidediv_finished_last').css('background-color',firstprocolor);
+
+            /*$j('<div>', { 
+                id: 'innerdiv_size'
+            }).appendTo('#sub_block_2_size');
+
+            $j('#innerdiv_size').css('height',seconddragicontoppos); 
+            $j('#innerdiv_size').css('width','298px');
+            $j('#innerdiv_size').css('background-color',secondprocolor);*/
+
+            $j('<div>', { 
+                id: 'innerdiv'
+            }).appendTo('#sub_block_2');
+
+            var sec_div_cal_height = (seconddragicontoppos-outerdivheight) + 30;
+            var sub_inner_div_height = totalheight - (sec_div_cal_height + outerdivheight);
+
+            $j('#innerdiv').css('height',sec_div_cal_height); 
+            $j('#innerdiv').css('width','298px');
+            $j('#innerdiv').css('background-color',secondprocolor);
+
+
+
+            $j('<div>', { 
+                id: 'innerdiv_nico'
+            }).appendTo('#sub_block_2_nico');
+
+            $j('#innerdiv_nico').css('height',sec_div_cal_height); 
+            $j('#innerdiv_nico').css('width','298px');
+            $j('#innerdiv_nico').css('background-color',secondprocolor);
+
+            $j('<div>', { 
+                id: 'innerdiv_size'
+            }).appendTo('#sub_block_2_size');
+
+            $j('#innerdiv_size').css('height',sec_div_cal_height); 
+            $j('#innerdiv_size').css('width','298px');
+            $j('#innerdiv_size').css('background-color',secondprocolor);
+
+            $j('<div>', { 
+                id: 'innerdiv_shot'
+            }).appendTo('#sub_block_2_shot');
+
+            $j('#innerdiv_shot').css('height',sec_div_cal_height); 
+            $j('#innerdiv_shot').css('width','298px');
+            $j('#innerdiv_shot').css('background-color',secondprocolor);
+
+            $j('<div>', { 
+                id: 'innerdiv_finished_last'
+            }).appendTo('#sub_block_2_finished_last');
+
+            $j('#innerdiv_finished_last').css('height',sec_div_cal_height); 
+            $j('#innerdiv_finished_last').css('width','298px');
+            $j('#innerdiv_finished_last').css('background-color',secondprocolor);
+
+            $j('<div>', { 
+                id: 'subinnerdiv_size'
+            }).appendTo('#sub_block_2_size');
+
+            $j('#subinnerdiv_size').css('height',sub_inner_div_height);
+            $j('#subinnerdiv_size').css('width','298px');
+            $j('#subinnerdiv_size').css('background-color',thirdprocolor);
+
+            $j('<div>', { 
+                id: 'subinnerdiv'
+            }).appendTo('#sub_block_2');
+
+            /*console.log('totalheight:'+totalheight);
+            console.log('seconddragicontoppos:'+seconddragicontoppos);
+            console.log('outerdivheight:'+outerdivheight);
+            console.log('dssdsdsd:'+(totalheight-(seconddragicontoppos + outerdivheight)));*/
+            
+            
+            $j('#subinnerdiv').css('height',sub_inner_div_height);
+            $j('#subinnerdiv').css('width','298px');
+            $j('#subinnerdiv').css('background-color',thirdprocolor);
+
+            $j('<div>', { 
+                id: 'subinnerdiv_nico'
+            }).appendTo('#sub_block_2_nico');
+
+            $j('#subinnerdiv_nico').css('height',sub_inner_div_height);
+            $j('#subinnerdiv_nico').css('width','298px');
+            $j('#subinnerdiv_nico').css('background-color',thirdprocolor);
+
+            $j('<div>', { 
+                id: 'subinnerdiv_shot'
+            }).appendTo('#sub_block_2_shot');
+
+            $j('#subinnerdiv_shot').css('height',sub_inner_div_height);
+            $j('#subinnerdiv_shot').css('width','298px');
+            $j('#subinnerdiv_shot').css('background-color',thirdprocolor);
+
+            $j('<div>', { 
+                id: 'subinnerdiv_finished_last'
+            }).appendTo('#sub_block_2_finished_last');
+
+            $j('#subinnerdiv_finished_last').css('height',sub_inner_div_height);
+            $j('#subinnerdiv_finished_last').css('width','298px');
+            $j('#subinnerdiv_finished_last').css('background-color',thirdprocolor);
+            return true;
+        } // end of else if 3
+        else {
+            var innerdivHeight = $j('#innerdiv').height();
+            var totalHeight = innerdivHeight + outerdivheight;
+            console.log(totalHeight);
+            $j('#draggable2').css('top',totalHeight);
+            return false;
+        }
+      }
+        } // end of second limit
+
+    });
+
+  });
+  </script>
+
+
+<script type="text/javascript">
+
+    $j(document).ready(function(){
+        $j('#main-slider').liquidSlider({ 
+          callback: function() {
+            if($j('.tab5').hasClass('current')){
+              $j('.ls-nav-right-arrow').addClass('hide-arrow');  
+            }
+            else{
+              $j('.ls-nav-right-arrow').removeClass('hide-arrow');   
+            }
+
+            if($j('.tab1').hasClass('current')){
+              $j('.ls-nav-left-arrow').addClass('hide-arrow');  
+            }
+            else{
+              $j('.ls-nav-left-arrow').removeClass('hide-arrow');   
+            }
+            
+          }
+        });
+          amazonmenu.init({
+            menuid: 'mysidebarmenu',
+            width: '1000'
+        });
+
+        $j('.ls-nav-left-arrow').addClass('hide-arrow');  
+    });
+
+    
+    /*var canvas1;
+    var ctx1;
+    var x1 = 0;
+    var y1 = 10;
+    var WIDTH1 = 41;
+    var HEIGHT1 = 330;
+    var dragok1 = false;
+
+    var canvas2;
+    var ctx2;
+    var x2 = 0;
+    var y2 = 50;
+    var WIDTH2 = 41;
+    var HEIGHT2 = 220;
+    var dragok2 = false;
+    var firstprocolor = secondprocolor = thirdprocolor = '';
+    
+    var img = document.getElementById("up_down_colorfill_img");
+    // code for canvas
+
+    function init() {
+        canvas1 = document.getElementById("canvas1");
+        ctx1 = canvas1.getContext("2d");
+
+        alert(' Canvas1 offsetleft: '+canvas1.offsetLeft+' Canvas1 offsetTop: '+canvas1.offsetTop);
+
+        canvas2 = document.getElementById("canvas2");
+        ctx2 = canvas2.getContext("2d");
+        
+        return setInterval(draw, 10);
+    }
+
+    function rect1(x,y,w,h) {
+        ctx1.beginPath();
+        ctx1.rect(x,y,w,h);
+        ctx1.closePath();
+        ctx1.fill();
+    }
+
+    function rect2(x,y,w,h) {
+        ctx2.beginPath();
+        ctx2.rect(x,y,w,h);
+        ctx2.closePath();
+        ctx2.fill();
+    }
+
+    function draw() {   
+        var checkboxcheckedlen = $j('input[name="flavour[]"]:checked').length;
+    
+        if(checkboxcheckedlen==2){
+            ctx1.clearRect(0, 0, WIDTH1, HEIGHT1);
+            ctx1.fillStyle = "#FFF";
+            canvas1.getContext('2d').drawImage(img, x1, y1);
+        }
+        else if(checkboxcheckedlen==3){
+            ctx1.clearRect(0, 0, WIDTH1, HEIGHT1);
+            ctx2.clearRect(0, 0, WIDTH2, HEIGHT2);
+
+            ctx1.fillStyle = "#FFF";
+            canvas1.getContext('2d').drawImage(img, x1, y1);
+            
+            ctx2.fillStyle = "#FFF";
+            canvas2.getContext('2d').drawImage(img, x2, y2);
+        }
+    }
+
+    function myMove1(e){
+        var checkboxcheckedlen = $j('input[name="flavour[]"]:checked').length;
+        alert(checkboxcheckedlen);
+        
+        if(checkboxcheckedlen==2){
+            if(flag==0){
+                ctx1.canvas.height = 330;
+                flag++;
+            }
+
+            var totalheight = 330;
+            var firstproper = 0;
+            var secondproper = 0;
+
+            $j('#outsidediv').remove();
+            $j('#innerdiv').remove();
+
+            var height=0;
+            x1 = (e.pageX - canvas1.offsetLeft);
+            y1 = (e.pageY - canvas1.offsetTop)+10;
+
+            alert(' X1 = '+x1+' Y1= '+y1);return false;
+
+            
+            $j('<div>', { 
+                id: 'outsidediv'
+            }).appendTo('#sub_block_2');
+
+            firstproper = Math.round(((height+y1)*100)/500);
+
+            var finalfirstproper = finalfirstrem = finalfirstdigit = 0;
+            
+            finalfirstrem = parseInt(firstproper%10);
+            finalfirstdigit = parseInt(firstproper/10);
+            
+            if(finalfirstrem>5){
+                finalfirstproper = (finalfirstdigit + 1);
+            }
+            else {
+                finalfirstproper = finalfirstdigit;
+            }
+
+            finalfirstproper = (finalfirstproper*10);
+
+            $j('#firstper').html(finalfirstproper+'%');
+
+            $j('#outsidediv').css('height',(height+y1));
+            $j('#outsidediv').css('width','298px');
+            $j('#outsidediv').css('background-color',firstprocolor);
+            
+            if (dragok1){
+                x1 = e.pageX - canvas1.offsetLeft;
+                y1 = e.pageY - canvas1.offsetTop;
+            }
+
+            secondblockheight = totalheight - parseInt($j("#outsidediv").height());
+            
+            $j('#secondper').html((100-finalfirstproper)+'%');
+            $j('<div>', { 
+                id: 'innerdiv'
+            }).appendTo('#sub_block_2');
+
+            $j('#innerdiv').css('height',secondblockheight); 
+            $j('#innerdiv').css('width','298px');
+            $j('#innerdiv').css('background-color',secondprocolor);
+        } // end of if
+        else if(checkboxcheckedlen==3){     
+            if(flag == 0 || e.pageY > 250){
+                ctx1.canvas.height = 333;   
+                ctx1.canvas.width = 40;
+                ctx2.canvas.height = 167;
+                ctx2.canvas.width = 40;
+                flag++;
+            }
+
+            x2 = 10;
+            y2 = 5;
+
+            var totalheight = 333;
+            var totalheightforper = 500;
+
+            $('#outsidediv').remove();
+            $('#innerdiv').remove();
+            $('#subinnerdiv').remove();
+
+            var height=0;
+            x1 = e.pageX - canvas1.offsetLeft;
+            y1 = (e.pageY - canvas1.offsetTop)+10;
+
+            $('<div>', { 
+                id: 'outsidediv'
+            }).appendTo('#sub_block_2');
+
+            firstproper = Math.round(((height+y1)*100)/500);
+
+            // code for first percentage
+            var finalfirstproper = finalfirstrem = finalfirstdigit = 0;
+            
+            finalfirstrem = parseInt(firstproper%10);
+            finalfirstdigit = parseInt(firstproper/10);
+            
+            if(finalfirstrem>5){
+                finalfirstproper = (finalfirstdigit + 1);
+            }
+            else {
+                finalfirstproper = finalfirstdigit;
+            }
+
+            finalfirstproper = (finalfirstproper*10);
+            // end of code
+
+            $('#firstper').html(finalfirstproper+'%');
+
+            $('#outsidediv').css('height',(height+y1));
+            $('#outsidediv').css('width','298px');
+            $('#outsidediv').css('background-color',firstprocolor);
+            
+            if (dragok1){
+                x1 = e.pageX - canvas1.offsetLeft;
+                y1 = e.pageY - canvas1.offsetTop;
+            }
+
+            secondblockheightper = (totalheightforper - (parseInt($("#outsidediv").height())+167));
+            secondproper = Math.round(((secondblockheightper)*100)/500);
+
+            thirdproper = Math.round((167*100)/500);
+
+            // code for third percentage
+            var finalthirdproper = finalthirdrem = finalthirddigit = 0;
+            
+            finalthirdrem = parseInt(thirdproper%10);
+            finalthirddigit = parseInt(thirdproper/10);
+            
+            if(finalthirdrem>5){
+                finalthirdproper = (finalthirddigit + 1);
+            }
+            else {
+                finalthirdproper = finalthirddigit;
+            }
+
+            finalthirdproper = (finalthirdproper*10);
+            // end of code for third percentage 
+
+            // code for second percentage
+            var finalsecondproper = (100 - (finalfirstproper + finalthirdproper));
+            // end of code for second percentage
+
+            $('#secondper').html(finalsecondproper+'%');
+
+            $('<div>', { 
+                id: 'innerdiv'
+            }).appendTo('#sub_block_2');
+
+            secondblockheight = (totalheight - parseInt($("#outsidediv").height()));
+
+            $('#innerdiv').css('height',secondblockheight); 
+            $('#innerdiv').css('width','298px');
+            $('#innerdiv').css('background-color',secondprocolor);
+
+            $('<div>', { 
+                id: 'subinnerdiv'
+            }).appendTo('#sub_block_2');
+
+            
+            $('#thirdper').html(finalthirdproper+'%');
+
+            $('#subinnerdiv').css('height','167px');
+            $('#subinnerdiv').css('width','298px');
+            $('#subinnerdiv').css('background-color',thirdprocolor);
+        }
+    }
+
+
+    function myDown1(e){
+        flag = 0;
+        
+        if (e.pageX < x1 + 15 + canvas1.offsetLeft && e.pageX > x1 - 15 +
+            canvas1.offsetLeft && e.pageY < y1 + 20 + canvas1.offsetTop &&
+            e.pageY > y1 -20 + canvas1.offsetTop){
+
+            x1 = e.pageX - canvas1.offsetLeft;
+            y1 = e.pageY - canvas1.offsetTop;
+
+            dragok1 = true;
+            canvas1.onmousemove = myMove1;
+            alert('in if');
+        }
+        else {
+            alert(' offset left: '+canvas1.offsetLeft+' offset top: '+canvas1.offsetTop);
+        }
+    }
+
+    function myDown2(e){
+        flag = 0;
+        if (e.pageX < x2 + 15 + canvas2.offsetLeft && e.pageX > x2 - 15 +
+            canvas2.offsetLeft && e.pageY < y2 + 15 + canvas2.offsetTop &&
+            e.pageY > y2 -15 + canvas2.offsetTop){
+            x2 = e.pageX - canvas2.offsetLeft;
+            y2 = e.pageY - canvas2.offsetTop;
+          
+            dragok2 = true;
+            canvas2.onmousemove = myMove2;
+        }
+    }
+
+    function myUp1(){
+        dragok1 = false;
+        canvas1.onmousemove = null;
+    }
+
+    function myUp2(){
+        dragok2 = false;
+        canvas2.onmousemove = null;
+    }
+
+    init();
+    canvas1.onmousedown = myDown1;
+    canvas1.onmouseup = myUp1;
+
+    canvas2.onmousedown = myDown2;
+    canvas2.onmouseup = myUp2;*/
+</script> 

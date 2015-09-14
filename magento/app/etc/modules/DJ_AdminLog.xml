@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <DJ_AdminLog>
+      <active>false</active>
+      <codePool>local</codePool>
+      <version>0.1.0</version>
+    </DJ_AdminLog>
+  </modules>
+</config>

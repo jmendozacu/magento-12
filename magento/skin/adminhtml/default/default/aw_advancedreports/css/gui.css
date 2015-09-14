@@ -1,0 +1,22 @@
+#page_container {
+  margin: auto;
+  width: 600px;
+}
+#example {
+  padding: 10px;
+  padding: 5px 128px 40px;
+  background: #eee;
+  border: 3px solid #fff;
+  
+  box-shadow:         0 1px 10px #999;
+  -webkit-box-shadow: 0 1px 10px #999;
+  -moz-box-shadow:    0 1px 10px #999;
+  border-radius:         6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius:    6px;
+}
+
+/* Form */
+#calendar_form #fields span input:focus {
+  outline: none;
+}

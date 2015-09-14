@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AW_ARUnitSalesbyproductattr>
+            <version>1.0.2</version><platform>ce</platform>
+        </AW_ARUnitSalesbyproductattr>
+    </modules>
+    <global>
+        <helpers>
+            <awunitsalesbyproductattr>
+                <class>AW_Advancedreports_Helper</class>
+            </awunitsalesbyproductattr>
+        </helpers>
+    </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <AW_ARUnitSalesbyproductattr>
+                    <files>
+                        <default>AW_Advancedreports.csv</default>
+                    </files>
+                </AW_ARUnitSalesbyproductattr>
+            </modules>
+        </translate>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

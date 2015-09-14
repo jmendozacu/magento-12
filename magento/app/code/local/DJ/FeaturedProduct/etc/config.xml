@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <DJ_FeaturedProduct>
+      <version>0.1.0</version>
+    </DJ_FeaturedProduct>
+  </modules>
+  <global>
+    <helpers>
+      <featuredproduct>
+        <class>DJ_FeaturedProduct_Helper</class>
+      </featuredproduct>
+    </helpers>
+    <blocks>
+        <featuredproduct>
+            <class>DJ_FeaturedProduct_Block</class>
+        </featuredproduct>
+    </blocks>
+  </global>
+</config> 

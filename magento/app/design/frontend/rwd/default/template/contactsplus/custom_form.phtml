@@ -1,0 +1,217 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<style type="text/css">
+    .contfrmrow .capch li{ display: inline;float: left;width:49%;} 
+    .contfrmrow .capch li:last-child{ margin-left: 15px;margin-top: 15px;}
+    .captcha-image {
+  position: relative;
+  width: 195px;
+}
+.captcha-img {
+    border: 1px solid #ccc;
+}
+.captcha-reload {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+}
+.captcha-reload.refreshing  {
+    animation:rotate 1.5s infinite linear;
+    -webkit-animation:rotate 1.5s infinite linear;
+    -moz-animation:rotate 1.5s infinite linear;
+}
+@-webkit-keyframes rotate {
+    0% { -webkit-transform:rotate(0); }
+    0% { -webkit-transform:rotate(-360deg); }
+}
+@-moz-keyframes rotate {
+    0% { -moz-transform:rotate(0); }
+    0% { -moz-transform:rotate(-360deg); }
+}
+@keyframes rotate {
+    0% { transform:rotate(0); }
+    0% { transform:rotate(-360deg); }
+}   
+</style>
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+<div class="innerwhite">
+    <div class="page-title">
+        <h2 class="pagenamehd"><?php echo Mage::helper('contacts')->__('Help and Inquiries') ?></h2>
+    </div>
+    <div class="privacymain">
+        <p>We are here to help. We’re available <strong>Monday – Friday, 9:00 AM – 5:00 PM EST</strong> on our customer service line at (239) 772-VAPE(8273). If we miss you for some odd reason, we will get back to you as soon as we possibly can. Please fill out the contact us form below for any inquires on product, pricing, or vaping in general.</p>
+        <p>We’re here for you and we’ll do everything that we can to make sure you love shopping at the Vape Store Online.</p>
+        <form action="<?php echo Mage::getUrl('contactsplus/index/post'); ?>" id="contactForm" method="post">
+            <div class="fieldset cont-main">
+                <!-- <h2 class="legend cont-form-hd"><?php echo Mage::helper('contacts')->__('Contact Information') ?></h2> -->
+                
+
+
+                <div class="contform">
+                        <div class="contfrmrow">
+                            
+                            <div class="leftfild">
+                                <label>NAME</label><span class="contacts-asterisk">*</span>
+                                <input name="name" class="input-text required-entry validation-failed inptxtfld" id="name" title="<?php echo Mage::helper('contacts')->__('Name') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserName()) ?>" class="input-text required-entry" type="text" />
+                            </div>
+
+                            <div class="rightfild">
+                                <label>TELEPHONE</label>
+                                <input name="telephone" class="cont-inpt-bg inptxtfld" id="telephone" title="<?php echo Mage::helper('contacts')->__('Telephone') ?>" value="" class="input-text" type="text" />
+                            </div>
+
+                        </div>
+                        <div class="contfrmrow">                        
+                           
+                                <label>EMAIL ID</label><span class="contacts-asterisk">*</span>
+                                 <input name="email" class="input-text required-entry validate-email inptxtfld" id="email" title="<?php echo Mage::helper('contacts')->__('Email') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserEmail()) ?>" class="input-text required-entry validate-email" type="text" />                 
+                        </div>
+                        <div class="contfrmrow">                        
+                           
+                                <label>MESSAGE</label><span class="contacts-asterisk">*</span>
+                                 <textarea name="comment" class="required-entry input-text textariaconr" id="comment" title="<?php echo Mage::helper('contacts')->__('Comment') ?>" class="required-entry input-text" cols="5" rows="3"></textarea>                         
+                        </div>
+                        <div class="contfrmrow">
+                            <!-- <div class="leftfild">
+                                <label>TEXT*</label>
+                                <input type="text" name="captcha" id="captcha-form" class="required-entry input-text cap-txt inptxtfld" autocomplete="off" />
+                                <div class="validation-advice" id="captch-error" style="opacity: 1; display: none;">Invalid captcha code.</div>
+                            </div> -->
+                            <div class="capch"> <!-- rightfild -->
+                                <?php echo $this->getChildHtml('form.additional.info'); ?>
+                                 <!-- <img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB)."captcha.php";?>" id="captcha" /> -->
+                                <!-- <img src="<?php echo Mage::getUrl('captcha.php');?>" id="captcha" /> -->
+                                <!-- <img src="http://dev.thevapestoreonline.com/captcha.php" id="captcha" /> -->
+                                
+                            </div>
+                        </div>
+                        <div class="contfrmrow">
+                            <div class="subbtncont contactsubmitbtn">
+                                 <button type="submit" title="<?php echo Mage::helper('contacts')->__('Submit') ?>" class="button cont-btn contactbtn"><span><span class="cont-green-box"><?php echo Mage::helper('contacts')->__('Submit') ?></span></span></button>
+                            </div>
+                            <div class="cntfrmtxt">
+                                <!-- <p class="notread">
+                                     Not readable? <a href="#" onclick="document.getElementById('captcha').src='<?php echo Mage::getUrl('captcha.php?')?>'+Math.random();return false;" id="change-image">Change text.</a>
+                                </p> -->
+                                <p class="required contacts-required requied_text"><?php echo Mage::helper('contacts')->__('* Required Fields') ?></p>
+                                    <input type="text" name="hideit" id="hideit" value="" style="display:none !important;" />
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+
+
+                <!-- <ul class="form-list">
+                    <li class="fields">
+                        <div class="field">
+                            <label for="name" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Name') ?></label>
+                            <div class="input-box">
+                                <input name="name" class="cont-inpt-bg" id="name" title="<?php echo Mage::helper('contacts')->__('Name') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserName()) ?>" class="input-text required-entry" type="text" />
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="email" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Email') ?></label>
+                            <div class="input-box">
+                                <input name="email" class="cont-inpt-bg" id="email" title="<?php echo Mage::helper('contacts')->__('Email') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserEmail()) ?>" class="input-text required-entry validate-email" type="text" />
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <label for="telephone"><?php echo Mage::helper('contacts')->__('Telephone') ?></label>
+                        <div class="input-box">
+                            <input name="telephone" class="cont-inpt-bg" id="telephone" title="<?php echo Mage::helper('contacts')->__('Telephone') ?>" value="" class="input-text" type="text" />
+                        </div>
+                    </li>
+                    <li class="wide">
+                        <label for="comment" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Comment') ?></label>
+                        <div class="input-box">
+                            <textarea name="comment" class="cont-inpt-bg-txa" id="comment" title="<?php echo Mage::helper('contacts')->__('Comment') ?>" class="required-entry input-text" cols="5" rows="3"></textarea>
+                        </div>
+                    </li>
+                </ul> -->
+
+                <!-- <div class="captch-contain" style="margin:0 0 0 20%;">
+                    
+                    <img src="<?php echo Mage::getUrl('captcha.php')?>" id="captcha" /><br/>
+
+                    <a href="#" onclick="document.getElementById('captcha').src='<?php echo Mage::getUrl('captcha.php?')?>'+Math.random();return false;" id="change-image">Not readable? Change text.</a><br/><br/>
+                    
+                    <button type="submit" title="<?php echo Mage::helper('contacts')->__('Submit') ?>" class="button cont-btn contactbtn"><span><span class="cont-green-box"><?php echo Mage::helper('contacts')->__('Submit') ?></span></span></button>
+
+                    <input type="text" name="captcha" id="captcha-form" class="required-entry input-text cap-txt" autocomplete="off" />
+                    
+                </div> -->
+            </div>
+            
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    var contactForm = new VarienForm('contactForm', true);
+//]]>
+
+
+
+</script>
+<script type="text/javascript">
+    
+    $j(document).ready(function(){
+        $j('#captcha_contact_form').addClass('inptxtfld');
+    });
+
+    /*function validCaptcha(){
+        $j('#captch-error').hide();
+        var captcha = getCookie('captcha');
+        var captcha_form = document.getElementById('captcha-form').value;
+        if(captcha_form.trim() != captcha){
+            $j('#captch-error').show();
+            return false;    
+        }
+        
+    }*/
+    function getCookie(c_name) {
+        var c_value = " " + document.cookie;
+        var c_start = c_value.indexOf(" " + c_name + "=");
+        if (c_start == -1) {
+            c_value = null;
+        }
+        else {
+            c_start = c_value.indexOf("=", c_start) + 1;
+            var c_end = c_value.indexOf(";", c_start);
+            if (c_end == -1) {
+                c_end = c_value.length;
+            }
+            c_value = unescape(c_value.substring(c_start,c_end));
+        }
+        return c_value;
+    }
+</script>
+<style>
+    #change-image { font-size: 0.8em; }
+</style>

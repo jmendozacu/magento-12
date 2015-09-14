@@ -1,0 +1,65 @@
+<?php
+/**
+ * @category     Inchoo
+ * @package     Inchoo Featured Products
+ * @author        Domagoj Potkoc, Inchoo Team <web@inchoo.net>
+ * @modified    Mladen Lotar <mladen.lotar@surgeworks.com>, Vedran Subotic <vedran.subotic@surgeworks.com>
+ */
+?>
+
+<?php $image_size = (int) Mage::getStoreConfig("featuredproducts/cmspage/max_image_dimension") ?>
+<?php if (($_products = $this->fetchProducts()) && $_products->getSize()): ?>
+<div class="our_wrap">
+    <h2 class="sechdpart"><span>TRENDING NOW</span></h2>
+    <div class="dish-product">
+        
+        <?php
+        $i = 1;
+        $row = 0;
+        $lastclass ='';
+        foreach ($_products->getItems() as $_product):
+        ?>
+        <?php //echo $i."<hr/>";?>
+        <?php if ($i == 0): ?>
+        <?php $row++; ?>
+        <!-- <div class="<?php echo (($row % 2) > 0) ? 'odd' : 'even' ?>"> -->
+        <?php endif; ?>
+        <?php //echo $i."<--->".($this->getItemsPerRow()-1);?>
+        	<?php $lastclass = ''; ?>
+            <?php if($i % 5 == 0){?>
+                <?php $lastclass = 'lastdishprd';?>
+            <?php }?>
+
+            <div class="dishprdbox <?php echo $lastclass;?>">
+                <div class="prdboxpart">
+                    <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>">
+                        <img class="product-img" src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize($image_size, $image_size) ?>" alt="<?php echo $this->htmlEscape($_product->getName()) ?>" />
+                    </a>
+                </div>
+                <h3>
+                    <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->htmlEscape($_product->getName()) ?>)">
+                    <?php echo $this->htmlEscape($_product->getName()) ?>
+                    </a>
+                </h3>                
+                <?php if($_product->getAttributeText('manufacturer')){?>
+                    <h4>By <?php echo $_product->getAttributeText('manufacturer');?></h4>
+                <?php } ?>
+                <h5><?php echo $this->getPriceHtml($_product, true, '-new') ?></h5>
+                <div class="featureproducthomepoint">
+                    <span>or <?php echo ceil($_product->getFinalPrice()) * 20; ?> VP pts</span>
+                </div>
+            </div>
+            
+        <?php $i++;
+        if ($i == $this->getItemsPerRow()):
+        ?>
+        <?php $i = 0; $lastclass ='';?>    
+        <!-- </div> -->
+        <?php endif; ?>
+        
+        <?php endforeach; ?>
+
+
+    </div>
+</div> 
+<?php endif; ?>

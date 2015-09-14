@@ -1,0 +1,106 @@
+<?php
+/**
+ * aheadWorks Co.
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://ecommerce.aheadworks.com/AW-LICENSE.txt
+ *
+ * =================================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * =================================================================
+ * This software is designed to work with Magento community edition and
+ * its use on an edition other than specified is prohibited. aheadWorks does not
+ * provide extension support in case of incorrect edition use.
+ * =================================================================
+ *
+ * @category   AW
+ * @package    AW_Advancedreports
+ * @version    2.6.3
+ * @copyright  Copyright (c) 2010-2012 aheadWorks Co. (http://www.aheadworks.com)
+ * @license    http://ecommerce.aheadworks.com/AW-LICENSE.txt
+ */
+?><div>
+    <div class="aw_arep_reports_list">
+        <?php echo $this->getStoreSwitcherHtml() ?>
+        <?php echo $this->getReportsListHtml() ?>
+    </div>
+    <div class="aw_arep_report_grid">
+        <table cellspacing="0" class="aw_arep_reports_dashbord">
+            <thead>
+                <tr>
+                    <th class="f-left"><h3><?php echo $this->__('Dashboard') ?></h3></th>
+                    <th class="f-right"><h3><?php echo $this->__('Last 30 days') ?></h3></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="aw_dashbord_row" >
+                    <td class="aw_dashbord_col_left">
+                        <h3><?php echo $this->__('Sales Overview')?></h3>
+                        <?php echo $this->getSalesOverviewChart() ?>
+                    </td>
+                    <td class="aw_dashbord_col_right">
+                        <h3><?php echo $this->__('Bestsellers')?></h3>
+                        <table class="arep-dashboard-report-grid">
+                            <?php $data = $this->getBestsellersReport(); ?>
+                            <?php if (count($data)): ?>
+                                <?php foreach($data as $row): ?>
+                                    <tr>
+                                        <td class="field-number"><?php echo $row->getSortOrder(); ?></td>
+                                        <td class="field-label"><?php echo $row->getName(); ?></td>
+                                        <td class="field-number"><?php echo round($row->getSumQty()); ?></td>
+                                        <td class="field-currency"><?php echo $this->formatCurrency($row->getSumTotal()); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td><?php echo $this->__('No data for this period') ?></td>
+                                </tr>
+                            <?php endif; ?>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="aw_dashbord_row">
+                    <td class="aw_dashbord_col_left">
+                        <h3><?php echo $this->__('Average Order Value')?></h3>
+                        <?php echo $this->getAverageOrderValueChart() ?>
+                    </td>
+                    <td class="aw_dashbord_col_right">
+                        <h3><?php echo $this->__('Sales by Country')?></h3>
+                        <table class="arep-dashboard-report-grid">
+                            <?php if (count($this->getSalesByCountryReport())): ?>
+                                <?php foreach($this->getSalesByCountryReport() as $row): ?>
+                                    <tr>
+                                        <td class="field-number"><?php echo $row['order']; ?></td>
+                                        <td class="field-label"><?php echo $row['country_name']; ?></td>
+                                        <td class="field-number"><?php echo round($row['qty_ordered']); ?></td>
+                                        <td class="field-currency"><?php echo $this->formatCurrency($row['total']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td><?php echo $this->__('No data for this period') ?></td>
+                                </tr>
+                            <?php endif; ?>
+                        </table>
+                    </td>
+                </tr>
+                <tr class="aw_dashbord_row">
+                    <td class="aw_dashbord_col_left">
+                        <h3><?php echo $this->__('Items per Order')?></h3>
+                        <?php echo $this->getItemsPerOrderChart() ?>
+                    </td>
+                    <td class="aw_dashbord_col_right">
+                        <h3><?php echo $this->__('New Signups')?></h3>
+                        <?php echo $this->getNewSignupChart() ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+

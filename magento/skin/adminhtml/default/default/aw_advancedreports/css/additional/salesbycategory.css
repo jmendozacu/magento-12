@@ -1,0 +1,79 @@
+.aw_arep_category_dropdown {
+    background-color: #FFFFFF;
+    border: 1px solid #d7d7d7;
+    display: none;
+    height: 0px;
+    left: 88px;
+    position: absolute;
+    top: 29px;
+    z-index: 10;
+    text-align: center;
+    width: 128px;
+}
+
+#product_category_dropdown ul li {
+    padding-left: 3px;
+    padding-top: 1px;
+    cursor: pointer;
+}
+
+#product_category_dropdown ul li span span.search {
+    background-color: #f8e515;
+}
+
+#product_category_dropdown ul li.active {
+    background-color: #CDDDDD;
+}
+
+.aw_arep_category_li_overlay {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 122px;
+    z-index: 1000;
+}
+
+.aw_arep_category_loader {
+    background: url("../../images/ajax-loader.gif") repeat-x scroll 0 0 #FFFFFF;
+    display: none;
+    height: 16px;
+    position: absolute;
+    right: 140px;
+    top: 7px;
+    width: 16px;
+}
+
+.aw_arep_category_loader.display,
+.aw_arep_category_dropdown.display {
+    display: block;
+}
+
+.aw_arep_category_container {
+    position: relative;
+    clear: both;
+    margin: 15px 0;
+}
+
+.aw_arep_category_container input.input-text {
+    width: 118px;
+    height: 18px;
+    padding: 5px;
+    margin-left: 5px;
+    color: #a8a8a8;
+    border-color: #d7d7d7;
+}
+
+.aw_arep_category_container input.loading {
+    padding-right: 20px;
+    width: 100px;
+}
+
+.arep-button-set.category-grid {
+    margin: 0;
+    float: right;
+}
+
+.arep-button-set.category-grid .scalable.task{
+    width: 130px;
+    margin: 0;
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AW_ARUnitSalesbycouponcode>
+            <version>1.0.7</version><platform>ce</platform>
+        </AW_ARUnitSalesbycouponcode>
+    </modules>
+    <global>
+        <helpers>
+            <awunitsalesbycouponcode>
+                    <class>AW_Advancedreports_Helper</class>
+            </awunitsalesbycouponcode>
+        </helpers>
+    </global>
+    <adminhtml>
+        <translate>
+            <modules>
+                <AW_ARUnitSalesbycouponcode>
+                    <files>
+                        <default>AW_Advancedreports.csv</default>
+                    </files>
+                </AW_ARUnitSalesbycouponcode>
+            </modules>
+        </translate>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

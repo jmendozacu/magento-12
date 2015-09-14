@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <customform_adminhtml_customformbackend_index>
+	<reference name="content">
+	  <block type="customform/adminhtml_customformbackend" name="customformbackend" template="customform/customformbackend.phtml"/>
+	</reference>
+  </customform_adminhtml_customformbackend_index>
+  <customform_adminhtml_customform_index>
+	<reference name="content">
+	  <block type="customform/adminhtml_customform" name="customform" />
+	</reference>
+  </customform_adminhtml_customform_index>
+</layout>

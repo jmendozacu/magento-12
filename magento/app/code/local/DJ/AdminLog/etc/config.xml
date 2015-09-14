@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <DJ_AdminLog>
+      <version>0.1.0</version>
+    </DJ_AdminLog>
+  </modules>
+  <global>
+    <helpers>
+      <adminlog>
+        <class>DJ_AdminLog_Helper</class>
+      </adminlog>
+    </helpers>
+	<blocks>
+	  <adminlog>
+		<class>DJ_AdminLog_Block</class>
+	  </adminlog>
+	</blocks>
+	<models>
+	  <adminlog>
+		<class>DJ_AdminLog_Model</class>
+		<resourceModel>adminlog_mysql4</resourceModel>
+	  </adminlog>
+	  <adminlog_mysql4>
+		<class>DJ_AdminLog_Model_Mysql4</class>
+		<entities>		  
+			  <productlog>
+				<table>product_log</table>
+			  </productlog>
+        </entities>
+	  </adminlog_mysql4>
+	</models>
+	<resources>
+	  <adminlog_setup>
+		<setup>
+		  <module>DJ_AdminLog</module>
+		</setup>
+		<connection>
+		  <use>core_setup</use>
+		</connection>
+	  </adminlog_setup>
+	  <adminlog_write>
+		<connection>
+		  <use>core_write</use>
+		</connection>
+	  </adminlog_write>
+	  <adminlog_read>
+		<connection>
+		  <use>core_read</use>
+		</connection>
+	  </adminlog_read>
+	</resources>
+    <events>
+	  <catalog_product_save_after> <!-- identifier of the event we want to catch -->
+        <observers>
+          <catalog_product_save_after_handler> <!-- identifier of the event handler -->
+            <type>model</type> <!-- class method call type; valid are model, object and singleton -->
+            <class>adminlog/observer</class> <!-- observers class alias -->
+            <method>AfterSaveProduct</method>  <!-- observer's method to be called -->
+            <args></args> <!-- additional arguments passed to observer -->
+          </catalog_product_save_after_handler>
+        </observers>
+      </catalog_product_save_after>
+	  <catalog_product_delete_after> <!-- identifier of the event we want to catch -->
+        <observers>
+          <catalog_product_delete_after_handler> <!-- identifier of the event handler -->
+            <type>model</type> <!-- class method call type; valid are model, object and singleton -->
+            <class>adminlog/observer</class> <!-- observers class alias -->
+            <method>AfterDeleteProduct</method>  <!-- observer's method to be called -->
+            <args></args> <!-- additional arguments passed to observer -->
+          </catalog_product_delete_after_handler>
+        </observers>
+      </catalog_product_delete_after>
+    </events>
+  </global>
+  <admin>
+	<routers>
+	  <adminlog>
+	    <use>admin</use>
+		<args>
+		  <module>DJ_AdminLog</module>
+		  <frontName>admin_adminlog</frontName>
+		</args>
+	  </adminlog>
+	</routers>
+  </admin>
+  <adminhtml>
+	<menu>
+	  <adminlog module="adminlog">
+		<title>AdminLog</title>
+		<sort_order>100</sort_order>
+		<children>
+		  <!-- <adminlogbackend module="adminlog">
+			<title>Product Log</title>
+			<sort_order>0</sort_order>
+			<action>admin_adminlog/adminhtml_adminlogbackend</action>
+		  </adminlogbackend> -->
+		  <productlog module="adminlog">
+		    <title>Manage Productlog</title>
+			<sort_order>0</sort_order>
+			<action>admin_adminlog/adminhtml_productlog</action>
+		  </productlog>
+		</children>
+	  </adminlog>
+	</menu>
+	<acl>
+	  <resources>
+		<all>
+		  <title>Allow Everything</title>
+		</all>
+		<admin>
+		  <children>
+			<adminlog translate="title" module="adminlog">
+			  <title>AdminLog</title>
+			  <sort_order>1000</sort_order>
+			  <children>
+		  <adminlogbackend translate="title">
+			<title>Product Log</title>
+		  </adminlogbackend>
+		  <productlog translate="title">
+			<title>Manage Productlog</title>
+			<sort_order>0</sort_order>
+		  </productlog>
+			  </children>
+			</adminlog>
+		  </children>
+		</admin>
+	  </resources>
+	</acl>
+	<layout>
+	  <updates>
+		<adminlog>
+		  <file>adminlog.xml</file>
+		</adminlog>
+	  </updates>
+	</layout>
+  </adminhtml>
+</config> 

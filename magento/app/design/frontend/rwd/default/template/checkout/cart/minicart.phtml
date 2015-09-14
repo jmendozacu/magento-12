@@ -1,0 +1,155 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Shoping cart sidebar
+ *
+ * @see Mage_Checkout_Block_Cart_Sidebar
+ */
+
+?>
+
+<?php
+    $_cartQty = $this->getSummaryCount();
+    if(empty($_cartQty)) {
+        $_cartQty = 0;
+    }
+?>
+<?php 
+    $session = Mage::getSingleton('customer/session', array('name'=>'frontend'));
+    
+    // Checking for Mobile Device
+    $isMobile = false;
+    if(isset($_SERVER['HTTP_USER_AGENT'])){
+    	$iphone = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+	    $android = strpos($_SERVER['HTTP_USER_AGENT'],"Android");
+	    $palmpre = strpos($_SERVER['HTTP_USER_AGENT'],"webOS");
+	    $berry = strpos($_SERVER['HTTP_USER_AGENT'],"BlackBerry");
+	    $ipod = strpos($_SERVER['HTTP_USER_AGENT'],"iPod");
+		$ipad = strpos($_SERVER['HTTP_USER_AGENT'],"iPad");
+	    if($iphone || $android || $palmpre || $ipod || $berry || $ipad == true){ 
+	        $isMobile = true;
+	    }	
+    }
+    
+    $count_cart = $this->helper('checkout/cart')->getSummaryCount();
+
+    //$isMobile = true;
+?>
+<?php if($isMobile) : ?>
+	<div class="carthedrep"><a onclick="return show_mobile_minicart();" href="#" class="skip-link skip-cart <?php if($_cartQty <= 0): ?> no-count<?php endif; ?>" id="cart-header_mobile">
+	    <span class="icon"></span>
+	    <span class="label"><?php echo $this->__('Cart'); ?></span>
+	    <span class="count"><?php echo $_cartQty; ?></span>
+	    
+	</a></div>
+
+	<div id="header-cart" class="block block-cart skip-content" style="display:none;">
+	    <?php echo $this->getChildHtml('minicart_content');?>
+	</div>
+
+	<script type="text/javascript">
+	function show_mobile_minicart(){
+		//Hide Action Window
+		jQuery('#header-account').removeClass('skip-active');
+        jQuery('#myaccountdj_mobile').removeClass('skip-active');
+        jQuery('#header-account').hide();      
+        jQuery('.youama-login-window').hide();
+
+        jQuery('#header-nav-link-mobile').removeClass('skip-active');
+        jQuery('#header-nav').hide();  
+        jQuery('#header-nav').removeClass('skip-active');
+
+        jQuery('#header-search-link-mobile').removeClass('skip-active');
+        jQuery('#header-search').hide();  
+        jQuery('#header-search').removeClass('skip-active');
+
+        //Show Cart Window
+		jQuery('#cart-header_mobile').toggleClass('skip-active');
+		if(jQuery('#cart-header_mobile').hasClass('skip-active')){
+			jQuery('#header-cart').slideDown('slow');	
+			jQuery('#header-cart').addClass('skip-active');
+		}
+		else{
+			jQuery('#header-cart').slideUp('slow');
+		}
+		return false;
+	}
+	</script>
+
+<?php else : ?>
+	<div class="carthedrep"><a onmouseover="return show_cart_div();" href="#header-cart" class="skip-link skip-cart <?php if($_cartQty <= 0): ?> no-count<?php endif; ?>" id="cart-header">
+	    <span class="icon"></span>
+	    <span class="label"><?php echo $this->__('cart'); ?></span>
+	    <span class="count"><?php echo $_cartQty; ?></span>
+	    <input type="hidden" id="totalcartitems" value="<?php echo $count_cart; ?>">
+	</a></div>
+	<div id="main-cart" style="display:none;">
+		<div id="header-cart"  class="block block-cart skip-content">
+		    <?php echo $this->getChildHtml('minicart_content');?>
+		</div>
+	</div>
+	<script>
+	var timeout;
+	$j('#main-cart').on('mouseleave',function(){
+		$j('#cart-header').removeClass('skip-active');
+		$j('#cart-header').removeClass('skip-active-cart');
+		$j('#main-cart').hide();
+	});
+	/*function hide_cart_div(){
+		$j('#cart-header').removeClass('skip-active');
+		$j('#cart-header').removeClass('skip-active-cart');
+		$j('#main-cart').hide();
+	}*/
+	function show_cart_div(){
+		$j('#myaccountdj').removeClass('skip-active');
+		$j('#myaccountdj').removeClass('account-hover');
+        $j('#main-div-account').hide();
+		timeout = setTimeout(function(){ display_delay_div(); }, 500);
+		
+	}
+	function display_delay_div(){
+		var isHover = $j('#cart-header').is(":hover");
+		if(isHover){
+			$j('#cart-header').addClass('skip-active-cart');
+			$j('#cart-header').addClass('skip-active');
+			$j('#main-cart').show();
+			var totalitems = $j('#totalcartitems').val();	
+			if(totalitems.trim() > 3){
+				$j('#header-cart').addClass('scrollminicart');
+			}
+			else{
+				$j('#header-cart').removeClass('scrollminicart');	
+			}
+			
+		}
+	}
+
+
+	</script>
+<?php endif ?>
+
+

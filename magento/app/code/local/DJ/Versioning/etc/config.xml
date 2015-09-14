@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <DJ_Versioning>
+            <version>0.1.1</version>
+        </DJ_Versioning>
+    </modules>
+  
+    <global>
+        <models>
+            <core>
+                <rewrite>
+                    <design_package>DJ_Versioning_Model_Design_Package</design_package>										
+                </rewrite>
+            </core>			
+        </models>
+    </global>	
+</config>

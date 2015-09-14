@@ -1,0 +1,123 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php if($this->getResultCount()): ?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+    <div class="innerpage_banner">
+        <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('starter-kits-banner')->toHtml(); ?> 
+        <div class="black-tranprancy">&nbsp;</div>
+        <div class="banshadowinner">&nbsp;</div>
+        <div class="banner-hdpart">
+            <div class="our_wrap">
+
+
+                <?php if ($this->helper('rss/catalog')->getTagFeedUrl()): ?>
+                    <a href="<?php echo $this->helper('rss/catalog')->getTagFeedUrl() ?>" class="nobr link-rss"><?php echo $this->__('Subscribe to Feed') ?></a>
+                <?php endif; ?>
+                <h2 class="strkit-hd">
+                    <span>
+                        <?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $this->helper('catalogsearch')->getEscapedQueryText()) ?>
+                    </span>
+                </h2>
+               
+                <p class="kitname">Chasing Clouds</p>            
+            </div>
+        </div>
+    </div>
+    <div class="serch-blank-hd">&nbsp;</div>    
+
+    <?php if ($messages = $this->getNoteMessages()):?>
+    <p class="note-msg">
+        <?php foreach ($messages as $message):?>
+            <?php echo $message?><br />
+        <?php endforeach;?>
+    </p>
+    <?php endif; ?>
+    <?php echo $this->getProductListHtml() ?>
+<?php else: ?>
+    
+<div class="fullrow">
+    <div class="our_wrap">
+
+        <div class="no-pro-fou nores-main">
+            <h2 class="res-hd">
+                <?php echo ($this->getHeaderText() || $this->getHeaderText() === false) ? $this->getHeaderText() : $this->__("Search results for '%s'", $this->helper('catalogsearch')->getEscapedQueryText()) ?>
+            </h2>
+            <p class="note-msg">
+                <?php echo ($this->getNoResultText()) ? $this->getNoResultText() : $this->__('Your search returned no Results.') ?>
+                <?php echo $this->getAdditionalHtml() ?>
+                <?php if ($messages = $this->getNoteMessages()):?>
+                    <?php foreach ($messages as $message):?>
+                    <br /><?php echo $message?>
+                    <?php endforeach;?>
+                <?php endif; ?>
+            </p>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+
+<?php
+$baseURL = Mage::getUrl('');
+if(Mage::app()->getStore()->isCurrentlySecure()):
+    $baseURL = Mage::getUrl('',array('_secure'=>true));
+endif;
+?>
+
+<script type="text/javascript">
+    var filtered = false;
+    var filterURLGlobal = '<?php echo $baseURL; ?>catalogsearch/result?q=<?php echo $this->helper("catalogsearch")->getEscapedQueryText() ?>&filter=true&';    
+    var pageDJ = 1;
+    var loadmore = true;
+    var loading = false;
+
+    jQuery(window).scroll(function(){
+        if (jQuery(window).scrollTop() >= jQuery(document).height() - jQuery(window).height() - 200){
+            if(loadmore){                
+                if(!loading){
+                    loadMoreDJ();
+                }
+            }
+        }
+    });
+
+    /* Load More */
+    function loadMoreDJ(){
+        loading = true;
+        pageDJ++;
+        jQuery('#dj_spinner').show();
+        var filterURL = filterURLGlobal+'pageDJ='+pageDJ;
+        jQuery.ajax({
+          url: filterURL,
+        }).done(function(data) {
+            jQuery('#category-product-list').html(data);
+            jQuery('#dj_spinner').hide();
+            loading = false;
+        });
+    }
+</script>

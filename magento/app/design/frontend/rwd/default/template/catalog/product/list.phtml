@@ -1,0 +1,646 @@
+<?php
+    $route = Mage::app()->getRequest()->getRouteName();
+    $pageidentifier = Mage::getSingleton('cms/page')->getIdentifier();
+
+    $catId = $this->getLayer()->getCurrentCategory()->getId();
+    if(Mage::app()->getRequest()->getParam('categoryId')){
+        $categoryStr = Mage::app()->getRequest()->getParam('categoryId');
+        $categoryIds = explode('-', $categoryStr);
+        if(isset($categoryIds[0])){
+            $catId = $categoryIds[0];    
+        }
+    }
+
+    $activeCategoryUrlKey = '';
+    $activeCategoryId = '';
+    $activeCategoryParentId = '';
+    if(Mage::registry('current_category')){
+        $activeCategoryUrlKey = Mage::registry('current_category')->getUrlKey();
+        $activeCategoryId = Mage::registry('current_category')->getId();
+        $activeCategoryParentId = Mage::registry('current_category')->getParentId();
+    }else{
+        $activeCategory = Mage::getModel('catalog/category')->load($catId);
+        $activeCategoryUrlKey = $activeCategory->getUrlKey();
+        $activeCategoryId = $activeCategory->getId();
+        $activeCategoryParentId = $activeCategory->getParentId();
+    }
+
+    $rootCategoryId = 74;
+    if($activeCategoryUrlKey == 'brands'):
+        $rootCategoryId = 74;
+    else: 
+        $rootCategoryId = $activeCategoryId;
+    endif;
+
+    // 1col, 2col, 4col
+    if($activeCategoryUrlKey == 'starter-kits' || $activeCategoryParentId == 105){
+        $categoryCustomLayout = '1col';
+        $_columnCount=1;
+    }elseif ($activeCategoryUrlKey == 'brands' || $activeCategoryUrlKey == 'vaporstoreonline-categories') {
+        $categoryCustomLayout = '2col';
+        $_columnCount=2;
+    }elseif ($activeCategoryUrlKey == 'devices' || $activeCategoryParentId == 98 || $route =='catalogsearch') {
+        $categoryCustomLayout = '2col';
+        $_columnCount=2;
+    }elseif ($activeCategoryUrlKey == 'dry-devices' || $activeCategoryParentId == 123) {
+        $categoryCustomLayout = '2col';
+        $_columnCount=2;
+    }elseif ($activeCategoryUrlKey == 'clearomizers-tanks-atomizers' || $activeCategoryParentId == 94){
+        $categoryCustomLayout = '2col';
+        $_columnCount=2;
+    }elseif ($activeCategoryUrlKey == 'usa-made-e-liquid' || $activeCategoryParentId == 79){
+        $categoryCustomLayout = '4col';
+        $_columnCount=4;
+    }elseif ($activeCategoryUrlKey == 'accessories-parts' || $activeCategoryParentId == 77){
+        $categoryCustomLayout = '4col';
+        $_columnCount=4;
+    }else{
+        $categoryCustomLayout = '1col';
+        $_columnCount=1;
+    }
+
+    if ($activeCategoryUrlKey == 'variable-voltage-wattage-mods'){
+        $categoryCustomLayout = '2column-new';
+        $_columnCount=2;    
+    }
+    
+    
+    //$_productCollection=$this->getLoadedProductCollection();
+    
+    $_helper = $this->helper('catalog/output');
+
+    if(Mage::app()->getRequest()->getParam('pageDJ')){
+        $pageDJ = Mage::app()->getRequest()->getParam('pageDJ');
+        $numberRec = 12;
+        $pagesize = $pageDJ * $numberRec;
+        $_productCollection = clone $this->getLoadedProductCollection();
+        $_productCollection->clear()->setPageSize($pagesize)->load();
+    }else{
+        $pageDJ = 1;
+        $numberRec = 12;
+        $pagesize = $pageDJ * $numberRec;
+        $_productCollection = clone $this->getLoadedProductCollection();
+        $_productCollection->clear()->setPageSize($pagesize)->load();
+    }
+
+    $minPrice = 0; $maxPrice = 0; $priceFilter = 0;
+    if(Mage::registry('min_price')){
+        $minPrice = floor(Mage::registry('min_price'));
+    }
+    if(Mage::registry('max_price')){
+        $maxPrice = ceil(Mage::registry('max_price'));
+    }
+    if(Mage::registry('price_filter')){
+        $priceFilter = Mage::registry('price_filter');
+    }
+?>
+<div id="category-product-list">
+<?php if(!$_productCollection->count()): ?>
+    <div class="fullrow">
+        <div class="our_wrap">
+            <div class="no-pro-fou">
+                <p class="note-msg"><?php echo $this->__('There are no Products matching the selection.') ?></p>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+<div class="category-products">
+    <?php //echo $this->getToolbarHtml() ?>
+    <?php $_collectionSize = $_productCollection->count() ?>
+    <?php
+        $_iterator = 0;
+        $class ='';
+    ?>
+    <?php if($categoryCustomLayout == '1col'){ // 1 column  ?>
+    <ol class="productgrid_custom products-list" id="products-list">
+    <?php } else{?>
+    <div class="our_wrap">   
+    <ul class="productgrid_custom products-grid products-grid--max-<?php echo $_columnCount; ?>-col">
+    <?php }?>
+
+    <?php $i=0; foreach ($_productCollection as $_product): ?>
+        
+   
+    <?php if($categoryCustomLayout == '1col'): // 1 column  ?>            
+            
+            <?php $class = ($i %2 == 0) ? 'evenrow' : 'oddrow'; ?>
+
+            <li class="item<?php if( ++$_iterator == sizeof($_productCollection) ): ?> last<?php endif; ?> <?php echo $class;?>">
+
+                <div class="our_wrap">
+                
+                    <div class="product_info">                        
+                        <?php $_productNameStripped = $this->stripTags($_product->getName(), null, true); ?>
+                        <h2 class="product-name list_productname">
+                            <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $_productNameStripped; ?>">
+                                <?php echo $_helper->productAttribute($_product, $_product->getName() , 'name'); ?>
+                            </a>
+                        </h2>                        
+                        <span class="by_company">
+                            <?php
+                                if($_product->getAttributeText('manufacturer')){
+                                    echo "By ".$_product->getAttributeText('manufacturer');
+                                }
+                            ?>
+                        </span>
+                        
+                        <?php if($_product->getRatingSummary()){?>
+                        <div class="retingdetails">
+                            <h3>THE DETAILS</h3>
+                            <span>
+                                <!-- <img src="<?php echo $this->getSkinUrl('images/star-reting.png');?>"> -->
+                                <?php echo $this->getReviewsSummaryHtml($_product, 'short');?>
+                            </span>
+                        </div>
+                        <?php } else {?>
+                        <div class="retingdetails"></div>
+                        <?php }?>
+                        
+                        <div class="desc std ifotatprd">
+                            <?php echo substr($_helper->productAttribute($_product, $_product->getShortDescription(), 'short_description'),0, 500) ?>
+                            <?php //echo $_helper->productAttribute($_product, $_product->getShortDescription(), 'short_description') ?>
+                            <div style="clear:both;"></div>
+                            
+                        </div>
+                        <div class="desbuult staterul">
+                            <ul>
+                                <?php if($_product->getDescriptionBulletOne()): ?>
+                                    <li><?php echo $_product->getDescriptionBulletOne(); ?></li>
+                                <?php endif; ?>
+                                <?php if($_product->getDescriptionBulletTwo()): ?>
+                                    <li><?php echo $_product->getDescriptionBulletTwo(); ?></li>
+                                <?php endif; ?>
+                                <?php if($_product->getDescriptionBulletThree()): ?>
+                                    <li><?php echo $_product->getDescriptionBulletThree(); ?></li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="product_photo">
+                        <?php // Product Image ?>
+                        <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" class="product-image">
+                            <?php $_imgSize = 300; ?>
+                            <img id="product-collection-image-<?php echo $_product->getId(); ?>"
+                                 src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->keepFrame(false)->resize($_imgSize); ?>"
+                                 alt="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" />
+                        </a>
+                    </div>
+                    
+                    <div class="product_buy">
+                        <h4 class="starrkithd"><?php echo Mage::getModel('catalog/category')->load($_product->getCategoryId())->getName() ?></h4>
+                        <div class="product-secondary prd_price">
+                            <?php echo $this->getPriceHtml($_product, true) ?>
+                        </div>
+                        <div class="newaddvp onecollayout">
+                            <span>or <?php echo ceil($_product->getFinalPrice()) * 20; ?> VP pts</span>
+                        </div>
+                        <div class="product-secondary prd-btnpart">
+                            <?php if($_product->isSaleable() && !$_product->canConfigure()): ?>
+                                <p class="action"><button type="button" title="<?php echo $this->__('Buy now') ?>" class="button btn-cart ourcart-btn" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><?php echo $this->__('Buy now') ?></button></p>
+                                <div class="moredetails_btn"><a href="<?php echo $_product->getProductUrl() ?>">MORE DETAILS</a></div>
+                            <?php elseif($_product->isSaleable()): ?>
+                                <p class="action"><button type="button" title="<?php echo $this->__('Buy now') ?>" class="button btn-cart ourcart-btn" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><?php echo $this->__('Buy now') ?></button></p>
+                                <div class="moredetails_btn"><a href="<?php echo $_product->getProductUrl() ?>">MORE DETAILS</a></div>                                
+                            <?php else: ?>
+                                <p class="action availability out-of-stock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                            <?php endif; ?>
+
+                        </div>
+                    </div>  
+
+                    <div class="fullrow openrowmore" style="display:none;" id="productid<?php echo $_product->entity_id;?>">
+                        <div class="product_info tpspinfo">
+                            <?php $productName = $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                            <?php $productUrl = $_helper->productAttribute($_product, $_product->getProductUrl(), 'product_url'); ?>
+                            <?php $productImage = $_product->getImageUrl() ?>
+                            <?php $mainurl = Mage::getBaseUrl();?>
+
+                            <div class="socialmoreicons" id="prolistacc"> 
+                                <div class="drawer">
+                                    <!-- First Item -->
+                                    <div class="drawer-item">
+                                        <div class="drawer-header">
+                                            <h1>HAVE QUESTIONS?</h1>
+                                            <div class="drawer-header-icon"></div>
+                                        </div>
+                                        <div class="drawer-content">
+                                            <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('chat-to-expert')->toHtml(); ?> 
+                                        </div>
+                                    </div>
+
+                                    <!-- Second Item -->
+                                    <!-- <div class="drawer-item">
+                                        <div class="drawer-header">
+                                            <h1>Shipping</h1>
+                                            <div class="drawer-header-icon"></div>
+                                        </div>
+                                        <div class="drawer-content">
+                                            <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('shipping-text')->toHtml(); ?> 
+                                        </div>
+                                    </div> -->
+
+                                    <!-- Third Item -->
+                                </div>
+                                <div class="shareicmn">
+                                    <h3>Share</h3> 
+                                    <span>
+                                        <a href="javascript:popWin('https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode($productUrl); ?>&t=<?php echo urlencode($productName); ?>', 'facebook', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Share on Facebook') ?>">
+                                            <img src="<?php echo $this->getSkinUrl('images/facebook-icon.png');?>" alt=""/>
+                                        </a>
+                                        
+                                        <a href="javascript:popWin('http://twitter.com/home/?status=<?php echo urlencode($productName . ' (' . $productUrl . ')'); ?>', 'twitter', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Tweet') ?>">
+                                            <img src="<?php echo $this->getSkinUrl('images/tweeter-icon.png');?>" alt=""/>
+                                        </a>
+                                        
+                                        <a href="javascript:popWin('https://pinterest.com/pin/create/button/?url=<?php echo urlencode($productUrl); ?>&media=<?php echo urlencode($productImage); ?>&description=<?php echo urlencode($productName); ?>', 'pinterest', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Pin it') ?>">
+                                            <img src="<?php echo $this->getSkinUrl('images/pintrast-icon.png');?>" alt=""/>
+                                        </a>
+                                        
+                                        <a href="<?php echo $mainurl;?>sendfriend/product/send/id/<?php echo $_product->getId();?>/cat_id/<?php echo $_product->getCategoryId();?>/" class="link-email-friend" title="Email to a Friend">
+                                            <img src="<?php echo $this->getSkinUrl('images/email-icon.png');?>" alt=""/>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <?php 
+                            $product = Mage::getModel('catalog/product')->load($_product->getId());
+                            $helper = Mage::Helper('catalog/image');
+
+                            $product = Mage::getModel('catalog/product')->load($_product->getId());
+                            $media_gallery = $_product->getMediaGallery();
+                        ?>
+                        <?php if(count($product->getMediaGalleryImages()) > 0){?>
+                        <div class="product_photo morephotobx">
+
+                            <?php foreach ($product->getMediaGalleryImages() as $_image):?>
+                                <a id="" onclick="return set_productId(<?php echo $_product->getId(); ?>);" href="<?php echo $this->helper('catalog/image')->init($_product, 'image', $_image['file']) ?>" rel="fancybox_<?php echo $_product->getId(); ?>">
+                                    <img src="<?php echo $this->helper('catalog/image')->init($_product, 'image', $_image['file'])->resize(57); ?>" alt="<?php echo $this->escapeHtml($_image['label']) ?>" />
+                                </a>
+                                
+                            <?php endforeach; ?>
+                        </div>
+                        <?php } ?>
+
+                        <div class="product_buy morebtntxt">
+                            <?php
+                                if($_product->getWhatsInside()){
+                                    echo $_product->getWhatsInside();
+                                }
+                            ?>
+                        </div>
+                    </div>
+                    
+                    <div class="uparowdon">
+                    	<div class="updowarroedelt">
+                            <a id="product_anchor_down_<?php echo $_product->entity_id;?>" onclick="return change_image(<?php echo $_product->entity_id;?>)" href="javascript:showproductdetail(<?php echo $_product->entity_id;?>);">
+                                <img src="<?php echo $this->getSkinUrl('images/down-deltarrow.png');?>" alt=""/>
+                            </a>
+                            <a style="display:none;" id="product_anchor_up_<?php echo $_product->entity_id;?>" onclick="return change_image(<?php echo $_product->entity_id;?>)" href="javascript:showproductdetail(<?php echo $_product->entity_id;?>);">
+                                <img src="<?php echo $this->getSkinUrl('images/up-deltarrow.png');?>" alt=""/>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+            </li>
+
+    <?php elseif($categoryCustomLayout == '2col'): // 2 column  ?>
+            <li class="item<?php if(($i-1)%$_columnCount==0): ?> first<?php elseif($i%$_columnCount==0): ?> last<?php endif; ?> twocolbox">
+                <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" class="product-image twogrid_product">
+                    <?php $_imgSize = 210; ?>
+                    <img id="product-collection-image-<?php echo $_product->getId(); ?>"
+                         src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize($_imgSize); ?>"
+                         alt="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" />
+                </a>
+                <div class="product-info twoproductinfo">
+                    <div class="twoprddetails">
+                        <h2 class="product-name twoprdname">
+                            <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php //echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?>
+                                <?php echo substr($_helper->productAttribute($_product, $_product->getName(), 'name'),0,30); ?>
+                            </a>
+                        </h2>
+
+                        <span class="twoby_company">
+                            <?php
+                                if($_product->getAttributeText('manufacturer')){
+                                    echo "By ".$_product->getAttributeText('manufacturer');
+                                }
+                            ?>
+                        </span>
+                   
+                        <?php echo $this->getPriceHtml($_product, true) ?>
+
+                        <div class="newaddvp twocollayout">
+                            <span>or <?php echo ceil($_product->getFinalPrice()) * 20; ?> VP pts</span>
+                        </div>
+						
+                        <?php if($_product->getRatingSummary()): ?>
+                        <div class="retingdetails tworating">
+                            <!-- <img src="<?php echo $this->getSkinUrl('images/star-reting.png');?>"> -->
+                            <?php echo $this->getReviewsSummaryHtml($_product, 'short');?>
+                        </div>
+                        <?php endif; ?>
+					   
+						<div class="desbuult">
+                        	<ul>
+                                <?php if($_product->getDescriptionBulletOne()): ?>
+                                    <li><?php echo substr($_product->getDescriptionBulletOne(),0,22)."..."; ?></li>
+                                <?php endif; ?>
+                                <?php if($_product->getDescriptionBulletTwo()): ?>
+                                    <li><?php echo substr($_product->getDescriptionBulletTwo(),0,22)."..."; ?></li>
+                                <?php endif; ?>
+                                <?php if($_product->getDescriptionBulletThree()): ?>
+                                    <li><?php echo substr($_product->getDescriptionBulletThree(),0,22)."..."; ?></li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="actions twoaction">
+                        <?php if($_product->isSaleable() && !$_product->canConfigure()): ?>
+                            <button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart twoaddtocart" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><?php echo $this->__('Add to Cart') ?></button>
+                        <?php elseif($_product->isSaleable()): ?>
+                           <button type="button" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart twoaddtocart" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><?php echo $this->__('Add to Cart') ?></button>
+                        <?php else: ?>
+                            <p class="availability out-of-stock twocoloutstock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                        <?php endif; ?>
+	                     <a href="<?php echo $_product->getProductUrl() ?>">
+                            <button type="button" title="<?php echo $this->__('DETAILS') ?>" class="button btn-cart todetailbtn"><?php echo $this->__('DETAILS') ?>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </li>
+
+   	<?php elseif($categoryCustomLayout == '2column-new'): // 2 column  new ?>
+
+        <!-- 2 Column New Layout Start -->
+
+            <li class="item<?php if(($i-1)%$_columnCount==0): ?> first<?php elseif($i%$_columnCount==0): ?> last<?php endif; ?> twocolbox newlistbox">
+
+            <?php 
+                $specialprice = Mage::getModel('catalog/product')->load($_product->getId())->getSpecialPrice(); 
+                $specialPriceFromDate = Mage::getModel('catalog/product')->load($_product->getId())->getSpecialFromDate();
+                $specialPriceToDate = Mage::getModel('catalog/product')->load($_product->getId())->getSpecialToDate();
+                $today =  time();
+                if ($specialprice):
+                if($today >= strtotime( $specialPriceFromDate) && $today <= strtotime($specialPriceToDate) || $today >= strtotime( $specialPriceFromDate) && is_null($specialPriceToDate)):
+                ?>
+                    <span class="sale_lable">sale</span>
+                <?php  
+                endif;
+                endif;
+            ?>
+            
+            <h2 class="product-name twoprdname twoprdnamenewone">
+                <a class="newboxhd" href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($_product->getName(), null, true) ?>"><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?>
+                </a>
+            </h2>
+            <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" class="product-image newprdpicrow">
+                <?php $_imgSize = 400; ?>
+                <img id="product-collection-image-<?php echo $_product->getId(); ?>"
+                     src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize($_imgSize); ?>"
+                     alt="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" />
+            </a>
+            <div class="newprdboxinfo">
+                <div class="descriptionnnbew">
+                    <p class="descriptionnewprd"><?php echo substr(strip_tags($_product->getShortDescription()),0,110).' ...'; ?></p>
+                </div>
+                <div class="twoprddetails newaddprddelt">
+                    <?php /* ?><span class="twoby_company">
+                        <?php
+                            if($_product->getAttributeText('manufacturer')){
+                                echo "By ".$_product->getAttributeText('manufacturer');
+                            }
+                        ?>
+                    </span><?php */ ?>
+                    
+                    <div class="priceboxrow">
+                    <?php echo $this->getPriceHtml($_product, true) ?>
+                    <div class="newaddvp newaddorprdhere">
+                        <span><span>or</span> <?php echo ceil($_product->getFinalPrice()) * 20; ?> VP pts</span>
+                    </div>                    
+                    </div>
+                    
+                    <div class="reting_star newlisting">
+                        <?php echo $this->getReviewsSummaryHtml($_product, 'short');?>
+                    </div>
+                </div>
+                
+                <div class="actions newaddacnbtnred">
+                 <div class="btncatwrap">
+                    <?php if($_product->isSaleable() && !$_product->canConfigure()): ?>
+                        <button type="button" title="<?php echo $this->__('Add to Cart') ?>" id="<?php echo $_product->getId(); ?>" class="button btn-cart newaddcartbtnher" onmouseover="showDiv(this.id);" onmouseout="hideDiv(this.id);" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><?php echo $this->__('Add to Cart') ?></button>
+                         
+                    <?php elseif($_product->isSaleable()): ?>
+                       <button type="button" id="<?php echo $_product->getId(); ?>" onmouseover="showDiv(this.id);" title="<?php echo $this->__('Add to Cart') ?>" class="button btn-cart newaddcartbtnher" onmouseout="hideDiv(this.id);"  onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><?php echo $this->__('Add to Cart') ?></button>
+                       
+                    <?php else: ?>
+                    
+                    <p class="availability out-of-stock twocoloutstock"><span><?php echo $this->__('Out of stock') ?></span></p>
+                    <?php endif; ?>
+                     <div class="showpart" id="div_<?php echo $_product->getId(); ?>">Add to Cart</div>
+                    </div>
+                        
+                    <div class="btncatwrap">
+                     <a href="<?php echo $this->helper('wishlist')->getAddUrl($_product) ?>">
+                        <button type="button" id="detaildiv_<?php echo $_product->getId(); ?>" onmouseover="showDetailDiv(this.id);" onmouseout="hideDetailDiv(this.id);" pid="<?php echo $_product->getId(); ?>"  title="<?php echo $this->__('Wishlist') ?>" class="button btn-cart newlikebtnaddded"><?php echo $this->__('Wishlist') ?>
+                        </button>
+                    </a>
+                    <div class="showpart" id="divDetail_<?php echo $_product->getId(); ?>">Add to Wish list</div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                function showDetailDiv(id){
+                    var pid = $j('#'+id).attr('pid');
+                    $j('#divDetail_'+pid).show();
+                }
+                function hideDetailDiv(id){
+                    var pid = $j('#'+id).attr('pid');
+                    $j('#divDetail_'+pid).hide();
+                }
+                function showDiv(id){
+                    $j('#div_'+id).show(); 
+                }   
+                function hideDiv(id){
+                    $j('#div_'+id).hide(); 
+                }
+                $j('.showpart').hide(); 
+            </script>
+
+        </li>
+        
+       
+        <!-- 2 Column New Layout Ends -->
+   		
+    <?php else: // 4 column ?>
+
+            <li class="item">
+                <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" class="product-image fourprdphoto">
+                    <?php $_imgSize = 210; ?>
+                    <img id="product-collection-image-<?php echo $_product->getId(); ?>"
+                         src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize($_imgSize); ?>"
+                         alt="<?php echo $this->stripTags($this->getImageLabel($_product, 'small_image'), null, true) ?>" />
+                </a>
+                <div class="product-info">
+                    <h2 class="product-name fourprdname">
+                    <a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->stripTags($_product->getName(), null, true) ?>">
+                        <?php //echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?>
+                        <?php echo substr($_helper->productAttribute($_product, $_product->getName(), 'name'),0,30); ?>
+                    </a>
+                    </h2>
+
+                    <div class="fourprdinfo">
+                        <!-- <h4>Lorem Ipsum</h4> -->
+                        <p class="bythevap">
+                            <?php
+                                if($_product->getAttributeText('manufacturer')){
+                                    echo "By ".$_product->getAttributeText('manufacturer');
+                                }
+                            ?>
+                        </p>
+                    </div>
+
+                    <div style="clear:both;"></div>
+                    <div class="fourcolprslf">
+                    <div class="four_prdprice">
+                        <?php echo $this->getPriceHtml($_product, true) ?>
+                        
+                    </div>
+                    <div class="newaddvp fourcollayout">
+                            <span>or <?php echo ceil($_product->getFinalPrice()) * 20; ?> VP pts</span>
+                        </div>
+                    </div>
+                    <?php if($_product->getRatingSummary()): ?>
+                        <div class="retingdetails tworating addnewprsbs">
+                            <?php echo $this->getReviewsSummaryHtml($_product, 'short');?>
+                        </div>
+                    <?php endif; ?>
+						<div class="fourcolbxbtn">
+                        	<button type="button" title="<?php echo $this->__('Buy Now') ?>" class="button btn-cart fourcolnowbtn" onclick="setLocation('<?php echo $this->getAddToCartUrl($_product) ?>')"><?php echo $this->__('Buy Now') ?></button>
+                        
+	                     <a class="addnewdelbtncls" href="<?php echo $_product->getProductUrl() ?>"><button type="button" title="<?php echo $this->__('DETAILS') ?>" class="button btn-cart fordelcolbtn"><?php echo $this->__('DETAILS') ?></button></a>
+                        </div>
+                </div>
+                
+            </li>
+
+    <?php endif; ?>
+
+
+    <?php $i++; endforeach ?>
+
+ 
+
+ 
+    <?php if($categoryCustomLayout == '1col'){ // 1 column  ?>    
+    </ol>
+    <?php if(($_productCollection->count()%12) == 0): ?>
+    <div style="display:none" id="dj_spinner"><img alt="" src="<?php echo $this->getSkinUrl('images/ajax-loader.gif');?>"></div>
+    <?php endif;?>
+    <?php } else{?>
+    </ul>
+    <?php if(($_productCollection->count()%12) == 0): ?>
+    <div style="display:none" id="dj_spinner"><img alt="" src="<?php echo $this->getSkinUrl('images/ajax-loader.gif');?>"></div>
+    <?php endif;?>
+    </div>
+    <?php }?>
+
+
+
+    <?php if(($_productCollection->count()%12) == 0): ?>
+        <script type="text/javascript">
+            loadmore = true;            
+        </script>        
+    <?php else:?>
+        <script type="text/javascript">
+            loadmore = false;
+        </script>
+    <?php endif;?>
+</div>
+<?php endif; ?>
+
+
+<script type="text/javascript">
+    function set_productId(product_id){
+        jQuery("a[rel=fancybox_"+product_id+"],a[rel=fancybox-main]").fancybox({
+            helpers: {
+                overlay: {
+                   locked: false
+                }
+            },
+            'padding' : 10,
+            'margin' : 40,
+            'opacity' : 1,
+            'scrolling' : 'auto',
+            'autoScale' : 1,
+            'hideOnOverlayClick' : 1,
+            'overlayShow' : 1,
+            'overlayOpacity' : 0.7,
+            'overlayColor' : '#777',
+            'titleShow' : 1,
+            'transitionIn' : 'elastic',
+            'transitionOut' : 'elastic',
+            'speedIn' : 500,
+            'speedOut' : 500,
+            'changeFade' : 'fast',
+            'easingIn' : 'swing',
+            'easingOut' : 'swing',
+            'showCloseButton' : 1,
+            'showNavArrows' : 1,
+            'enableEscapeButton' : 1
+        });
+
+        return false;
+    }
+    function change_image(product_id){
+        var desc_div = $j('#productid'+product_id).css('display'); 
+        if(desc_div == 'none'){
+            $j('#product_anchor_down_'+product_id).hide();
+            $j('#product_anchor_up_'+product_id).show();
+        }
+        else{
+            $j('#product_anchor_down_'+product_id).show();
+            $j('#product_anchor_up_'+product_id).hide();
+        }
+    }
+
+</script>
+
+<?php if($activeCategoryUrlKey != 'starter-kits' && $activeCategoryParentId != 105  && $activeCategoryUrlKey != 'accessories-parts' && $activeCategoryParentId != 77): ?>
+
+<script type="text/javascript">
+    
+    (function(){
+        var priceFilter = parseInt('<?php echo $priceFilter; ?>');        
+        if(priceFilter == 0){
+            var minPrice = parseInt('<?php echo $minPrice; ?>');  
+            var maxPrice = parseInt('<?php echo $maxPrice; ?>');
+            mySlider = new Slider('.slider', {
+                min: minPrice,
+                max: maxPrice,
+                range: true,
+                value: [ minPrice, maxPrice ]
+            });
+            mySlider.refresh();
+            jQuery('#price_range_from').html(minPrice);
+            jQuery('#price_range_to').html(maxPrice);
+        }
+        mySlider.on('slideStop', function(ev){
+            var val = mySlider.getValue();
+            var value1 = val[0];
+            var value2 = val[1];
+            jQuery('#price_range_from').html(value1);
+            jQuery('#price_range_to').html(value2);
+            filterByPrice('<?php echo $rootCategoryId; ?>',value1,value2);
+        });
+    }).call(this);
+
+</script>
+
+<?php endif; ?>

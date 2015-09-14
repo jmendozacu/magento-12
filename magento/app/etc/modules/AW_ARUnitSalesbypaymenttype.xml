@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AW_ARUnitSalesbypaymenttype>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <AW_Advancedreports/>
+            </depends>
+        </AW_ARUnitSalesbypaymenttype>
+    </modules>
+</config>

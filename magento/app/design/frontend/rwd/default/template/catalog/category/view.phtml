@@ -1,0 +1,2206 @@
+<div class="ajax-cover-img ajax-loader" style="display:none;"></div>
+<div class="ajax-cover ajax-loader" style="display:none;opacity:0.8;"></div>
+
+<?php
+    $_helper    = $this->helper('catalog/output');
+    $_category  = $this->getCurrentCategory();
+    $_imgHtml   = '';
+    if ($_imgUrl = $_category->getImageUrl()) {
+        $_imgHtml = '<p class="category-image"><img src="'.$_imgUrl.'" alt="'.$this->escapeHtml($_category->getName()).'" title="'.$this->escapeHtml($_category->getName()).'" /></p>';
+        $_imgHtml = $_helper->categoryAttribute($_category, $_imgHtml, 'image');
+    }
+
+	$activeCategoryUrlKey = Mage::registry('current_category')->getUrlKey();
+	$activeCategoryId = Mage::registry('current_category')->getId();
+	$activeCategoryParentId = Mage::registry('current_category')->getParentId();
+	$activeCategoryUrlPath = Mage::registry('current_category')->getUrlPath();
+	
+	
+	$rootCategoryId = 74;
+
+	if($activeCategoryUrlKey == 'brands'):
+		$rootCategoryId = 74;
+	else: 
+		$rootCategoryId = $_category->getId();
+	endif;
+
+	$catId= $_category->getId(); //echo $catId;//exit;
+	
+	$isMobile = false;
+    if(isset($_SERVER['HTTP_USER_AGENT'])){
+        $iphone = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+        $android = strpos($_SERVER['HTTP_USER_AGENT'],"Android");
+        $palmpre = strpos($_SERVER['HTTP_USER_AGENT'],"webOS");
+        $berry = strpos($_SERVER['HTTP_USER_AGENT'],"BlackBerry");
+        $ipod = strpos($_SERVER['HTTP_USER_AGENT'],"iPod");
+        $ipad = strpos($_SERVER['HTTP_USER_AGENT'],"iPad");
+        if($iphone || $android || $berry == true){ 
+            $isMobile = true;
+        }    
+    }
+
+    $filterBrandId = 0;
+	if(Mage::getSingleton('core/session')->getData('filterBrandId')){
+		$filterBrandId = Mage::getSingleton('core/session')->getData('filterBrandId');
+		Mage::getSingleton('core/session')->unsetData('filterBrandId');
+	}
+
+    $brandPage = 1;
+    $itemBrandNumber = 1;
+	$manufacturers = array();
+
+	$colorPage = 1;
+    $itemColorNumber = 1;    
+	$colors = array();
+
+	$minPrice = 0;
+	$maxPrice = 0;
+
+?>
+
+<?php if($activeCategoryUrlKey != 'starter-kits' && $activeCategoryParentId != 105  && $activeCategoryUrlKey != 'accessories-parts' && $activeCategoryParentId != 77): ?>
+
+	<?php
+		$productCollection = Mage::getSingleton('catalog/layer')->setCurrentCategory($rootCategoryId);
+		$productPriceCollection = $productCollection->getProductCollection();	
+		$productBrandAndColorCollection = $productCollection->getFilterableAttributes();
+
+		$connection = Mage::getSingleton('core/resource')->getConnection('core_read');
+		$cnt = 0;
+		$filterBlockName = 'catalog/layer_filter_attribute';
+		$filterBlockNameLayer = Mage::app()->getLayout()->createBlock($filterBlockName)->setLayer($productCollection);
+
+		foreach ($productBrandAndColorCollection as $attribute) {
+		    if ($attribute->getAttributeCode() == 'manufacturer') {
+		        $result = $filterBlockNameLayer->setAttributeModel($attribute)->init();
+		        foreach($result->getItems() as $option) {
+				    $hideBrands = array('Boge');
+				    if(!in_array($option->getLabel(), $hideBrands)){
+				    	$manufacturers[$option->getValue()] = $option->getLabel();	
+				    }
+		        }
+		    }
+		    if ($attribute->getAttributeCode() == 'product_color') {
+		        $result = $filterBlockNameLayer->setAttributeModel($attribute)->init();
+		        foreach($result->getItems() as $option) {
+		        	$select = $connection->select()->from('eav_attribute_option', array('*'))->where('option_id =?',$option->getValue());
+					$rowsArray = $connection->fetchRow($select);
+					if($rowsArray['image'] != ''){
+						$colors[$cnt]['image'] = $rowsArray['image'];
+			        	$colors[$cnt]['value'] = $option->getValue();
+			        	$colors[$cnt]['label'] = $option->getLabel();
+						$cnt++;
+					}
+		        }
+		    }
+		}
+
+		$tmpClone = clone $productPriceCollection;
+		$minPriceTmp = 0;
+	    $maxPriceTmp = 0;
+	    $i = 0;
+	    foreach ($tmpClone as $productTmp) {
+	        if(!$i) $minPriceTmp = $productTmp->getPrice(); $i++;
+	        if($productTmp->getSpecialPrice() && $productTmp->getSpecialPrice() != 0){
+	            if($productTmp->getSpecialPrice() <= $minPriceTmp){
+	                $minPriceTmp = $productTmp->getSpecialPrice();
+	            }
+	            if($productTmp->getSpecialPrice() >= $maxPriceTmp){
+	                $maxPriceTmp = $productTmp->getSpecialPrice();
+	            }
+	        }else{
+	            if($productTmp->getPrice() <= $minPriceTmp){
+	                $minPriceTmp = $productTmp->getPrice();
+	            }
+	            if($productTmp->getPrice() >= $maxPriceTmp){
+	                $maxPriceTmp = $productTmp->getPrice();
+	            }
+	        }
+	    }
+		$minPrice = floor($minPriceTmp);
+		$maxPrice = ceil($maxPriceTmp);
+	?>
+
+	<link href="<?php echo $this->getSkinUrl('css/bootstrap-slider.css'); ?>" rel="stylesheet" />
+	<script type='text/javascript' src="<?php echo $this->getSkinUrl('js/bootstrap-slider.js'); ?>"></script>
+	<link href="<?php echo $this->getSkinUrl('slider/css/slider.css'); ?>" media="all" rel="stylesheet" />
+	<link rel="stylesheet" href="<?php echo $this->getSkinUrl('jquery-labelauty/jquery-labelauty.css');?>" type="text/css" media="screen" />
+	<script type="text/javascript" src="<?php echo $this->getSkinUrl('jquery-labelauty/jquery-labelauty.js');?>"></script>
+
+	<script type="text/javascript">
+		jQuery(document).ready(function(){
+		    jQuery(".filterbrand").labelauty({ label: false });
+		    jQuery(".filtercat").labelauty({ label: false });
+		});
+	</script>
+	<style type="text/css">
+		input.labelauty + label {padding:0; float: left;}
+		.filtertanchor{ color: #333333;}
+	</style>
+
+<?php endif; ?>
+
+
+<?php if($activeCategoryUrlKey == 'starter-kits' || $activeCategoryParentId == 105): ?>
+
+	<!-- STARTER KIT PAGE -->
+
+	<div class="innerpage_banner">
+		<?php if($isMobile) : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('starter-kits-banner-mobile')->toHtml(); ?>
+		<?php elseif($ipad || $ipod || $palmpre): ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('starter-kits-banner-ipad')->toHtml(); ?>  	
+		<?php else : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('starter-kits-banner')->toHtml(); ?> 
+		<?php endif; ?>
+
+	    
+	    <div class="black-tranprancy">&nbsp;</div>
+	    <div class="banshadowinner">&nbsp;</div>
+	    <div class="banner-hdpart">
+	    	<div class="our_wrap">
+	        	<h2 class="strkit-hd"><span><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></span></h2>
+	            <p class="kitname"><?php echo $_category->getDescription();?></p>            
+	        </div>
+	    </div>
+	</div>
+	<div class="fullrow starterkit-main">
+	    <div class="our_wrap">
+		    <div class="breadcrumbs">
+		        <ul>
+		            <li class="home">
+		                <a title="<?php echo $this->__('Go to Home Page') ?>" href="<?php echo $this->getUrl() ?>"><?php echo $this->__('Home') ?></a>
+		                <span>&nbsp&gt;&nbsp;</span>
+		            </li>
+		            <li class="category15">
+		                <strong><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></strong>
+		            </li>
+		        </ul>
+		    </div>
+
+		    <div class="fullrow botspace">
+		        <div class="makestatment starterkit-left">
+		            <h3 class="makehd">Ready to vape right out of the box.</h3>
+		            <p class="maketext starterkit-p">With a starter kit configured by our vape experts, you’ll have the setup you need to start enjoying a world of complex flavors and aromatic clouds, all in one easy package.</p>
+		        </div>
+		        <div class="graybgprod starterkit-right"><img alt="" src="<?php echo $this->getSkinUrl('images/ready-vape.png');?>"></div>
+		    </div>
+	    </div>
+
+	</div>
+
+<?php elseif($activeCategoryUrlKey == 'brands'):?>
+
+	<!-- BRAND PAGE -->
+
+	<div class="innerpage_banner device-mid-banner">
+		<?php if($isMobile) : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('brand-banner-mobile')->toHtml(); ?>
+		<?php elseif($ipad || $ipod || $palmpre): ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('brand-banner-ipad')->toHtml(); ?>  	
+		<?php else : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('brand-banner')->toHtml(); ?> 
+		<?php endif; ?>
+	    
+	    <div class="black-tranprancy">&nbsp;</div>
+	    <div class="banshadowinner">&nbsp;</div>
+	    <div class="banner-hdpart">
+	        <div class="our_wrap">
+	            <h2 class="strkit-hd"><span><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></span></h2>
+	            <p class="kitname"><?php echo $_category->getDescription();?></p>
+	        </div>
+	    </div>
+	</div>
+
+	<div class="grayfullrow">
+	    <div class="graybgcolor">
+	        
+	        <div id="sticker">
+	            <div class="stickermain">
+	                <div class="hideshowrow">
+	                    <div class="divice_small_box device-ojkl" id="devicefilsmallboxid">
+	                       <span id="devicefiltertxt" class="text-fillter">
+	                        	<a class="filtertanchor" onclick="hidebigdevicefilbox();">Filter By</a>
+	                       </span> 
+	                       <span id="deviceicon">
+	                            <img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigdevicefilbox();"/>    
+	                       </span>              
+	                    </div>
+	                </div>
+	                <div class="our_wrap">
+
+	                    <div class="dilrelt">
+
+	                        <div class="divice_search ojkl" id="devicefilbigboxid" >
+	                            <div class="layer-nav-left">
+	                                
+	                                <!-- Brands Filter -->
+
+	                                <div class="filter-div">
+	                                
+	                                    <div class="filter-subdiv firstadded brandwidth">
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Brands</span>
+	                                            <span class="clearfilter clearbrand" style="float:right; display:none; margin-right:17px;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearBrandFilter('<?php echo $catId; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+	                                        <?php if (count($manufacturers)): ?>
+	                                        <ol class="ourcheck overcheck-brands">
+		                                        <?php
+		                                            foreach($manufacturers as $optionId => $value) {
+		                                            ?>
+		                                            <li class="li-full-flavor brandlist page-<?php echo $brandPage; ?>" <?php if($brandPage != 1){ ?> style="display:none;" <?php } ?> > 	
+								
+		                                                <input onclick="filterByBrand('<?php echo $rootCategoryId; ?>');" style="float:left;" type="checkbox" class="filterbrand" name="brandname" value="<?php echo $optionId; ?>" <?php if($filterBrandId == $optionId): ?> checked="checked" <?php endif;?> />
+								
+		                                                <span style="float:left;"><?php echo $value; ?></span>
+		                                            </li>
+		                                            <?php
+		                                                if($itemBrandNumber % 12 == 0){
+		                                                    $brandPage++;
+		                                                }
+		                                                $itemBrandNumber++;
+		                                            }
+		                                        ?>                                   
+	                                        </ol>
+	                                        <div class="arrowmainrownxt">
+		                                        <a class="brdprevarrow" id="prev-brand" onclick="previousBrand();" style="display:none;">
+		                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+		                                        </a>
+		                                        <a class="brdnextarrow" id="next-brand" onclick="nextBrand();" <?php if($brandPage <= 1){ ?> style="display:none;" <?php } ?> >
+		                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+		                                        </a>
+	                                        </div>
+
+	                                        <?php else: ?>
+		                                    	<div style="clear:both;"></div>
+		                                    	<div style='font-size:12px;margin-top:15px;'>No Brands to Filter</div>
+		                                    <?php endif; ?>
+	                                    </div>
+
+
+	                                    <div class="filter-subdiv">
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Categories</span>
+	                                            <span class="clearfilter clearcat" style="float:right; display:none;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearCategoryFilter('<?php echo $rootCategoryId; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+	                                        
+	                                        <ol class="ourcheck overcheck-brands">
+	                                            <li class="li-full-flavor brandcatlist"> 
+	                                                <input onclick="filterByCategory();" style="float:left;" type="checkbox" class="filtercat" name="categoryname" value="105">
+	                                                <span style="float:left;">Starter Kits</span>
+	                                            </li>
+	                                            <li class="li-full-flavor brandcatlist" > 
+	                                                <input onclick="filterByCategory();" style="float:left;" type="checkbox" class="filtercat" name="categoryname" value="98">
+	                                                <span style="float:left;">Devices</span>
+	                                            </li>
+	                                            <li class="li-full-flavor brandcatlist" > 
+	                                                <input onclick="filterByCategory();" style="float:left;" type="checkbox" class="filtercat" name="categoryname" value="94">
+	                                                <span style="float:left;">Tanks & Coils</span>
+	                                            </li>
+	                                            <li class="li-full-flavor brandcatlist" > 
+	                                                <input onclick="filterByCategory();" style="float:left;" type="checkbox" class="filtercat" name="categoryname" value="79">
+	                                                <span style="float:left;">E-Liquids</span>
+	                                            </li>
+	                                            <li class="li-full-flavor brandcatlist" > 
+	                                                <input onclick="filterByCategory();" style="float:left;" type="checkbox" class="filtercat" name="categoryname" value="77">
+	                                                <span style="float:left;">Accessories</span>
+	                                            </li>
+	                                        </ol>
+	                                    </div>
+
+	                                    <div class="filter-subdiv" id="brandfilterprice">
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Price</span>
+	                                            <span class="clearfilter clearprice" style="float:right; display:none;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearPriceFilter('<?php echo $rootCategoryId; ?>','<?php echo $minPrice; ?>','<?php echo $maxPrice; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+
+	                                        <div id="chweb_layered_price">
+	                                            <ol>
+	                                                <li style="width:100%;">
+	                                                    $<span id="price_range_from"><?php echo $minPrice; ?></span>-$<span id="price_range_to"><?php echo $maxPrice; ?></span>
+	                                                </li>
+	                                            </ol>
+	                                        </div>
+	                                        <div class="slider-div">
+	                                          <input class="slider" data-slider-max="<?php echo $maxPrice; ?>" data-slider-min="<?php echo $minPrice; ?>" data-slider-value="[<?php echo $minPrice; ?>,<?php echo $maxPrice; ?>]" type="text" />
+	                                        </div>
+	                                    </div>
+
+	                                    <div class="filter-subdiv viewboanewadded">
+	                                        <div class="chweb_layered_dt">View By</div>
+	                                        <div class="sorter">
+	                                            <div class="sort-by stylishselectbox">                
+	                                                <select class="blue-arrow" onchange="sortByProduct('<?php echo $rootCategoryId; ?>',this.value);">
+	                                                   	<option selected='selected' value="bestseller">Best Selling</option>
+	                                                   	<option value="name">Name</option>
+	                                                    <option value="price">Price</option>
+	                                                </select>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                    
+	                                </div>
+	                            </div>
+	                        </div>         
+	                    </div>
+	                </div> 
+	            </div>
+	        </div>
+	        
+	        <div class="our_wrap">
+	            <div class="fullrow">
+	                <div class="our_wrap">
+	                <div class="breadcrumbs">
+	                    <ul>
+	                        <li class="home">
+	                            <a title="<?php echo $this->__('Go to Home Page') ?>" href="<?php echo $this->getUrl() ?>"><?php echo $this->__('Home') ?></a>
+	                            <span>&nbsp&gt;&nbsp;</span>
+	                        </li>
+	                        <li class="category15">
+	                            <strong><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></strong>
+	                        </li>
+	                    </ul>
+	                </div>
+	                </div>
+	            </div>
+
+
+	            <?php if($activeCategoryUrlKey == 'brands'): ?>
+	                <div class="brandmainwraphere">
+	                    <div class="leftbrantxt">
+	                        <h2>A stellar collection of featured brands.</h2>
+	                        <p>Immerse yourself in premium vaping technology from high quality brands like Aspire and KangerTech. Combining innovation with design.</p>
+	                    </div>
+	                    <div class="brandlogohere">
+	                        <div class="brandlogoboxmain"><img src="<?php echo $this->getSkinUrl('images/brand1.jpg');?>" alt=""/></div>
+	                        <div class="brandlogoboxmain"><img src="<?php echo $this->getSkinUrl('images/brand2.png');?>" alt=""/></div>
+	                        <div class="brandlogoboxmain bordnonebrand"><a href="<?php echo Mage::getBaseUrl(); ?>productfilter/index/brandfilter?filterBrandId=1173"><img src="<?php echo $this->getSkinUrl('images/brand3.png');?>" alt=""/></a></div>
+	                        <div class="brandlogoboxmain"><a href="<?php echo Mage::getBaseUrl(); ?>productfilter/index/brandfilter?filterBrandId=1176"><img src="<?php echo $this->getSkinUrl('images/brand4.png');?>" alt=""/></a></div>
+	                        <div class="brandlogoboxmain"><a href="<?php echo Mage::getBaseUrl(); ?>productfilter/index/brandfilter?filterBrandId=1184"><img src="<?php echo $this->getSkinUrl('images/brand5.png');?>" alt=""/></a></div>
+	                        <div class="brandlogoboxmain bordnonebrand"><a href="<?php echo Mage::getBaseUrl(); ?>productfilter/index/brandfilter?filterBrandId=1443"><img src="<?php echo $this->getSkinUrl('images/brand6.png');?>" alt=""/></a></div>
+	                        <div class="brandlogoboxmain brdnonebot"><a href="<?php echo Mage::getBaseUrl(); ?>productfilter/index/brandfilter?filterBrandId=1166"><img src="<?php echo $this->getSkinUrl('images/brand7.png');?>" alt=""/></a></div>
+	                        <div class="brandlogoboxmain brdnonebot"><a href="<?php echo Mage::getBaseUrl(); ?>productfilter/index/brandfilter?filterBrandId=1181"><img src="<?php echo $this->getSkinUrl('images/brand8.png');?>" alt=""/></a></div>
+	                        <div class="brandlogoboxmain bordnonebrand brdnonebot"><a href="<?php echo Mage::getBaseUrl(); ?>productfilter/index/brandfilter?filterBrandId=1170"><img src="<?php echo $this->getSkinUrl('images/brand9.png');?>" alt=""/></a></div>
+	                    </div>
+	                </div>
+
+	            <?php else: ?>
+
+	                <div class="fullrow botspace">
+	                    <div class="makestatment">
+	                        <h3 class="makehd">Make a statement.<br/> Get fully charged.</h3>
+	                        <p class="maketext">The most useful overview to the  best devices. Explore our full range of mechanical mods with variable voltage or batteries.</p>
+	                    </div>
+	                    <div class="graybgprod"><img alt="" src="<?php echo $this->getSkinUrl('images/espec.png');?>"></div>
+	                </div>
+
+	            <?php endif; ?>
+
+	        </div>
+	    </div>
+	</div>
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+	    var isMobile = '<?php echo $isMobile; ?>';
+	    var s = jQuery("#sticker");
+	    var pos = s.position();
+	    var windowWidth = screen.width;
+
+	    jQuery(document).ready(function() {			    
+			if(windowWidth < 960){
+				var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigdevicefilbox();"/>';
+				var filterTxt = '<a class="filtertanchor" onclick="showbigdevicefilbox();">Filter By</a>'
+	            jQuery('#devicefiltertxt').html(filterTxt);
+
+	            jQuery('#deviceicon').html(imgsrc);
+
+	            jQuery("#devicefilbigboxid").slideUp('fast');
+			}
+		});
+
+	    jQuery(window).scroll(function() {
+	        var windowpos = jQuery(window).scrollTop();
+	        //s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+	        if(windowWidth > 960){
+	            if (windowpos >= pos.top) {
+	                s.addClass("stick");
+	                if(jQuery('#deviceicon')){
+	                    var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigdevicefilbox();"/>';
+
+	                    var filterTxt = '<a class="filtertanchor" onclick="showbigdevicefilbox();">Filter By</a>'
+	                    jQuery('#devicefiltertxt').html(filterTxt);
+
+	                    jQuery('#deviceicon').html(imgsrc);
+	                }
+	                jQuery("#devicefilbigboxid").slideUp('fast');
+	            } else {
+	                s.removeClass("stick");
+	                if(jQuery('#deviceicon')){
+	                    var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigdevicefilbox();"/>';
+
+	                    var filterTxt = '<a class="filtertanchor" onclick="hidebigdevicefilbox();">Filter By</a>'
+	                    jQuery('#devicefiltertxt').html(filterTxt);
+
+	                    jQuery('#deviceicon').html(imgsrc);
+	                }
+	                jQuery("#devicefilbigboxid").slideDown('fast');
+	            }    
+	        }
+	       
+	    });
+	});
+	</script>
+
+<?php elseif($activeCategoryUrlKey == 'devices' || $activeCategoryParentId == 98):?>
+
+	<!-- DEVICES PAGE -->
+
+	<div class="innerpage_banner device-mid-banner">
+		<?php if($isMobile) : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('device-banner-mobile')->toHtml(); ?>
+		<?php elseif($ipad || $ipod || $palmpre): ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('device-banner-ipad')->toHtml(); ?>  	
+		<?php else : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('device-banner')->toHtml(); ?>  
+		<?php endif; ?>
+	    
+	    <div class="black-tranprancy">&nbsp;</div>
+	    <div class="banshadowinner">&nbsp;</div>
+	    <div class="banner-hdpart">
+	    	<div class="our_wrap">
+	        	<h2 class="strkit-hd"><span><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></span></h2>
+	            <p class="kitname"><?php echo $_category->getDescription();?></p>
+	        </div>
+	    </div>
+	</div>
+
+	<div class="grayfullrow">
+		<div class="graybgcolor">
+	        
+	        <div id="sticker">
+	            <div class="stickermain">
+	                <div class="hideshowrow">
+	                    <div class="divice_small_box device-ojkl" id="devicefilsmallboxid">
+	                       <!-- <span class="text-fillter">
+	                        Filter By
+	                       </span> -->
+	                       <span id="devicefiltertxt" class="text-fillter">
+	                        	<a class="filtertanchor" onclick="hidebigdevicefilbox();">Filter By</a>
+	                       </span>  
+	                       <span id="deviceicon">
+	                            <img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigdevicefilbox();"/>    
+	                       </span>              
+	                    </div>
+	                </div>
+	                <div class="our_wrap">
+
+	                    <div class="dilrelt">
+
+	                        <div class="divice_search ojkl" id="devicefilbigboxid" >
+	                            <div class="layer-nav-left">
+
+	                                <!-- Devices Filter -->
+
+	                                <div class="filter-div">
+	                                    <div class="filter-subdiv fltsendwdtnodevider firstadded brandwidth">
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Brands</span>
+	                                            <span class="clearfilter clearflavor clearbrand" style="float:right; display:none; margin-right:17px;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearBrandFilter('<?php echo $catId; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+	                                        <?php if (count($manufacturers)) : ?>
+	                                        <ol class="ourcheck overcheck-brands">
+		                                        <?php
+		                                            foreach($manufacturers as $optionId => $value) {
+		                                            ?>
+		                                            <li class="li-full-flavor brandlist page-<?php echo $brandPage; ?>" <?php if($brandPage != 1){ ?> style="display:none;" <?php } ?> > 
+		                                                <input onclick="filterByBrand('<?php echo $rootCategoryId; ?>');" style="float:left;" type="checkbox" class="filterbrand" name="brandname" value="<?php echo $optionId; ?>">
+		                                                <span style="float:left;"><?php echo $value; ?></span>
+		                                            </li>
+		                                            <?php
+		                                                if($itemBrandNumber % 12 == 0){
+		                                                    $brandPage++;
+		                                                }
+		                                                $itemBrandNumber++;
+		                                            }
+		                                        ?>                                   
+	                                        </ol>
+	                                        <div class="arrowmainrownxt">
+		                                        <a class="brdprevarrow" id="prev-brand" onclick="previousBrand();" style="display:none;">
+		                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+		                                        </a>
+		                                        <a class="brdnextarrow" id="next-brand" onclick="nextBrand();" <?php if($brandPage <= 1){ ?> style="display:none;" <?php } ?> >
+		                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+		                                        </a>
+	                                        </div>
+
+	                                        <?php else: ?>
+		                                    	<div style="clear:both;"></div>
+		                                    	<div style='font-size:12px;margin-top:15px;'>No Brands to Filter</div>
+		                                    <?php endif; ?>
+	                                    </div>
+
+	                                    <div class="filter-subdiv">                                        
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Color</span>
+	                                            <span class="clearfilter clearcolor" style="float:right; display:none;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearColorFilter('<?php echo $catId; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+
+	                                        <div id="chweb_layered_color">
+	                                        	<?php if(count($colors)): ?>
+	                                            <ol style="min-height:135px;">
+	                                            	<?php foreach ($colors as $color): ?>
+	                                            	<?php 
+	                                            	$value = $color['value'];
+	                                            	$image = $color['image'];
+	                                            	$label = $color['label'];
+	                                            	?>
+                                            		<li class="dtcolorbox colorpage-<?php echo $colorPage; ?>" <?php if($colorPage != 1){ ?> style="display:none;" <?php } ?>>
+	                                                    <div class="color" id="colorbox-<?php echo $rootCategoryId; ?>-<?php echo $value; ?>">
+	                                                        <a onclick="filterByColor('<?php echo $rootCategoryId; ?>','<?php echo $value; ?>')" style="cursor:pointer;">
+	                                                            <span class="custom-checkbox" style="background:url(<?php echo $image; ?>);">
+	                                                                <input type="checkbox" id="color-<?php echo $rootCategoryId; ?>-<?php echo $value; ?>" name="colors[]" class="colorchk" value="<?php echo $value; ?>">
+	                                                            </span>
+	                                                        </a>
+	                                                    </div>
+	                                                </li>
+	                                            	<?php
+		                                                if($itemColorNumber % 15 == 0){
+		                                                    $colorPage++;
+		                                                }
+		                                                $itemColorNumber++;
+		                                            endforeach; ?>
+	                                            </ol>
+
+	                                            <div class="arrowmainrownxt">
+			                                        <a class="brdprevarrow" id="prev-color" onclick="previousColor();" style="display:none;">
+			                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+			                                        </a>
+			                                        <a class="brdnextarrow" id="next-color" onclick="nextColor();" <?php if($colorPage <= 1){ ?> style="display:none;" <?php } ?> >
+			                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+			                                        </a>
+		                                        </div>
+
+		                                        <?php else: ?>
+			                                    	<div style="clear:both;"></div>
+			                                    	<div style='font-size:12px;margin-top:15px;'>No Colors to Filter</div>
+			                                    <?php endif; ?>
+	                                        </div>
+	                                    </div>
+	                                    
+	                                    <div class="filter-subdiv" id="brandfilterprice">
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Price</span>
+	                                            <span class="clearfilter clearprice" style="float:right; display:none;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearPriceFilter('<?php echo $rootCategoryId; ?>','<?php echo $minPrice; ?>','<?php echo $maxPrice; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+
+	                                        <div id="chweb_layered_price">
+	                                            <ol>
+	                                                <li style="width:100%;">
+	                                                    $<span id="price_range_from"><?php echo $minPrice; ?></span>-$<span id="price_range_to"><?php echo $maxPrice; ?></span>
+	                                                </li>
+	                                            </ol>
+	                                        </div>
+	                                        <div class="slider-div">
+	                                          <input class="slider" data-slider-max="<?php echo $maxPrice; ?>" data-slider-min="<?php echo $minPrice; ?>" data-slider-value="[<?php echo $minPrice; ?>,<?php echo $maxPrice; ?>]" type="text" />
+	                                        </div>
+	                                    </div>
+
+	                                    <div class="filter-subdiv view-devicefilter">
+	                                        <div class="chweb_layered_dt">View By</div>
+	                                        <div class="sorter">
+	                                            <div class="sort-by stylishselectbox">                
+	                                                <select class="blue-arrow" onchange="sortByProduct('<?php echo $rootCategoryId; ?>',this.value);">
+	                                                    <option selected='selected' value="bestseller">Best Selling</option>
+	                                                   	<option value="name">Name</option>
+	                                                    <option value="price">Price</option>
+	                                                </select>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>         
+	                    </div>
+	                </div> 
+	            </div>
+	        </div>
+	    	
+	        <div class="our_wrap">
+	        	<div class="fullrow">
+	                <div class="our_wrap">
+	                <div class="breadcrumbs">
+	                    <ul>
+	                        <li class="home">
+	                            <a title="<?php echo $this->__('Go to Home Page') ?>" href="<?php echo $this->getUrl() ?>"><?php echo $this->__('Home') ?></a>
+	                            <span>&nbsp&gt;&nbsp;</span>
+	                        </li>
+	                        <li class="category15">
+	                            <strong><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></strong>
+	                        </li>
+	                    </ul>
+	                </div>
+	                </div>
+	            </div>
+	            <div class="fullrow botspace">
+	            	<div class="makestatment">
+	                	<h3 class="makehd">Make a statement.<br/> Get fully charged.</h3>
+	                    <p class="maketext">The most useful overview to the  best devices. Explore our full range of mechanical mods with variable voltage or batteries.</p>
+	                </div>
+	                <div class="graybgprod"><img alt="" src="<?php echo $this->getSkinUrl('images/espec.png');?>"></div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+	    var isMobile = '<?php echo $isMobile; ?>';
+	    var s = jQuery("#sticker");
+	    var pos = s.position();                    
+	    var windowWidth = screen.width;
+
+		jQuery(document).ready(function() {			    
+			if(windowWidth < 960){
+				var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigdevicefilbox();"/>';
+	            
+	            var filterTxt = '<a class="filtertanchor" onclick="showbigdevicefilbox();">Filter By</a>'
+	            jQuery('#devicefiltertxt').html(filterTxt);
+	            
+	            jQuery('#deviceicon').html(imgsrc);
+	            jQuery("#devicefilbigboxid").slideUp('fast');
+			}
+		});
+
+	    jQuery(window).scroll(function() {
+	        var windowpos = jQuery(window).scrollTop();
+	        //s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+	        if(windowWidth > 960){
+	            if (windowpos >= pos.top) {
+	                s.addClass("stick");
+	                if(jQuery('#deviceicon')){
+	                    var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigdevicefilbox();"/>';
+	                    var filterTxt = '<a class="filtertanchor" onclick="showbigdevicefilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+	                    jQuery('#deviceicon').html(imgsrc);
+	                }
+	                jQuery("#devicefilbigboxid").slideUp('fast');
+	            } else {
+	                s.removeClass("stick");
+	                if(jQuery('#deviceicon')){
+	                    var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigdevicefilbox();"/>';
+	                    var filterTxt = '<a class="filtertanchor" onclick="hidebigdevicefilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+	                    jQuery('#deviceicon').html(imgsrc);
+	                }
+	                jQuery("#devicefilbigboxid").slideDown('fast');
+	            }    
+	        }
+	       
+	    });
+	});
+	</script>
+
+
+<?php elseif($activeCategoryUrlKey == 'dry-devices' || $activeCategoryParentId == 123): ?>
+
+	<!-- DRY DEVICES PAGE -->
+	
+	<div class="innerpage_banner device-mid-banner">
+	    
+	    <?php if($isMobile) : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('dry-devices-banner-mobile')->toHtml(); ?>
+		<?php elseif($ipad || $ipod || $palmpre): ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('dry-devices-banner-ipad')->toHtml(); ?>  	
+		<?php else : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('dry-devices-banner')->toHtml(); ?>  	
+		<?php endif; ?>
+
+	    <div class="black-tranprancy">&nbsp;</div>
+	    <div class="banshadowinner">&nbsp;</div>
+	    <div class="banner-hdpart">
+	    	<div class="our_wrap">
+	        	<h2 class="strkit-hd"><span><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></span></h2>
+	            <p class="kitname"><?php echo $_category->getDescription();?></p>
+	        </div>
+	    </div>
+	</div>
+
+	<div class="grayfullrow">
+		<div class="graybgcolor blackbg">
+	        
+	        <div id="sticker">
+	            <div class="stickermain">
+	            	
+	                <div class="hideshowrow">
+	                    <div class="divice_small_box device-ojkl" id="devicefilsmallboxid">
+	                       <!-- <span class="text-fillter">
+	                        Filter By
+	                       </span>  -->
+	                        <span id="devicefiltertxt" class="text-fillter">
+	                        	<a class="filtertanchor" onclick="hidebigdevicefilbox();">Filter By</a>
+	                       </span>
+	                       <span id="deviceicon">
+	                            <img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigdevicefilbox();"/>    
+	                       </span>              
+	                    </div>
+	                </div>
+	                <div class="our_wrap">
+
+	                    <div class="dilrelt">
+
+	                        <div class="divice_search ojkl" id="devicefilbigboxid" >
+	                            <div class="layer-nav-left">
+
+	                                <!-- Dry Devices Filter -->
+
+	                                <div class="filter-div">
+	                                    <div class="filter-subdiv fltsendwdtnodevider firstadded brandwidth">
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Brands</span>
+	                                            <span class="clearfilter clearflavor" style="float:right; display:none; margin-right:17px;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearFlavorFilter('<?php echo $catId; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+
+	                                        <?php if (count($manufacturers)): ?>
+
+	                                        <ol class="ourcheck overcheck-brands">
+		                                        <?php
+		                                            foreach($manufacturers as $optionId => $value) {
+		                                            ?>
+		                                            <li class="li-full-flavor brandlist page-<?php echo $brandPage; ?>" <?php if($brandPage != 1){ ?> style="display:none;" <?php } ?> > 
+		                                                <input onclick="filterByBrand('<?php echo $rootCategoryId; ?>');" style="float:left;" type="checkbox" class="filterbrand" name="brandname" value="<?php echo $optionId; ?>">
+		                                                <span style="float:left;"><?php echo $value; ?></span>
+		                                            </li>
+		                                            <?php
+		                                                if($itemBrandNumber % 12 == 0){
+		                                                    $brandPage++;
+		                                                }
+		                                                $itemBrandNumber++;
+		                                            }
+		                                        ?>                                   
+	                                        </ol>
+	                                        <div class="arrowmainrownxt">
+		                                        <a class="brdprevarrow" id="prev-brand" onclick="previousBrand();" style="display:none;">
+		                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+		                                        </a>
+		                                        <a class="brdnextarrow" id="next-brand" onclick="nextBrand();" <?php if($brandPage <= 1){ ?> style="display:none;" <?php } ?> >
+		                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+		                                        </a>
+	                                        </div>
+	                                        <?php else: ?>
+		                                    	<div style="clear:both;"></div>
+		                                    	<div style='font-size:12px;margin-top:15px;'>No Brands to Filter</div>
+		                                    <?php endif; ?>
+	                                    </div>
+
+	                                    <div class="filter-subdiv">                                        
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Color</span>
+	                                            <span class="clearfilter clearcolor" style="float:right; display:none;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearColorFilter('<?php echo $catId; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+
+	                                        <div id="chweb_layered_color">
+		                                    	<?php if(count($colors)): ?>
+		                                        <ol style="min-height:135px;">
+		                                        	<?php foreach ($colors as $color): ?>
+		                                        	<?php 
+		                                        	$value = $color['value'];
+		                                        	$image = $color['image'];
+		                                        	$label = $color['label'];
+		                                        	?>
+		                                    		<li class="dtcolorbox colorpage-<?php echo $colorPage; ?>" <?php if($colorPage != 1){ ?> style="display:none;" <?php } ?>>
+		                                                <div class="color" id="colorbox-<?php echo $catId; ?>-<?php echo $value; ?>">
+		                                                    <a onclick="filterByColor('<?php echo $rootCategoryId; ?>','<?php echo $value; ?>')" style="cursor:pointer;">
+		                                                        <span class="custom-checkbox" style="background:url(<?php echo $image; ?>);">
+		                                                            <input type="checkbox" id="color-<?php echo $catId; ?>-<?php echo $value; ?>" name="colors[]" class="colorchk" value="<?php echo $value; ?>">
+		                                                        </span>
+		                                                    </a>
+		                                                </div>
+		                                            </li>
+		                                        	<?php
+		                                                if($itemColorNumber % 15 == 0){
+		                                                    $colorPage++;
+		                                                }
+		                                                $itemColorNumber++;
+		                                            endforeach; ?>
+		                                        </ol>
+		                                        <div class="arrowmainrownxt">
+			                                        <a class="brdprevarrow" id="prev-color" onclick="previousColor();" style="display:none;">
+			                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+			                                        </a>
+			                                        <a class="brdnextarrow" id="next-color" onclick="nextColor();" <?php if($colorPage <= 1){ ?> style="display:none;" <?php } ?> >
+			                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+			                                        </a>
+		                                        </div>
+		                                        <?php else: ?>
+		                                        	<div style="clear:both;"></div>
+		                                        	<div style='font-size:12px;margin-top:15px;'>No Colors to Filter</div>
+		                                        <?php endif; ?>
+		                                    </div>
+	                                    </div>
+	                                    
+	                                    <div class="filter-subdiv" id="brandfilterprice">
+	                                        <div class="chweb_layered_dt">
+	                                            <span style="float:left;">Price</span>
+	                                            <span class="clearfilter clearprice" style="float:right; display:none;">
+	                                                <a title="Clear Filter" style="cursor:pointer;" onclick="clearPriceFilter('<?php echo $rootCategoryId; ?>','<?php echo $minPrice; ?>','<?php echo $maxPrice; ?>');">
+	                                                    <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                                </a>
+	                                            </span>
+	                                        </div>
+
+	                                        <div id="chweb_layered_price">
+	                                            <ol>
+	                                                <li style="width:100%;">
+	                                                    $<span id="price_range_from"><?php echo $minPrice; ?></span>-$<span id="price_range_to"><?php echo $maxPrice; ?></span>
+	                                                </li>
+	                                            </ol>
+	                                        </div>
+	                                        <div class="slider-div">
+	                                          <input class="slider" data-slider-max="<?php echo $maxPrice; ?>" data-slider-min="<?php echo $minPrice; ?>" data-slider-value="[<?php echo $minPrice; ?>,<?php echo $maxPrice; ?>]" type="text" />
+	                                        </div>
+	                                    </div>
+
+	                                    <div class="filter-subdiv view-devicefilter">
+	                                        <div class="chweb_layered_dt">View By</div>
+	                                        <div class="sorter">
+	                                            <div class="sort-by stylishselectbox">                
+	                                                <select class="blue-arrow" onchange="sortByProduct('<?php echo $rootCategoryId; ?>',this.value);">
+	                                                    <option selected='selected' value="bestseller">Best Selling</option>
+	                                                   	<option value="name">Name</option>
+	                                                    <option value="price">Price</option>
+	                                                </select>
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                    
+	                                </div>
+	                            </div>
+	                        </div>         
+	                    </div>
+	                </div> 
+	            </div>
+	        </div>
+	    	
+	        <div class="our_wrap">
+	        	<div class="fullrow">
+	                <div class="our_wrap">
+	                <div class="breadcrumbs">
+	                    <ul>
+	                        <li class="home">
+	                            <a title="<?php echo $this->__('Go to Home Page') ?>" href="<?php echo $this->getUrl() ?>"><?php echo $this->__('Home') ?></a>
+	                            <span>&nbsp&gt;&nbsp;</span>
+	                        </li>
+	                        <li class="category15">
+	                            <strong><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></strong>
+	                        </li>
+	                    </ul>
+	                </div>
+	                </div>
+	            </div>
+	            <div class="fullrow">
+	            	<div class="makestatment">
+	                	<h3 class="makehd whitehd">Make a statement.<br/> Get fully charged.</h3>
+	                    <p class="maketext whiteprg">The most useful overview to the  best devices. Explore our full range of mechanical mods with variable voltage or batteries.</p>
+	                </div>
+	                <div class="graybgprod"><img alt="" src="<?php echo $this->getSkinUrl('images/dry-product.png');?>"></div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+	    var isMobile = '<?php echo $isMobile; ?>';
+	   	var s = jQuery("#sticker");
+	    var pos = s.position();                    
+
+		var windowWidth = screen.width;
+
+		jQuery(document).ready(function() {			    
+			if(windowWidth < 960){
+				var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigdevicefilbox();"/>';
+				var filterTxt = '<a class="filtertanchor" onclick="showbigdevicefilbox();">Filter By</a>'
+	            jQuery('#devicefiltertxt').html(filterTxt);
+	            jQuery('#deviceicon').html(imgsrc);
+	            jQuery("#devicefilbigboxid").slideUp('fast');
+			}
+		});	   
+
+	    jQuery(window).scroll(function() {
+	        var windowpos = jQuery(window).scrollTop();
+	        //s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+	        if(windowWidth > 960){
+	            if (windowpos >= pos.top) {
+	                s.addClass("stick");
+	                if(jQuery('#deviceicon')){
+	                    var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigdevicefilbox();"/>';
+	                    var filterTxt = '<a class="filtertanchor" onclick="showbigdevicefilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+	                    jQuery('#deviceicon').html(imgsrc);
+	                }
+	                jQuery("#devicefilbigboxid").slideUp('fast');
+	            } else {
+	                s.removeClass("stick");
+	                if(jQuery('#deviceicon')){
+	                    var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigdevicefilbox();"/>';
+	                    var filterTxt = '<a class="filtertanchor" onclick="hidebigdevicefilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+	                    jQuery('#deviceicon').html(imgsrc);
+	                }
+	                jQuery("#devicefilbigboxid").slideDown('fast');
+	            }    
+	        }
+	    });
+	});
+	</script>
+
+
+
+
+
+<?php elseif($activeCategoryUrlKey == 'clearomizers-tanks-atomizers' || $activeCategoryParentId == 94):?>
+
+	<!-- TANKS AND COILS PAGE -->
+
+	<div class="innerpage_banner">
+		<?php if($isMobile) : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('tank-coils-banner-mobile')->toHtml(); ?>
+		<?php elseif($ipad || $ipod || $palmpre): ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('tank-coils-banner-ipad')->toHtml(); ?>  	
+		<?php else : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('tank-coils-banner')->toHtml(); ?> 
+		<?php endif; ?>
+	    
+	    <div class="black-tranprancy">&nbsp;</div>
+	    <div class="banshadowinner">&nbsp;</div>
+	    <div class="banner-hdpart">
+	        <div class="our_wrap">
+	            <h2 class="strkit-hd"><span><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></span></h2>
+	            <p class="kitname"><?php echo $_category->getDescription();?></p>
+	        </div>
+	    </div>
+	</div>
+	<div class="fullrow">
+	<div id="sticker">
+	    <div class="stickermain">
+	        <div class="hideshowrow">
+	            <div class="divice_small_box device-ojkl" id="tankfilsmallboxid">
+	               <!-- <span class="text-fillter">
+	                Filter By
+	               </span> --> 
+	               <span id="devicefiltertxt" class="text-fillter">
+	                	<a class="filtertanchor" onclick="hidebigtankfilbox();">Filter By</a>
+	               </span>
+	               <span id="tankicon">
+	                    <img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigtankfilbox();"/>
+	               </span>              
+	            </div>
+	        </div>
+
+	        <div class="our_wrap">
+	            <div class="dilrelt">
+	                <div class="divice_search ojkl" id="tankfilbigboxid">
+	                    <div class="layer-nav-left">
+
+	                        <!-- Tanks Filter -->
+
+	                        <div class="filter-div">
+	                            
+	                            <div class="filter-subdiv firstadded brandwidth">
+	                                <div class="chweb_layered_dt">
+	                                    <span style="float:left;">Brands</span>
+	                                    <span class="clearfilter clearbrand" style="float:right; display:none; margin-right:17px;">
+	                                        <a title="Clear Filter" style="cursor:pointer;" onclick="clearBrandFilter('<?php echo $catId; ?>');">
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                        </a>
+	                                    </span>
+	                                </div>
+	                                <?php if (count($manufacturers)): ?>
+	                                <ol class="ourcheck overcheck-brands">
+                                        <?php
+                                            foreach($manufacturers as $optionId => $value) {
+                                            ?>
+                                            <li class="li-full-flavor brandlist page-<?php echo $brandPage; ?>" <?php if($brandPage != 1){ ?> style="display:none;" <?php } ?> > 
+                                                <input onclick="filterByBrand('<?php echo $rootCategoryId; ?>');" style="float:left;" type="checkbox" class="filterbrand" name="brandname" value="<?php echo $optionId; ?>">
+                                                <span style="float:left;"><?php echo $value; ?></span>
+                                            </li>
+                                            <?php
+                                                if($itemBrandNumber % 12 == 0){
+                                                    $brandPage++;
+                                                }
+                                                $itemBrandNumber++;
+                                            }                                        
+                                        ?>                                   
+                                    </ol>
+                                    <div class="arrowmainrownxt">
+                                        <a class="brdprevarrow" id="prev-brand" onclick="previousBrand();" style="display:none;">
+                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+                                        </a>
+                                        <a class="brdnextarrow" id="next-brand" onclick="nextBrand();" <?php if($brandPage <= 1){ ?> style="display:none;" <?php } ?> >
+                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+                                        </a>
+                                    </div>
+
+                                    <?php else: ?>
+                                    	<div style="clear:both;"></div>
+                                    	<div style='font-size:12px;margin-top:15px;'>No Brands to Filter</div>
+                                    <?php endif; ?>
+	                            </div>
+
+	                            <div class="filter-subdiv nodevider">
+	                                <div class="chweb_layered_dt">
+	                                    <span style="float:left;">Color</span>
+	                                    <span class="clearfilter clearcolor" style="float:right; display:none;">
+	                                        <a title="Clear Filter" style="cursor:pointer;" onclick="clearColorFilter('<?php echo $catId; ?>');">
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                        </a>
+	                                    </span>
+	                                </div>
+
+                                    <div id="chweb_layered_color">
+                                    	<?php if(count($colors)): ?>
+                                        <ol style="min-height:135px;">
+                                        	<?php foreach ($colors as $color): ?>
+                                        	<?php 
+                                        	$value = $color['value'];
+                                        	$image = $color['image'];
+                                        	$label = $color['label'];
+                                        	?>
+                                    		<li class="dtcolorbox colorpage-<?php echo $colorPage; ?>" <?php if($colorPage != 1){ ?> style="display:none;" <?php } ?>>
+                                                <div class="color" id="colorbox-<?php echo $catId; ?>-<?php echo $value; ?>">
+                                                    <a onclick="filterByColor('<?php echo $rootCategoryId; ?>','<?php echo $value; ?>')" style="cursor:pointer;">
+                                                        <span class="custom-checkbox" style="background:url(<?php echo $image; ?>);">
+                                                            <input type="checkbox" id="color-<?php echo $catId; ?>-<?php echo $value; ?>" name="colors[]" class="colorchk" value="<?php echo $value; ?>">
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        	<?php
+                                                if($itemColorNumber % 15 == 0){
+                                                    $colorPage++;
+                                                }
+                                                $itemColorNumber++;
+                                            endforeach; ?>
+                                        </ol>
+                                        <div class="arrowmainrownxt">
+	                                        <a class="brdprevarrow" id="prev-color" onclick="previousColor();" style="display:none;">
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+	                                        </a>
+	                                        <a class="brdnextarrow" id="next-color" onclick="nextColor();" <?php if($colorPage <= 1){ ?> style="display:none;" <?php } ?> >
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+	                                        </a>
+                                        </div>
+                                        <?php else: ?>
+                                        	<div style="clear:both;"></div>
+                                        	<div style='font-size:12px;margin-top:15px;'>No Colors to Filter</div>
+                                        <?php endif; ?>
+                                    </div>
+	                            </div>
+
+	                            <div class="filter-subdiv" id="brandfilterprice">
+	                                <div class="chweb_layered_dt">
+	                                    <span style="float:left;">Price</span>
+	                                    <span class="clearfilter clearprice" style="float:right; display:none;">
+	                                        <a title="Clear Filter" style="cursor:pointer;" onclick="clearPriceFilter('<?php echo $rootCategoryId; ?>','<?php echo $minPrice; ?>','<?php echo $maxPrice; ?>');">
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                        </a>
+	                                    </span>
+	                                </div>
+	                                <div id="chweb_layered_price">
+	                                    <ol>
+	                                        <li style="width:100%;">
+	                                            $<span id="price_range_from"><?php echo $minPrice; ?></span>-$<span id="price_range_to"><?php echo $maxPrice; ?></span>
+	                                        </li>
+	                                    </ol>
+	                                </div>
+	                                <div class="slider-div">
+	                                  <input class="slider" data-slider-max="<?php echo $maxPrice; ?>" data-slider-min="<?php echo $minPrice; ?>" data-slider-value="[<?php echo $minPrice; ?>,<?php echo $maxPrice; ?>]" type="text" />
+	                                </div>
+	                            </div>
+
+	                            <div class="filter-subdiv" style="width:22%;">
+	                                <div class="chweb_layered_dt">View By</div>
+	                                <div class="sorter">
+	                                    <div class="sort-by stylishselectbox">                
+	                                        <select class="blue-arrow" onchange="sortByProduct('<?php echo $rootCategoryId; ?>',this.value);">
+	                                            <option selected='selected' value="bestseller">Best Selling</option>
+                                               	<option value="name">Name</option>
+                                                <option value="price">Price</option>
+	                                        </select>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div class="our_wrap">
+	    <div class="fullrow">
+	        <div class="our_wrap">
+	            <div class="breadcrumbs">
+	                <ul>
+	                    <li class="home">
+	                        <a title="<?php echo $this->__('Go to Home Page') ?>" href="<?php echo $this->getUrl() ?>"><?php echo $this->__('Home') ?></a>
+	                        <span>&nbsp&gt;&nbsp;</span>
+	                    </li>
+	                    <li class="category15">
+	                        <strong><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></strong>
+	                    </li>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	</div>
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+	    var s = jQuery("#sticker");
+	    var pos = s.position();
+
+	    var windowWidth = screen.width;
+
+		jQuery(document).ready(function() {			    
+			if(windowWidth < 960){
+				var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigtankfilbox();"/>';
+				var filterTxt = '<a class="filtertanchor" onclick="showbigtankfilbox();">Filter By</a>'
+	            jQuery('#devicefiltertxt').html(filterTxt);
+	            
+	            jQuery('#tankicon').html(imgsrc);
+	            jQuery("#tankfilbigboxid").slideUp('fast');
+			}
+		});
+
+	    jQuery(window).scroll(function() {
+	        var windowpos = jQuery(window).scrollTop();
+	        //s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+	        if(windowWidth > 960){
+	        	if (windowpos >= pos.top) {
+		            s.addClass("stick");
+		            if(jQuery('#tankicon')){
+		                var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigtankfilbox();"/>';
+		                var filterTxt = '<a class="filtertanchor" onclick="showbigtankfilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+		                jQuery('#tankicon').html(imgsrc);
+		            }
+		            jQuery("#tankfilbigboxid").slideUp('fast');            
+		        } else {
+		            s.removeClass("stick");
+
+		            if(jQuery('#tankicon')){
+		                var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigtankfilbox();"/>';
+		                var filterTxt = '<a class="filtertanchor" onclick="hidebigtankfilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+		                jQuery('#tankicon').html(imgsrc);
+		            }
+		            jQuery("#tankfilbigboxid").slideDown('fast');
+		            
+		        }	
+	        }
+	        
+	    });
+	});
+	</script>
+
+<?php elseif($activeCategoryUrlKey == 'usa-made-e-liquid' || $activeCategoryParentId == 79):?>
+
+	<!-- E LIQUID PAGE -->
+
+	<div class="innerpage_banner">
+		<?php if($isMobile) : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('eliquid-banner-mobile')->toHtml(); ?>
+		<?php elseif($ipad || $ipod || $palmpre): ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('eliquid-banner-ipad')->toHtml(); ?>  	
+		<?php else : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('eliquid-banner')->toHtml(); ?> 
+		<?php endif; ?>
+	    
+	    <div class="black-tranprancy">&nbsp;</div>
+	    <div class="banshadowinner">&nbsp;</div>
+	    <div class="banner-hdpart">
+	    	<div class="our_wrap">
+	        	<h2 class="strkit-hd"><span><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></span></h2>
+	            <p class="kitname"><?php echo $_category->getDescription();?></p>
+	        </div>
+	    </div>
+	</div>
+	<div class="fullrow">
+	    <div id="sticker">
+	        <div class="stickermain">
+	            <div class="hideshowrow">
+	                <div class="divice_small_box device-ojkl" id="eliquidfilsmallboxid">
+	                   <!-- <span class="text-fillter">
+	                    Filter By
+	                   </span> --> 
+	                   <span id="devicefiltertxt" class="text-fillter">
+		                	<a class="filtertanchor" onclick="hidebigeliquidfilbox();">Filter By</a>
+		               </span>
+	                   <span id="eliquidicon">
+	                        <img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigeliquidfilbox();"/>
+	                   </span>              
+	                </div>
+	            </div>
+	        </div>
+
+	        <div class="our_wrap">
+	            <div class="dilrelt">
+	                <div class="divice_search ojkl" id="eliquidfilbigboxid">
+	                    <div class="layer-nav-left">
+
+	                        <!-- Eliquid Filter -->
+
+	                        <div class="filter-div">
+
+	                            <div class="filter-subdiv firstadded brandwidth">
+	                                <div class="chweb_layered_dt">
+	                                    <span style="float:left;">Brands</span>
+	                                    <span class="clearfilter clearbrand" style="float:right; display:none; margin-right:17px;">
+	                                        <a title="Clear Filter" style="cursor:pointer;" onclick="clearBrandFilter('<?php echo $catId; ?>');">
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                        </a>
+	                                    </span>
+	                                </div>
+	                                <?php if (count($manufacturers)): ?>
+	                                <ol class="ourcheck overcheck-brands">
+                                        <?php
+                                            foreach($manufacturers as $optionId => $value) {
+                                            ?>
+                                            <li class="li-full-flavor brandlist page-<?php echo $brandPage; ?>" <?php if($brandPage != 1){ ?> style="display:none;" <?php } ?> > 
+                                                <input onclick="filterByBrand('<?php echo $rootCategoryId; ?>');" style="float:left;" type="checkbox" class="filterbrand" name="brandname" value="<?php echo $optionId; ?>">
+                                                <span style="float:left;"><?php echo $value; ?></span>
+                                            </li>
+                                            <?php
+                                                if($itemBrandNumber % 12 == 0){
+                                                    $brandPage++;
+                                                }
+                                                $itemBrandNumber++;
+                                            }
+                                        ?>                                   
+                                    </ol>
+                                    <div class="arrowmainrownxt">
+                                        <a class="brdprevarrow" id="prev-brand" onclick="previousBrand();" style="display:none;">
+                                            <img alt="" src="<?php echo $this->getSkinUrl('images/prev-arrow.png'); ?>" />
+                                        </a>
+                                        <a class="brdnextarrow" id="next-brand" onclick="nextBrand();" <?php if($brandPage <= 1){ ?> style="display:none;" <?php } ?> >
+                                            <img alt="" src="<?php echo $this->getSkinUrl('images/next-arrow.png'); ?>" />
+                                        </a>
+                                    </div>
+                                    <?php else: ?>
+                                    	<div style="clear:both;"></div>
+                                    	<div style='font-size:12px;margin-top:15px;'>No Brands to Filter</div>
+                                    <?php endif; ?>
+	                            </div>
+
+	                            <?php // echo $this->getChildHtml('filter.catalog'); ?>
+	                            <div class="filter-subdiv firstadded bafildwidth">
+	                                <div class="chweb_layered_dt">
+	                                    <span style="float:left;">FLAVORS</span>
+	                                    <span class="clearfilter clearcat" style="float:right; display:none; margin-right:17px;">
+	                                        <a title="Clear Filter" style="cursor:pointer;" onclick="clearCategoryFilter('<?php echo $rootCategoryId; ?>');">
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                        </a>
+	                                    </span>
+	                                </div>
+
+	                                <ol class="ourcheck">
+	                                    <li class="li-full-flavor">
+	                                        <input style="float:left;" id="allflavor" onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="79">
+	                                        <span style="float:left;">ALL</span>
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="115"> Premium
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="116"> Reduced
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="80"> Menthol
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="108"> Fruit
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="90"> Drink
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="106"> Tobacco
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="109"> Candy
+	                                    </li>
+	                                    <li class="li-half-flavor">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="112"> Food
+	                                    </li>
+	                                    <li class="li-full-flavor longwidthlast">
+	                                        <input onclick="filterByCategory();" type="checkbox" class="filtercat" name="categoryname" value="107"> Menthol Tobacco
+	                                    </li>
+	                                </ol>
+	                            </div>
+	                           
+	                            <div class="filter-subdiv fltsendwdt eltprcbox" id="brandfilterprice">
+	                                <div class="chweb_layered_dt">
+	                                    <span style="float:left;">Price</span>
+	                                    <span class="clearfilter clearprice" style="float:right; display:none;">
+	                                        <a title="Clear Filter" style="cursor:pointer;" onclick="clearPriceFilter('<?php echo $catId; ?>','<?php echo $minPrice; ?>','<?php echo $maxPrice; ?>');">
+	                                            <img alt="" src="<?php echo $this->getSkinUrl('images/delete-16.png'); ?>" />
+	                                        </a>
+	                                    </span>
+	                                </div>
+	                                <div id="chweb_layered_price">
+	                                    <ol>
+	                                        <li style="width:100%;">
+	                                            $<span id="price_range_from"><?php echo $minPrice; ?></span>-$<span id="price_range_to"><?php echo $maxPrice; ?></span>
+	                                        </li>
+	                                    </ol>
+	                                </div>
+	                                <div class="slider-div">
+	                                  <input class="slider" data-slider-max="<?php echo $maxPrice; ?>" data-slider-min="<?php echo $minPrice; ?>" data-slider-value="[<?php echo $minPrice; ?>,<?php echo $maxPrice; ?>]" type="text" />
+	                                </div>
+	                            </div>
+
+	                            <div class="filter-subdiv eltaddfilter">
+	                                <div class="chweb_layered_dt">View By</div>
+	                                <div class="sorter">
+	                                    <div class="sort-by stylishselectbox">                
+	                                        <select class="blue-arrow" onchange="sortByProduct('<?php echo $rootCategoryId; ?>',this.value);">
+	                                            <option selected='selected' value="bestseller">Best Selling</option>
+                                               	<option value="name">Name</option>
+                                                <option value="price">Price</option>
+	                                        </select>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="our_wrap">
+	        
+	        <div class="breadcrumbs">
+	            <ul>
+	                <li class="home">
+	                    <a title="<?php echo $this->__('Go to Home Page') ?>" href="<?php echo $this->getUrl() ?>"><?php echo $this->__('Home') ?></a>
+	                    <span>&nbsp&gt;&nbsp;</span>
+	                </li>
+	                <li class="category15">
+	                    <strong><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></strong>
+	                </li>
+	            </ul>
+	        </div>
+
+	    </div>
+
+	</div>
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+	    var s = jQuery("#sticker");
+	    var pos = s.position(); 
+	    var windowWidth = screen.width;
+	    /*windowWidth = 412;*/
+		jQuery(document).ready(function() {			    
+			if(windowWidth < 960){
+				var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigeliquidfilbox();"/>';
+
+				var filterTxt = '<a class="filtertanchor" onclick="showbigeliquidfilbox();">Filter By</a>'
+	            jQuery('#devicefiltertxt').html(filterTxt);
+
+	            jQuery('#eliquidicon').html(imgsrc);
+	            jQuery("#eliquidfilbigboxid").slideUp('fast');
+			}
+		});
+
+	    jQuery(window).scroll(function() {
+	        var windowpos = jQuery(window).scrollTop();
+	        //s.html("Distance from top:" + pos.top + "<br />Scroll position: " + windowpos);
+	        if(windowWidth > 960){
+	        	if (windowpos >= pos.top) {
+		            s.addClass("stick");
+		            
+		            if(jQuery('#eliquidicon')){
+		                var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigeliquidfilbox();"/>';
+		                jQuery('#eliquidicon').html(imgsrc);
+		                var filterTxt = '<a class="filtertanchor" onclick="showbigeliquidfilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+		            }
+		            jQuery("#eliquidfilbigboxid").slideUp('fast');
+
+		        } else {
+		            s.removeClass("stick");
+		            
+		            if(jQuery('#eliquidicon')){
+		                var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigeliquidfilbox();"/>';
+		                var filterTxt = '<a class="filtertanchor" onclick="hidebigeliquidfilbox();">Filter By</a>'
+	            		jQuery('#devicefiltertxt').html(filterTxt);
+		                jQuery('#eliquidicon').html(imgsrc);
+		            }
+		            jQuery("#eliquidfilbigboxid").slideDown('fast');
+		            
+		        }	
+	        }
+	    });
+	});
+	</script>
+
+<?php elseif($activeCategoryUrlKey == 'accessories-parts' || $activeCategoryParentId == 77 ):?>
+
+	<!-- ACESSARIES PAGE -->
+
+	<div class="innerpage_banner">
+		<?php if($isMobile) : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('accessories-banner-mobile')->toHtml(); ?>
+		<?php elseif($ipad || $ipod || $palmpre): ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('accessories-banner-ipad')->toHtml(); ?>  	
+		<?php else : ?>
+			<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('accessories-banner')->toHtml(); ?> 
+		<?php endif; ?>
+	    
+	    <div class="black-tranprancy">&nbsp;</div>
+	    <div class="banshadowinner">&nbsp;</div>
+	    <div class="banner-hdpart">
+	        <div class="our_wrap">
+	            <h2 class="strkit-hd"><span><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></span></h2>
+	            <p class="kitname"><?php echo $_category->getDescription();?></p>
+	        </div>
+	    </div>
+	</div>
+	<div class="fullrow">
+	    <div class="our_wrap">
+	    <div class="breadcrumbs">
+	        <ul>
+	            <li class="home">
+	                <a title="<?php echo $this->__('Go to Home Page') ?>" href="<?php echo $this->getUrl() ?>"><?php echo $this->__('Home') ?></a>
+	                <span>&nbsp&gt;&nbsp;</span>
+	            </li>
+	            <li class="category15">
+	                <strong><?php echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></strong>
+	            </li>
+	        </ul>
+	    </div>
+	    
+	    </div>
+	</div>
+
+<?php endif; ?>
+
+<div class="page-title category-title">
+    <?php if($this->IsRssCatalogEnable() && $this->IsTopCategory()): ?>
+        <a href="<?php echo $this->getRssLink() ?>" class="link-rss"><?php echo $this->__('Subscribe to RSS Feed') ?></a>
+    <?php endif; ?>
+    <h1><?php //echo $_helper->categoryAttribute($_category, $_category->getName(), 'name') ?></h1>
+</div>
+
+
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<?php if($_imgUrl): ?>
+    <?php echo $_imgHtml ?>
+<?php endif; ?>
+
+
+<?php if($_description=$this->getCurrentCategory()->getDescription()): ?>
+    <div class="category-description std">
+        <?php //echo $_helper->categoryAttribute($_category, $_description, 'description') ?>
+    </div>
+    <?php endif; ?>
+
+<?php if($this->isContentMode()): ?>
+    <?php echo $this->getCmsBlockHtml() ?>
+
+<?php elseif($this->isMixedMode()): ?>
+    <?php echo $this->getCmsBlockHtml() ?>
+    <?php echo $this->getProductListHtml() ?>
+
+<?php else: ?>
+    <?php echo $this->getProductListHtml() ?>
+<?php endif; ?>
+
+
+
+
+<?php
+$baseURL = Mage::getUrl('');
+if(Mage::app()->getStore()->isCurrentlySecure()):
+    $baseURL = Mage::getUrl('',array('_secure'=>true));
+endif;
+?>
+
+<script type="text/javascript">
+
+function showbigdevicefilbox(){
+	//alert('erw');
+    jQuery("#devicefilbigboxid").slideDown('fast');
+    if(jQuery('#deviceicon')){
+        var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigdevicefilbox();"/>';
+
+        var filterTxt = '<a class="filtertanchor" onclick="hidebigdevicefilbox();">Filter By</a>'
+	    jQuery('#devicefiltertxt').html(filterTxt);
+
+        jQuery('#deviceicon').html(imgsrc);
+    }
+    //jQuery('#devicefilsmallboxid').removeClass("smallfilbox");
+    //jQuery('#devicefilsmallboxid').hide();
+}
+
+function hidebigdevicefilbox(){    
+    jQuery("#devicefilbigboxid").slideUp('fast');
+    if(jQuery('#deviceicon')){
+        var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigdevicefilbox();"/>';
+        var filterTxt = '<a class="filtertanchor" onclick="showbigdevicefilbox();">Filter By</a>'
+	    jQuery('#devicefiltertxt').html(filterTxt);
+
+        jQuery('#deviceicon').html(imgsrc);
+    }
+}
+
+function showbigtankfilbox(){
+    jQuery("#tankfilbigboxid").slideDown('fast');
+
+    if(jQuery('#tankicon')){
+        var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigtankfilbox();"/>';
+        var filterTxt = '<a class="filtertanchor" onclick="hidebigtankfilbox();">Filter By</a>'
+	    jQuery('#devicefiltertxt').html(filterTxt);
+        jQuery('#tankicon').html(imgsrc);
+    }
+}
+
+function hidebigtankfilbox(){    
+    jQuery("#tankfilbigboxid").slideUp('fast');
+    
+    if(jQuery('#tankicon')){
+        var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigtankfilbox();"/>';
+        var filterTxt = '<a class="filtertanchor" onclick="showbigtankfilbox();">Filter By</a>'
+	    jQuery('#devicefiltertxt').html(filterTxt);
+        jQuery('#tankicon').html(imgsrc);
+    }
+    //jQuery('#tankfilsmallboxid').addClass("smallfilbox");
+    //jQuery('#tankfilsmallboxid').show();
+}
+
+function showbigeliquidfilbox(){
+
+    if(jQuery('#eliquidicon')){
+        var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/close-arrow.png');?>" onclick="hidebigeliquidfilbox();"/>';
+        var filterTxt = '<a class="filtertanchor" onclick="hidebigeliquidfilbox();">Filter By</a>'
+	    jQuery('#devicefiltertxt').html(filterTxt);
+        jQuery('#eliquidicon').html(imgsrc);
+    }
+    jQuery("#eliquidfilbigboxid").slideDown('fast');
+}
+
+function hidebigeliquidfilbox(){    
+
+    if(jQuery('#eliquidicon')){
+        var imgsrc = '<img alt="" src="<?php echo $this->getSkinUrl('images/open-arrow.png');?>" onclick="showbigeliquidfilbox();"/>';
+        var filterTxt = '<a class="filtertanchor" onclick="showbigeliquidfilbox();">Filter By</a>'
+	    jQuery('#devicefiltertxt').html(filterTxt);
+        jQuery('#eliquidicon').html(imgsrc);
+    }
+    jQuery("#eliquidfilbigboxid").slideUp('fast');
+}
+
+if(jQuery(".drawer-item")){
+    jQuery(".drawer-item").drawer({
+        slideSpeed: 200,
+        arrowIcon: "&#9660;"
+    }); 
+}
+
+</script>
+
+<?php if($activeCategoryUrlKey != 'starter-kits' && $activeCategoryParentId != 105  && $activeCategoryUrlKey != 'accessories-parts' && $activeCategoryParentId != 77): ?>
+
+	<script type="text/javascript">
+	// var mySlider = jQuery('.slider');
+	// (function() {
+	// jQuery(function() {
+	//     return mySlider.slider()
+	//     .on('slideStop', function(ev){
+	//         var val = ev.value;
+	//         var value1 = val[0];
+	//         var value2 = val[1];
+	//         jQuery('#price_range_from').html(value1);
+	//         jQuery('#price_range_to').html(value2);
+	//         filterByPrice('<?php echo $rootCategoryId; ?>',value1,value2);
+	//     });
+	//   });
+	// }).call(this);
+
+	var mySlider = new Slider('.slider', {});
+	(function(){
+	    mySlider.destroy();
+	    var minPrice = parseInt('<?php echo $minPrice; ?>');    
+	    var maxPrice = parseInt('<?php echo $maxPrice; ?>');
+	    mySlider = new Slider('.slider', {
+	        min: minPrice,
+	        max: maxPrice,
+	        range: true,
+	        value: [ minPrice, maxPrice ]
+	    });
+	    mySlider.refresh();
+	    jQuery('#price_range_from').html(minPrice);
+	    jQuery('#price_range_to').html(maxPrice);
+	    
+	    mySlider.on('slideStop', function(ev){
+	        var val = mySlider.getValue();
+	        var value1 = val[0];
+	        var value2 = val[1];
+	        jQuery('#price_range_from').html(value1);
+	        jQuery('#price_range_to').html(value2);
+	        filterByPrice('<?php echo $rootCategoryId; ?>',value1,value2);
+	    });
+	}).call(this);	
+
+	</script>
+
+<?php endif; ?>
+
+<script type="text/javascript">
+
+var filtered = false;
+var filterURLGlobal = '<?php echo $baseURL.$activeCategoryUrlPath; ?>?filter=true&';
+var filterURLCustom = '<?php echo $baseURL; ?>productfilter/index?filter=true&';
+var pageDJ = 1;
+var categoryFilter = '';
+var priceStartFilter = '';
+var priceEndFilter = '';
+var brandFilter = '';
+var colorFilter = '';
+var sortByFilter = '&sortBy=bestseller';
+var rootCategoryId = '<?php echo $rootCategoryId; ?>';
+var loadmore = true;
+var loading = false;
+
+jQuery(window).scroll(function(){	
+    if (jQuery(window).scrollTop() >= jQuery(document).height() - jQuery(window).height() - 1200){
+    	if(loadmore){
+        	if(!loading){
+        		loadMoreDJ();
+        	}
+        }
+    }
+});
+
+
+var activeCategoryUrlKey = "<?php echo $activeCategoryUrlKey?>";
+var activeCategoryParentId = "<?php echo $activeCategoryParentId?>";
+if(activeCategoryUrlKey == 'starter-kits' || activeCategoryParentId == 105){
+	sortByFilter = '&sortBy=position';
+}
+
+loadLastFilter();
+function loadLastFilter(){
+
+	pageDJ = 1;
+	loading = false;
+    var brandStr = '';
+    jQuery(".filterbrand").each(function() {
+        if(jQuery(this).is(":checked")){
+            if(brandStr == ''){
+                brandStr += jQuery(this).val();    
+            }else{
+                brandStr += '-'+jQuery(this).val();    
+            }    
+        }
+    });
+
+    var catStr = '';
+    jQuery(".filtercat").each(function() {
+        if(jQuery(this).is(":checked")){
+            if(catStr == ''){
+                catStr += jQuery(this).val();    
+            }else{
+                catStr += '-'+jQuery(this).val();    
+            }    
+        }
+    });
+    
+    if(brandStr != '' || catStr != ''){
+    	jQuery('.ajax-loader').show();
+	    if(categoryFilter == ''){
+	    	categoryFilter = '&categoryId='+rootCategoryId;
+	    }
+	    if(catStr != ''){
+	    	categoryFilter = '&categoryId='+catStr;	
+	    }
+	    if(brandStr != ''){
+	    	brandFilter = '&brands='+brandStr;	
+	    }
+	    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+	    jQuery.ajax({
+	      url: filterURL,
+	    }).done(function(data) {
+	        jQuery('#category-product-list').html(data);
+	        jQuery('.ajax-loader').hide();
+	        jQuery('.clearbrand').show();
+	        window.scrollTo(0, jQuery('#category-product-list').offset().top);
+	    });	
+    }
+}
+
+//loadPageDJ();
+function loadPageDJ(){
+	jQuery('.ajax-loader').show(); 
+	jQuery('#category-product-list').html();
+    if(categoryFilter == ''){
+    	categoryFilter = '&categoryId='+rootCategoryId;
+    }
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+    jQuery.ajax({
+      url: filterURL,
+    }).done(function(data) {
+        jQuery('#category-product-list').html(data);
+        jQuery('.ajax-loader').hide();
+    });
+}
+
+/* Load More */
+function loadMoreDJ(){
+	loading = true;
+    pageDJ++;
+    jQuery('#dj_spinner').show();
+    if(categoryFilter == ''){
+    	categoryFilter = '&categoryId='+rootCategoryId;
+    }
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;    
+    jQuery.ajax({
+      url: filterURL,
+    }).done(function(data) {
+        jQuery('#category-product-list').html(data);
+        jQuery('#dj_spinner').hide();
+        loading = false;
+    });
+}
+
+
+/* Sort By */
+
+function sortByProduct(categoryId, sortBy){
+	loading = false;
+	pageDJ = 1;
+    jQuery('.ajax-loader').show();    
+    sortByFilter = '&sortBy='+sortBy;
+    if(categoryFilter == ''){
+    	categoryFilter = '&categoryId='+categoryId;
+    }
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+    jQuery.ajax({
+      	url: filterURL,
+    }).done(function(data) {
+        jQuery('#category-product-list').html(data);
+        jQuery('.ajax-loader').hide();
+        window.scrollTo(0, jQuery('#category-product-list').offset().top);
+    });
+}
+
+
+/* Clear Filter */
+
+function clearFilter(categoryId){
+	pageDJ = 1;
+	loading = false;
+    jQuery('.ajax-loader').show();
+    if(categoryFilter == ''){
+    	categoryFilter = '&categoryId='+categoryId;
+    }
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+    //alert(filterURL);
+    jQuery.ajax({
+      url: filterURL,
+    }).done(function(data) {
+        jQuery('#category-product-list').html(data);
+        jQuery('.ajax-loader').hide();
+        window.scrollTo(0, jQuery('#category-product-list').offset().top);
+    });
+}
+
+/* Brand Filter */
+
+filterBrandId = '<?php echo $filterBrandId; ?>';
+if(filterBrandId != 0){
+	filterByBrand(74);
+}
+
+function filterByBrand(categoryId){
+	jQuery('.clearbrand').hide();
+	priceStartFilter = '';
+	priceEndFilter = '';
+
+	pageDJ = 1;
+	loading = false;
+    var brandStr = '';
+    jQuery(".filterbrand").each(function() {
+        if(jQuery(this).is(":checked")){
+            if(brandStr == ''){
+                brandStr += jQuery(this).val();    
+            }else{
+                brandStr += '-'+jQuery(this).val();    
+            }    
+        }
+    });
+    jQuery('.ajax-loader').show();
+    if(categoryFilter == ''){
+    	categoryFilter = '&categoryId='+categoryId;
+    }
+    brandFilter = '&brands='+brandStr;
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+    //alert(filterURL);
+    jQuery.ajax({
+      url: filterURL,
+    }).done(function(data) {
+    	if(brandStr != ''){
+    		jQuery('.clearbrand').show();
+    	}
+        jQuery('#category-product-list').html(data);
+        jQuery('.ajax-loader').hide();
+        
+        window.scrollTo(0, jQuery('#category-product-list').offset().top);
+
+     	//    jQuery.ajax({
+	    //   	url: '<?php echo $baseURL; ?>productfilter/index',
+	    // }).done(function(data) {
+	    //     jQuery('#brandfilterprice').html(data);
+	    // });
+
+    });
+
+}
+function clearBrandFilter(categoryId){
+	priceStartFilter = '';
+	priceEndFilter = '';
+
+	pageDJ = 1;
+	loading = false;
+	jQuery('.filterbrand').each(function() {
+        this.checked = false;
+    });
+    jQuery('.clearbrand').hide();
+    brandFilter = '';
+    clearFilter(categoryId);
+
+    // jQuery.ajax({
+    //   	url: '<?php echo $baseURL; ?>productfilter/index',
+    // }).done(function(data) {
+    //     jQuery('#brandfilterprice').html(data);
+    // });
+}
+
+
+/* Category Filter */
+
+function filterByCategory(){
+	jQuery('.clearcat').hide();
+	priceStartFilter = '';
+	priceEndFilter = '';
+
+	pageDJ = 1;
+	loading = false;
+    
+    var catStr = '';
+    jQuery(".filtercat").each(function() {
+        if(jQuery(this).is(":checked")){
+            if(catStr == ''){
+                catStr += jQuery(this).val();    
+            }else{
+                catStr += '-'+jQuery(this).val();    
+            }    
+        }
+    });
+    jQuery('.ajax-loader').show();
+    categoryFilter = '&categoryId='+catStr;
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+    //alert(filterURL);
+    jQuery.ajax({
+      url: filterURL,
+    }).done(function(data) {
+    	if(catStr != ''){
+    		jQuery('.clearcat').show();
+    	}
+        jQuery('#category-product-list').html(data);
+        jQuery('.ajax-loader').hide();
+        window.scrollTo(0, jQuery('#category-product-list').offset().top);
+
+
+     //    jQuery.ajax({
+	    //   	url: '<?php echo $baseURL; ?>productfilter/index',
+	    // }).done(function(data) {
+	    //     jQuery('#brandfilterprice').html(data);
+	    // });
+
+    });
+}
+
+function clearCategoryFilter(categoryId){
+	priceStartFilter = '';
+	priceEndFilter = '';
+
+	pageDJ = 1;
+	loading = false;
+    jQuery('.filtercat').each(function() {
+        this.checked = false;
+    });
+    jQuery('.clearcat').hide();
+    categoryFilter = '&categoryId='+categoryId;
+
+    clearFilter(categoryId);   
+
+    // jQuery.ajax({
+    //   	url: '<?php echo $baseURL; ?>productfilter/index',
+    // }).done(function(data) {
+    //     jQuery('#brandfilterprice').html(data);
+    // });
+}
+
+
+/* Price Filter */
+
+function filterByPrice(categoryId, priceStart,priceEnd){
+	pageDJ = 1;
+	loading = false;	
+    jQuery('.ajax-loader').show();    
+    priceStartFilter = '&priceStart='+priceStart;
+    priceEndFilter = '&priceEnd='+priceEnd;
+    if(categoryFilter == ''){
+    	categoryFilter = '&categoryId='+categoryId;
+    }
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+    //alert(filterURL);
+    jQuery.ajax({
+        url: filterURL,
+    }).done(function(data) {
+        jQuery('#category-product-list').html(data);
+        jQuery('.ajax-loader').hide();
+        //jQuery('.clearprice').show();
+        window.scrollTo(0, jQuery('#category-product-list').offset().top);
+    });
+}
+
+function clearPriceFilter(categoryId, minPrice, maxPrice){
+	pageDJ = 1;
+	loading = false;
+	if(minPrice == ''){
+        minPrice = '<?php echo $minPrice; ?>';
+    }
+    if(maxPrice == ''){
+        maxPrice = '<?php echo $maxPrice; ?>';
+    }
+    mySlider.slider('setValue', new Array(minPrice,maxPrice));
+    jQuery('#price_range_from').html(minPrice);
+    jQuery('#price_range_to').html(maxPrice);
+    jQuery('.clearprice').hide();
+    priceStartFilter = '';
+    priceEndFilter = '';
+    clearFilter(categoryId);
+}
+
+
+/* Color Filter */
+
+function filterByColor(categoryId, colorId){
+	jQuery('.clearcolor').hide();
+	priceStartFilter = '';
+	priceEndFilter = '';
+
+	pageDJ = 1;
+	loading = false;
+	//alert(jQuery('#colorbox-'+categoryId+'-'+colorId).hasClass('selected'));
+	//jQuery('#color-'+categoryId+'-'+colorId).is(':checked')
+    if(jQuery('#colorbox-'+categoryId+'-'+colorId).hasClass('selected')){
+        //alert("remove check");
+        jQuery('#color-'+categoryId+'-'+colorId).attr('checked', false);
+        jQuery('#color-'+categoryId+'-'+colorId).parent().removeClass("selected");
+        jQuery('#colorbox-'+categoryId+'-'+colorId).removeClass("selected");
+    }else{
+    	//alert("apply check");
+        jQuery('#color-'+categoryId+'-'+colorId).attr('checked', true);
+        jQuery('#color-'+categoryId+'-'+colorId).parent().addClass("selected");
+        jQuery('#colorbox-'+categoryId+'-'+colorId).addClass("selected");
+    }
+    var colorStr = '';
+    jQuery(".colorchk").each(function() {
+        if(jQuery(this).is(":checked")){
+            if(colorStr == ''){
+                colorStr += jQuery(this).val();
+            }else{
+                colorStr += '-'+jQuery(this).val();
+            }    
+        }
+    });
+    jQuery('.ajax-loader').show();
+    colorFilter = '&color='+colorStr;
+    if(categoryFilter == ''){
+    	categoryFilter = '&categoryId='+categoryId;
+    }
+    var filterURL = filterURLGlobal+'pageDJ='+pageDJ+categoryFilter+brandFilter+priceStartFilter+priceEndFilter+colorFilter+sortByFilter;
+
+    jQuery.ajax({
+      url: filterURL,
+    }).done(function(data) {        
+        jQuery('#category-product-list').html(data);
+        jQuery('.ajax-loader').hide();
+        if(colorStr != ''){
+        	jQuery('.clearcolor').show();	
+        }        
+        window.scrollTo(0, jQuery('#category-product-list').offset().top);
+
+
+     //    jQuery.ajax({
+	    //   	url: '<?php echo $baseURL; ?>productfilter/index',
+	    // }).done(function(data) {
+	    //     jQuery('#brandfilterprice').html(data);
+	    // });
+    });
+}
+
+function clearColorFilter(categoryId){
+	priceStartFilter = '';
+	priceEndFilter = '';
+
+	pageDJ = 1;
+	colorFilter = '';
+    jQuery('.colorchk').attr('checked', false);
+    jQuery('.colorchk').parent().removeClass("selected");
+    jQuery('.clearcolor').hide();
+    clearFilter(categoryId);
+
+    // jQuery.ajax({
+    //   	url: '<?php echo $baseURL; ?>productfilter/index',
+    // }).done(function(data) {
+    //     jQuery('#brandfilterprice').html(data);
+    // });
+}
+
+
+jQuery(document).ready(function() {
+    jQuery('#allflavor').click(function(event) {
+        if(this.checked) {
+            jQuery('.filtercat').each(function() {
+                this.checked = true;
+            });
+        }else{
+            jQuery('.filtercat').each(function() {
+                this.checked = false;
+            });
+        }
+    });
+});
+
+jQuery(document).ready(function (){
+    var checkBox = jQuery('input[name="colors[]"]');
+    var colors = jQuery('input[name="colors[]"]').val();
+    jQuery(checkBox).each(function(){
+        jQuery(this).wrap( "<span class='custom-checkbox'></span>" );
+        if(jQuery(this).is(':checked')){                                        
+            //jQuery(this).parent().addClass("selected");
+        }
+    });
+    jQuery(checkBox).click(function(){
+        //jQuery(this).parent().toggleClass("selected");
+    });
+});
+
+var totalPages = "<?php echo $brandPage; ?>";
+var brandPage = 1;
+function previousBrand(){
+    jQuery('.page-'+brandPage).hide();
+    brandPage--;
+    jQuery('.page-'+brandPage).show();
+
+    if(brandPage == 1){
+        jQuery('#prev-brand').hide();
+    }else{
+        jQuery('#prev-brand').show();
+    }
+    if(brandPage == totalPages){
+        jQuery('#next-brand').hide();
+    }else{
+        jQuery('#next-brand').show();
+    }
+}
+function nextBrand(){    
+    jQuery('.page-'+brandPage).hide();
+    brandPage++;
+    jQuery('.page-'+brandPage).show();
+
+    if(brandPage == 1){
+        jQuery('#prev-brand').hide();
+    }else{
+        jQuery('#prev-brand').show();
+    }
+    if(brandPage == totalPages){
+        jQuery('#next-brand').hide();
+    }else{
+        jQuery('#next-brand').show();
+    }
+}
+
+var totalColorPages = "<?php echo $colorPage; ?>";
+var colorPage = 1;
+function previousColor(){
+    jQuery('.colorpage-'+colorPage).hide();
+    colorPage--;
+    jQuery('.colorpage-'+colorPage).show();
+
+    if(colorPage == 1){
+        jQuery('#prev-color').hide();
+    }else{
+        jQuery('#prev-color').show();
+    }
+    if(colorPage == totalColorPages){
+        jQuery('#next-color').hide();
+    }else{
+        jQuery('#next-color').show();
+    }
+}
+function nextColor(){    
+    jQuery('.colorpage-'+colorPage).hide();
+    colorPage++;
+    jQuery('.colorpage-'+colorPage).show();
+
+    if(colorPage == 1){
+        jQuery('#prev-color').hide();
+    }else{
+        jQuery('#prev-color').show();
+    }
+    if(colorPage == totalColorPages){
+        jQuery('#next-color').hide();
+    }else{
+        jQuery('#next-color').show();
+    }
+}
+
+</script>

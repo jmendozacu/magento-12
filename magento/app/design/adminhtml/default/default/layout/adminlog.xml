@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <adminlog_adminhtml_adminlogbackend_index>
+	<reference name="content">
+	  <block type="adminlog/adminhtml_adminlogbackend" name="adminlogbackend" template="adminlog/adminlogbackend.phtml"/>
+	</reference>
+  </adminlog_adminhtml_adminlogbackend_index>
+  <adminlog_adminhtml_productlog_index>
+	<reference name="content">
+	  <block type="adminlog/adminhtml_productlog" name="productlog" />
+	</reference>
+  </adminlog_adminhtml_productlog_index>
+</layout>

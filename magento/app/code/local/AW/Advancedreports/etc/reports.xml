@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<reports>
+    <dashboard module="advancedreports" translate="title">
+        <title>Dashboard</title>
+        <action>advancedreports_admin/dashboard</action>
+        <type>dashboard</type>
+        <sort_order>0</sort_order>
+    </dashboard>
+    <salesoverview module="advancedreports" translate="title">
+        <title>Overview</title>
+        <action>advancedreports_admin/salesoverview</action>
+        <type>sales</type>
+        <sort_order>5</sort_order>
+    </salesoverview>
+    <bestsellers module="advancedreports" translate="title">
+        <title>Bestsellers</title>
+        <action>advancedreports_admin/bestsellers</action>
+        <type>sales</type>
+        <sort_order>10</sort_order>
+    </bestsellers>
+    <country module="advancedreports" translate="title">
+        <title>by Country</title>
+        <action>advancedreports_admin/country</action>
+        <type>sales</type>
+        <sort_order>45</sort_order>
+    </country>
+    <hours module="advancedreports" translate="title">
+        <title>by Hour</title>
+        <action>advancedreports_admin/hours</action>
+        <type>sales</type>
+        <sort_order>60</sort_order>
+    </hours>
+    <dayofweek module="advancedreports" translate="title">
+        <title>by Day of Week</title>
+        <action>advancedreports_admin/dayofweek</action>
+        <type>sales</type>
+        <sort_order>55</sort_order>
+    </dayofweek>
+    <product module="advancedreports" translate="title">
+        <title>by Product</title>
+        <action>advancedreports_admin/product</action>
+        <type>sales</type>
+        <sort_order>15</sort_order>
+    </product>
+    <users module="advancedreports" translate="title">
+        <title>Users Activity Report</title>
+        <action>advancedreports_admin/users</action>
+        <type>customer</type>
+        <sort_order>0</sort_order>
+    </users>
+    <salesdetailed module="advancedreports" translate="title">
+        <title>Detailed</title>
+        <action>advancedreports_admin/salesdetailed</action>
+        <type>sales</type>
+        <sort_order>20</sort_order>
+    </salesdetailed>
+    <usergroups module="advancedreports" translate="title">
+        <title>by Customer Group</title>
+        <action>advancedreports_admin/usergroups</action>
+        <type>sales</type>
+        <sort_order>50</sort_order>
+    </usergroups>
+    <purchased module="advancedreports" translate="title">
+        <title>Products by Customer</title>
+        <action>advancedreports_admin/purchased</action>
+        <type>customer</type>
+        <sort_order>5</sort_order>
+    </purchased>
+    <stockvssold module="advancedreports" translate="title">
+        <title>Stock vs. Sold</title>
+        <action>advancedreports_admin/stockvssold</action>
+        <type>sales</type>
+        <sort_order>30</sort_order>
+    </stockvssold>
+    <abandoned module="advancedreports" translate="title">
+        <title>Abandoned Carts</title>
+        <action>advancedreports_admin/abandoned</action>
+        <type>sales</type>
+        <sort_order>25</sort_order>
+    </abandoned>
+</reports>

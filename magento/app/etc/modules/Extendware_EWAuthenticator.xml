@@ -1,0 +1,15 @@
+<config>
+   <modules>
+      <Extendware_EWAuthenticator>
+         <active>true</active>
+         <codePool>local</codePool>
+         <depends>
+            <Extendware_EWCore/>
+         </depends>
+         <extendware>
+            <name>Authenticator</name>
+            <enabled>1</enabled>
+         </extendware>
+      </Extendware_EWAuthenticator>
+   </modules>
+</config>

@@ -1,0 +1,69 @@
+#header-account{position:relative;}
+.youama-window-outside{position:relative;}
+.youama-window-outside .close{cursor:pointer;text-align:center;width:40px;float:right;display:none;color:#636363;text-decoration:none;font-weight:normal;font-size:30px;position:absolute;top:-13px;right:-10px;}
+.youama-window-inside{padding:14px 0 0 0;}
+@media only screen and (min-width:771px){#header-account{width:221px !important;}
+.youama-register-window,
+.youama-login-window{display:none;width:198px;z-index:9998;padding:0 0 0 22px;}
+.youama-window-outside{margin:0;width:100%;}
+.youama-window-box .input-fly input[type="text"],
+.youama-window-box .input-fly input[type="password"]{width:306px;}
+.youama-forgot-password a{text-align:right !important;}
+.yoauam-switch-window{text-align:center;padding:5px;display:inline;}
+}
+@media only screen and (max-width:771px){.youama-register-window,
+.youama-login-window{width:400px;padding:10px 30px;}
+.youama-forgot-password a{text-align:right !important;}
+.yoauam-switch-window{text-align:center;padding:5px;display:inline;}
+}
+@media only screen and (max-width:670px){.youama-register-window,
+.youama-login-window{width:400px;padding:10px 30px;}
+.yoauam-switch-window{text-align:center;display:block;padding:0;}
+.youama-forgot-password a{text-align:center !important;}
+}
+@media only screen and (max-width:480px){.youama-register-window,
+.youama-login-window{width:auto;padding:15px;}
+.yoauam-switch-window{text-align:center;display:block;padding:0;}
+.youama-window-box .input-fly input[type="text"],
+.youama-window-box .input-fly input[type="password"]{width:100%;}
+}
+.youama-ajaxlogin-loader{display:none;position:absolute;top:50%;left:50%;margin-left:-20px;margin-top:-15px;height:31px;width:40px;z-index:9999;background:url('../../../images/youama/ajaxlogin/loader.gif') no-repeat center center;}
+.youama-window-title h3{display:inline;margin:0;color:#333333;font-family:'roboto_condensedbold';font-size:16px;}
+.yoauam-switch-window{cursor:pointer;color:#3399cc;line-height:33px;}
+.youama-window-box{margin-top:0;}
+.youama-window-subtitle p{margin:20px 0 12px 0;width:100%;font-size:12px;font-weight:bold;color:#333333;font-family:Arial, Helvetica, sans-serif;}
+.youama-window-box .input-fly{padding:5px 0 10px 0;width:100%}
+.youama-window-box .input-fly label{font-size:14px;line-height:26px;}
+.youama-window-box .input-fly input[type="text"],
+.youama-window-box .input-fly input[type="password"]{padding:3px 8px;height:30px;line-height:30px;border:0;border-radius:5px;font-family:'robotoregular';font-size:12px;color:#999999;}
+.youama-ajaxlogin-error{color:#eb340a;}
+.err-licence{}
+.err-newsletter{}
+.youama-window-box label a{display:inline !important;padding:0 !important;}
+.youama-window-box .input-fly-checkbox input{margin:7px 7px 0 0;}
+.youama-window-box .input-fly-checkbox label{font-size:12px;width:auto;}
+.youama-window-box .input-fly .youama-ajaxlogin-error{padding:13px 0 0 0;line-height:100%;}
+.youama-window-box .input-fly-checkbox .youama-ajaxlogin-error{text-align:left;}
+.youama-window-box .box-contents{}
+.youama-window-box .box-contents-button{width:100%;margin-top:0;}
+.youama-window-box .box-contents-button button{}
+.youama-window-box .youama-forgot-password{margin-top:10px;}
+#header-account a.passhelp{color:#333333;font-size:12px;font-family:Arial, Helvetica, sans-serif;float:left;width:100%;text-transform:capitalize;font-weight:bold;text-align:left !important;outline:none;padding:0;}
+#header-account a.passhelp:hover{color:#25358a;text-decoration:underline;}
+.youama-window-box .box-contents-button button.youama-ajaxlogin-button{background:#4657a3;float:left;color:#ffffff;font-family:'oswaldmedium';font-size:13px;width:124px;height:38px;border-radius:5px;text-align:center !important;line-height:44px;padding:0;margin:5px 0 0 0;}
+.youama-window-box .box-contents-button button.youama-ajaxlogin-button:hover{background:#3967ed;}
+.login-sec{float:left;width:100%;border-bottom:1px solid #c7c7c7;padding:0 0 27px 0;}
+.regst-sec{float:left;width:100%;border-top:1px solid #eeeeee;padding:16px 0 16px 0;}
+.creatacn{display:inline;margin:0;color:#333333;font-family:'roboto_condensedbold';font-size:16px;width:100%;float:left;padding:0 0 4px 0;}
+.joinbtn{background:#363636;float:left;color:#ffffff;font-family:'oswaldmedium';font-size:13px;width:124px;height:38px;border-radius:5px;text-align:center !important;line-height:44px;padding:0;}
+.joinbtn:hover{background:#999999;}
+.checkbxum{float:left;}
+.agreetxt{float:left;padding-top:2px;}
+.chewidth{width:88% !important;float:right;line-height:100% !important;margin:5px 0 0 0;}
+.chewidth a{line-height:150% !important;}
+button.rgtbtn{background:#4657a3;float:left;color:#ffffff;font-family:'oswaldmedium';font-size:13px;width:124px;height:38px;border-radius:5px;text-align:center !important;line-height:44px;padding:0;margin:5px 0 15px 0;}
+button.rgtbtn:hover{background:#3967ed;}
+.loginrgtbtn{float:left;width:100%;padding:10px 0 16px 0;}
+.addrgtbtn{float:left;width:100%;border-bottom:1px solid #c7c7c7;}
+.addlogbtn{float:left;width:100%;border-top:1px solid #eeeeee;padding:15px 0 0 0;}
+.topspacelst{padding:10px 0 0 0;}

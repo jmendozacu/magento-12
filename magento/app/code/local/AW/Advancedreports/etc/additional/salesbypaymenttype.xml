@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<additional>
+    <salesbypaymenttype>
+        <title>Sales by Payment Type</title>
+        <sort_order>30</sort_order>
+        <required_version>2.6.0</required_version>
+        <active>true</active>
+    </salesbypaymenttype>
+</additional>
+ 

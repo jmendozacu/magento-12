@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--step 1: registering the module-->
+<config>
+    <modules>
+        <DJ_ContactCaptcha>
+            <active>true</active>
+            <codePool>local</codePool>
+        </DJ_ContactCaptcha>
+    </modules>
+</config>

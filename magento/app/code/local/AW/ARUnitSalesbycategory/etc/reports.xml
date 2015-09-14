@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <salesbycategory>
+        <title>by Category</title>
+        <action>advancedreports_admin/additional_report/index/name/salesbycategory</action>
+        <type>sales</type>
+        <sort_order>35</sort_order>
+    </salesbycategory>
+</reports>

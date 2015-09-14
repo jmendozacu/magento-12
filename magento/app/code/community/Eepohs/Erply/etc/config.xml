@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * NB! This is a BETA release of Erply Connector.
+ *
+ * Use with caution and at your own risk.
+ *
+ * The author does not take any responsibility for any loss or damage to business
+ * or customers or anything at all. These terms may change without further notice.
+ *
+ * License terms are subject to change. License is all-restrictive until
+ * said otherwise.
+ *
+ * @author Eepohs Ltd
+ */
+-->
+<config>
+    <modules>
+        <Eepohs_Erply>
+            <version>2.0.2</version>
+        </Eepohs_Erply>
+    </modules>
+    <global>
+        <models>
+            <Erply>
+                <class>Eepohs_Erply_Model</class>
+                <resourceModel>Erply_mysql4</resourceModel>
+            </Erply>
+            <Erply_mysql4>
+                <class>Eepohs_Erply_Model_Mysql4</class>
+                <entities>
+                    <queue>
+                        <table>erply_queue</table>
+                    </queue>
+                </entities>
+            </Erply_mysql4>
+        </models>
+        <resources>
+            <eepohs_erply_setup>
+                <setup>
+                    <module>Eepohs_Erply</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </eepohs_erply_setup>
+            <Erply_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </Erply_write>
+            <Erply_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </Erply_read>
+        </resources>
+        <blocks>
+            <Erply>
+                <class>Eepohs_Erply_Block</class>
+            </Erply>
+        </blocks>
+        <helpers>
+            <Erply>
+                <class>Eepohs_Erply_Helper</class>
+            </Erply>
+        </helpers>
+        <events>
+            <sales_order_invoice_pay>
+                <observers>
+                    <Erply_sendOrder>
+                        <type>singleton</type>
+                        <class>Erply/observer</class>
+                        <method>sendOrder</method>
+                    </Erply_sendOrder>
+                </observers>
+            </sales_order_invoice_pay>
+        </events>
+    </global>
+    <admin>
+        <routers>
+            <Erply>
+                <use>admin</use>
+                <args>
+                    <module>Eepohs_Erply</module>
+                    <frontName>eepohs_erply</frontName>
+                    <modules>
+                        <test after="Eepohs_Erply">Mage_Adminhtml</test>
+                    </modules>
+                </args>
+            </Erply>
+        </routers>
+    </admin>
+    <adminhtml>
+        <menu>
+            <system>
+                <children>
+                    <eepohs_erply>
+                        <title>Erply</title>
+                        <action>Erply/Erply</action>
+                        <sort_order>10</sort_order>
+                    </eepohs_erply>
+                </children>
+            </system>
+        </menu>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <eepohs_erply>
+                                            <title>Erply Configuration Section</title>
+                                        </eepohs_erply>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+    <crontab>
+        <jobs>
+            <erply_check_order_status>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>Erply/cron::checkPendingOrders</model>
+                </run>
+            </erply_check_order_status>
+            <erply_import_products>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>Erply/cron::productUpdate</model>
+                </run>
+            </erply_import_products>
+            <erply_import_customers>
+                <schedule>
+                    <cron_expr>0 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>Erply/cron::customerUpdate</model>
+                </run>
+            </erply_import_customers>
+        </jobs>
+    </crontab>
+    <default>
+        <eepohs_erply>
+            <general>
+                <log_enabled>1</log_enabled>
+            </general>
+        </eepohs_erply>
+    </default>
+</config>

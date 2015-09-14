@@ -1,0 +1,332 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/**
+ * @var Mage_Page_Block_Html_Header $this
+ */
+?>
+
+<?php 
+    $session = Mage::getSingleton('customer/session', array('name'=>'frontend'));
+    
+    // Checking for Mobile Device
+    $isMobile = false;
+    if(isset($_SERVER['HTTP_USER_AGENT'])){
+        $iphone = strpos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+        $android = strpos($_SERVER['HTTP_USER_AGENT'],"Android");
+        $palmpre = strpos($_SERVER['HTTP_USER_AGENT'],"webOS");
+        $berry = strpos($_SERVER['HTTP_USER_AGENT'],"BlackBerry");
+        $ipod = strpos($_SERVER['HTTP_USER_AGENT'],"iPod");
+        $ipad = strpos($_SERVER['HTTP_USER_AGENT'],"iPad");
+        if($iphone || $android || $palmpre || $ipod || $berry || $ipad  == true){ 
+            $isMobile = true;
+        }    
+    }
+    
+
+    //$isMobile = true;
+?>
+<header id="header" class="page-header">
+<div class="main_wrapper">
+    <div class="page-header-container">
+        <div class="headtoprow">
+            <a class="logo" href="<?php echo $this->getUrl('') ?>" title="The Vape Store">
+                <img src="<?php echo $this->getLogoSrc() ?>" alt="<?php echo $this->getLogoAlt() ?>" class="large" />
+            </a>
+            <div class="searchpart">
+                <p class="freeshipping"><a style="color:#a1cae9;" href="<?php echo $this->getUrl('shipping-policy/'); ?>" >Free Shipping on orders over $75 </a></p>
+                    <!-- Search -->
+            
+                <div class="deskhedsearch"><div id="header-search-one" class="">
+                        <?php echo $this->getChildHtml('topSearch') ?>
+                </div>
+            </div>
+
+            </div>
+            <div class="acncart">
+                <p class="callno">Call: 239 772-VAPE (8273)</p>
+                <div class="skip-links">
+                    
+                    <div class="rep_mymenu">
+                    	<a href="#header-nav" onclick="return show_repmenu();" class="skip-link skip-nav"  id="header-nav-link-mobile">
+	                        <span class="icon"></span>
+	                        <span class="label"><?php echo $this->__('Menu'); ?></span>
+                    	</a>
+                    </div>
+
+                    <div class="rep_mysearch">
+                    	<a href="#" onclick="return show_repsearch();" class="skip-link skip-search" id="header-search-link-mobile">
+	                        <span class="icon"></span>
+	                        <span class="label"><?php echo $this->__('Search'); ?></span>
+                    	</a>
+                    </div>
+
+                    
+                    <?php if($isMobile) : ?>
+                    	<div class="acnmandesk">
+                            <div class="repacnmain">
+                                <a href="#" title="<?php echo $this->__('JOIN') ?>" onclick="return show_mobile_ajaxlogin();" id="myaccountdj_mobile" class="skip-link skip-account">                
+                                    <span class="icon"></span>
+                                    <span class="label"><?php echo $this->__('Account'); ?></span>
+                                </a>
+                            </div>
+                            <div id="header-account" <?php if($isMobile) { ?> onmouseout="return remove_hover_effect();" <?php } ?> class="skip-content">
+                                <?php echo $this->getChildHtml('topLinks') ?>
+                            </div>
+                          </div>
+                        <script type="text/javascript">
+                            
+                            function show_mobile_ajaxlogin(){
+                                //Hide Cart window
+                                jQuery('#header-nav-link-mobile').removeClass('skip-active');
+                                jQuery('#header-nav').hide();  
+                                jQuery('#header-nav').removeClass('skip-active');
+
+                                jQuery('#header-cart').removeClass('skip-active');
+                                jQuery('#cart-header_mobile').removeClass('skip-active');
+                                jQuery('#header-cart').hide();  
+
+                                jQuery('#header-search-link-mobile').removeClass('skip-active');
+                                jQuery('#header-search').hide();  
+                                jQuery('#header-search').removeClass('skip-active');
+
+                                //Show Account Window
+                                jQuery('#myaccountdj_mobile').toggleClass('skip-active');
+                                if(jQuery('#myaccountdj_mobile').hasClass('skip-active')){
+                                    jQuery('.youama-login-window').fadeIn();
+                                    jQuery('#header-account').slideDown('slow');  
+                                    jQuery('#header-account').addClass('skip-active');
+                                    
+                                }
+                                else{
+                                    jQuery('#header-account').slideUp('slow');      
+                                }
+                                return false;
+
+                            }
+                        </script>    
+                    <?php else : ?>
+                        <div class="acnmandesk">
+                            <div class="repacnmain">
+                                <a onmouseout="show_active_class();" onmouseover="return show_cart_div_account();" href="<?php if($session->isLoggedIn()){?><?php echo $this->getUrl('customer/account/')?><?php } else { ?><?php echo $this->getUrl('customer/account/login/')?><?php }?>" title="<?php echo $this->__('JOIN') ?>" id="myaccountdj" class="skip-link skip-account">                
+                                    <span class="icon" id="account-icon"></span>
+                                    <span class="label" id="account-lable" ><?php echo $this->__('Account'); ?></span>
+                                </a>
+                            </div>
+                            <div id="main-div-account" style="display:none;">
+                                <div id="header-account" <?php if($isMobile) { ?> onmouseout="return remove_hover_effect();" <?php } ?> class="skip-content">
+                                    <?php echo $this->getChildHtml('topLinks') ?>
+                                </div>
+                            </div>
+                        </div>    
+                        <script type="text/javascript">
+                            function show_cart_div_account(){
+                                /*$j('#account-icon').show();
+                                $j('#account-icon').css('background-position','4px -34px');*/
+                                
+                                $j('#account-lable').css('color','#99ccff');
+                                $j('#cart-header').removeClass('skip-active');
+                                $j('#cart-header').removeClass('skip-active-cart');
+                                /*$j('#myaccountdj').removeClass('account-hover');*/
+                                $j('#main-cart').hide();
+                                timeout = setTimeout(function(){ display_delay_div_account(); }, 500);
+                            }
+                            function display_delay_div_account(){
+                                var isHover = $j('#myaccountdj').is(":hover");
+                                if(isHover){
+                                    
+                                    $j('#myaccountdj').addClass('skip-active');
+                                    $j('#myaccountdj').addClass('account-hover');
+                                    
+                                    $j('#main-div-account').show();        
+                                }
+                                
+                            }
+                            $j('#header-account').on('mouseleave',function(){
+                                $j('#myaccountdj').removeClass('skip-active');
+                                $j('#myaccountdj').removeClass('account-hover');
+                                $j('#main-div-account').hide();
+                            });
+                            
+                            /*function hide_account_div(){
+                                $j('#myaccountdj').removeClass('skip-active');
+                                $j('#myaccountdj').removeClass('account-hover');
+                                $j('#main-div-account').hide();
+                            }*/
+                            function show_active_class(){   
+                                return false;
+                                /*$j('#myaccountdj').addClass('skip-active');*/
+                                /*$j('#myaccountdj').addClass('account-hover');*/
+                            }   
+                        </script>
+                    <?php endif ?>
+                    <script>
+                    	function show_repsearch(){
+                                jQuery('#header-account').removeClass('skip-active');
+                                jQuery('#myaccountdj_mobile').removeClass('skip-active');
+                                jQuery('#header-account').hide();      
+                                jQuery('.youama-login-window').hide();
+
+                                jQuery('#header-nav-link-mobile').removeClass('skip-active');
+                                jQuery('#header-nav').hide();  
+                                jQuery('#header-nav').removeClass('skip-active');
+
+                                jQuery('#header-cart').removeClass('skip-active');
+                                jQuery('#cart-header_mobile').removeClass('skip-active');
+                                jQuery('#header-cart').hide();  
+
+                                jQuery('#header-search-link-mobile').toggleClass('skip-active');
+                                if(jQuery('#header-search-link-mobile').hasClass('skip-active')){
+                                    jQuery('#header-search').slideDown();  
+                                    jQuery('#header-search').addClass('skip-active');
+                                    
+                                }
+                                else{
+                                    jQuery('#header-search').slideUp(500);      
+                                }
+                                return false;
+                            }
+
+                            function show_repmenu(){
+                                jQuery('#header-account').removeClass('skip-active');
+                                jQuery('#myaccountdj_mobile').removeClass('skip-active');
+                                jQuery('#header-account').hide();      
+                                jQuery('.youama-login-window').hide();
+
+                                jQuery('#header-cart').removeClass('skip-active');
+                                jQuery('#cart-header_mobile').removeClass('skip-active');
+                               	jQuery('#header-cart').hide();  
+
+                                jQuery('#header-search-link-mobile').removeClass('skip-active');
+                                jQuery('#header-search').hide();  
+                                jQuery('#header-search').removeClass('skip-active');
+
+                                jQuery('#header-nav-link-mobile').toggleClass('skip-active');
+                                if(jQuery('#header-nav-link-mobile').hasClass('skip-active')){
+
+                                    jQuery('#header-nav').slideDown('slow');
+                                	jQuery('#header-nav').addClass('skip-active');	
+                                    
+                                }
+                                else{
+                                    jQuery('#header-nav').slideUp('slow',function(){
+                                    	jQuery('#header-nav').removeClass('skip-active');		
+                                    });
+                                	
+                                    
+                                }
+                                return false;
+                            }
+                    </script>
+
+                    <!-- Cart -->
+
+                    <div class="header-minicart">
+                        <?php echo $this->getChildHtml('minicart_head'); ?>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="navigation_row">
+            <!-- Navigation -->
+            <div id="header-nav"  class="skip-content-nav">
+                <?php echo $this->getChildHtml('topMenu') ?>
+            </div>
+        </div>
+        
+         <!-- Account -->
+        <script type="text/javascript">
+        function remove_hover_effect(){
+            if($j('#myaccountdj_mobile').hasClass('skip-active')){
+                $j('.youama-login-window').show();
+                $j('#header-account').show();  
+                $j('#header-account').addClass('skip-active');
+                
+            }
+        }
+        </script>
+        
+
+        <div id="header-account-mobile" class="skip-content">
+            <?php echo $this->getChildHtml('topLinks') ?>
+        </div>
+        
+        <?php if($isMobile) : ?>
+            <div class="rsphedsearch"><div id="header-search" class="skip-content-search">
+                <?php echo $this->getChildHtml('topSearch') ?>
+            </div></div>
+        <?php endif; ?>
+
+        
+        <script>
+        jQuery('#myaccountdj').hover(function(){
+             jQuery('#header-cart').hide();
+             jQuery('#cart-header').removeClass('skip-active');            
+            // jQuery('#header-account' ).slideDown( 500, function() {});
+        });
+        // jQuery('#header-account').mouseleave(function() {
+        //     jQuery('#header-account').hide();
+        // });
+        // jQuery('#header-cart').hover(function(){
+        //     jQuery('#header-account').hide();
+        // });
+        // jQuery('#cart-header .icon').hover(function(){
+        //     jQuery('#header-account').hide();
+        // });        
+        // jQuery('.carthedrep').hover(function(){
+        //     jQuery('#header-account').hide();
+        // });
+        </script>
+
+
+        <?php // In order for the language switcher to display next to logo on smaller viewports, it will be moved here.
+              // See app.js for details ?>
+        <!-- <div class="store-language-container"></div> -->
+
+        <!-- Skip Links -->
+
+        
+
+       
+        <!-- Cart -->
+
+        <!-- <div id="header-cart" class="skip-content">
+            <div class="mini-cart">
+                <div class="menu-wrapper">
+                    <div class="menu cart-menu">
+                        <div class="empty">Your cart is empty.</div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    </div>
+
+</header>
+<div style="clear:both;"></div>
+
+<?php echo $this->getChildHtml('topContainer'); ?>

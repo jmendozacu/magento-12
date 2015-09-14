@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <salesbyzipcode>
+        <title>by ZIP Code</title>
+        <action>advancedreports_admin/additional_report/index/name/salesbyzipcode</action>
+        <type>sales</type>
+        <sort_order>80</sort_order>
+    </salesbyzipcode>
+</reports>

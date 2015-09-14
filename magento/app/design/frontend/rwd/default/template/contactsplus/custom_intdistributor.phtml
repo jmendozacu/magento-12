@@ -1,0 +1,199 @@
+
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<!-- <div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>   -->
+
+<form action="<?php echo Mage::getUrl('contactsplus/index/postdistributor'); ?>" id="contactForm" method="post">
+    <div class="fieldset">
+        <ul class="form-list">
+          <li>
+                <label for="company" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Tax ID') ?></label>
+                <div class="input-box">
+                    <input name="tax_id" id="tax_id" title="<?php echo Mage::helper('contacts')->__('Tax ID') ?>" value="" class="input-text  required-entry" type="text" />
+                </div>
+            </li>
+          <li>
+                <label for="company" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Legal Business Name') ?></label>
+                <div class="input-box">
+                    <input name="company" id="company" title="<?php echo Mage::helper('contacts')->__('Legal Business Name') ?>" value="" class="input-text  required-entry" type="text" />
+                </div>
+            </li>
+            <li>
+                <label for="telephone" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Telephone') ?></label>
+                <div class="input-box">
+                    <input name="telephone" id="telephone" title="<?php echo Mage::helper('contacts')->__('Telephone') ?>" value="" class="input-text  required-entry" type="text" />
+                </div>
+            </li>    
+
+                
+                
+                    <label for="email" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Email') ?></label>
+                    <div class="input-box">
+                        <input name="email" id="email" title="<?php echo Mage::helper('contacts')->__('Email') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserEmail()) ?>" class="input-text required-entry validate-email" type="text" />
+                    </div>
+                
+            </li>
+            
+            <li>
+                <label for="address"><?php echo Mage::helper('contacts')->__('Address') ?></label>
+                <div class="input-box">
+                    <input name="address" id="address" title="<?php echo Mage::helper('contacts')->__('Address') ?>" value="" class="input-text" type="text" />
+                </div>
+            </li>
+            
+            <li class="fields">
+                <div class="field">
+                    <label for="city" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('City') ?></label>
+                    <div class="input-box">
+                        <input name="city" id="city" title="<?php echo Mage::helper('contacts')->__('City') ?>"  class="input-text required-entry" type="text" />
+                    </div>
+                </div>
+                  <div class="field">
+                    <label for="state" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('State') ?></label>
+                    <div class="input-box">
+                        <input name="state" id="state" title="<?php echo Mage::helper('contacts')->__('State') ?>" class="input-text required-entry" type="text" />
+                    </div>
+                </div>
+            </li>
+            
+            
+        <!--      <li class="fields">
+                <div class="field">
+                    <label for="city" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Zip') ?></label>
+                    <div class="input-box">
+                        <input name="zip" id="zip" title="<?php echo Mage::helper('contacts')->__('Zip') ?>"  class="input-text" type="text" />
+                    </div>
+                </div>
+                  <div class="field">
+                    <label for="country" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Country') ?></label>
+                    <div class="input-box">
+                        <input name="country" id="country" title="<?php echo Mage::helper('contacts')->__('Country') ?>" class="input-text required-entry" type="text" />
+                    </div>
+                </div>
+            </li>
+            -->
+            
+                        <li class="fields">
+                <div class="field">
+                    <label for="first_name" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Owner/President First Name') ?></label>
+                    <div class="input-box">
+                        <input name="first_name" id="first_name" title="<?php echo Mage::helper('contacts')->__('Owner/President First Name') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserName()) ?>" class="input-text required-entry" type="text" />
+                    </div>
+                </div>
+                  <div class="field">
+                    <label for="last_name" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Last Name') ?></label>
+                    <div class="input-box">
+                        <input name="last_name" id="last_name" title="<?php echo Mage::helper('contacts')->__('Last Name') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserName()) ?>" class="input-text required-entry" type="text" />
+                    </div>
+                </div>
+            </li>
+              <li>
+                <label for="address"><?php echo Mage::helper('contacts')->__('Website') ?></label>
+                <div class="input-box">
+                    <input name="website" id="website" title="<?php echo Mage::helper('contacts')->__('Website') ?>" value="" class="input-text" type="text" />
+                </div>
+            </li>
+             <li class="wide">
+                <label for="comment" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Geographical Coverage:(list individual branches if applicable):') ?></label>
+                <div class="input-box">
+                    <textarea name="geo_coverage" id="geo_coverage" title="<?php echo Mage::helper('contacts')->__('Geographical Coverage') ?>" class="required-entry input-text" cols="5" rows="3"></textarea>
+                </div>
+            </li>
+               <li class="wide">
+                <label for="comment" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Business Focus:') ?></label>
+                
+            </li>
+      
+       
+              <li class="wide">
+                <label for="comment" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('What type of business are you?') ?></label>
+                <div class="input-box">
+                <input type="radio" name="type_of_business" class="validate-one-required-by-name" value="Smoke Shop"> Smoke Shop<br>
+                <input type="radio" name="type_of_business" class="validate-one-required-by-name" value="Convenience Store, Grocery Store, Club Store, Drug Store"> Convenience Store, Grocery Store, Club Store, Drug Store<br>
+                <input type="radio" name="type_of_business" class="validate-one-required-by-name" value="Bar/nightclub/restaurant"> Bar/nightclub/restaurant<br>
+                   <input type="radio" name="type_of_business" class="validate-one-required-by-name" value="Wholesaler"> Wholesaler<br>
+
+                </div>
+            </li> 
+               <li class="wide" id='whatdoyouselll' style="display:none;">
+                <label for="wholesale_product_sell" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('What products do you sell?') ?></label>
+                                 
+
+                <div class="input-box">
+	                   <input name="wholesale_product_sell" id="wholesale_product_sell" title="<?php echo Mage::helper('contacts')->__('What products do you sell?') ?>" class="input-text" type="text" />
+                </div>
+            </li>
+              <li class="wide">
+                <label for="comment" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('Do you currently sell electronic cigarettes? What Brands?') ?></label>
+
+                <div class="input-box">
+                       <input name="products_you_sell" id="products_you_sell" title="<?php echo Mage::helper('contacts')->__('Do you currently sell electronic cigarettes? What Brands?') ?>" class="input-text required-entry" type="text" />
+                </div>
+            </li>
+            
+           
+              <li class="wide">
+                <label for="comment" class="required"><em>*</em><?php echo Mage::helper('contacts')->__('What made you contact Vaporin?') ?></label>
+                <div class="input-box">
+                    <textarea name="how_to_hear" id="how_to_hear" title="<?php echo Mage::helper('contacts')->__('What made you contact Vaporin?') ?>" class="required-entry input-text" cols="5" rows="3"></textarea>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="buttons-set">
+        <p class="required"><?php echo Mage::helper('contacts')->__('* Required Fields') ?></p>
+        <input type="text" name="hideit" id="hideit" value="" style="display:none !important;" />
+        <button type="submit" title="<?php echo Mage::helper('contacts')->__('Submit') ?>" class="button"><span><span><?php echo Mage::helper('contacts')->__('Submit') ?></span></span></button>
+    </div>
+</form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+jQuery.noConflict();
+    var contactForm = new VarienForm('contactForm', true);
+	
+	jQuery(document).ready(function(){
+    // This is called caching, which is a good practice to get
+    // get into, as unless you need to requery due to dynamic
+    // changes, selecting them only once and reusing will give
+    // you better performance.
+    var $lcmoptions = jQuery('input:radio[name=type_of_business]');
+
+
+    $lcmoptions.change(function(){
+        // Note I this.value.toLowerCase() the comparison value
+        if (this.value.toLowerCase() === 'wholesaler') {
+            jQuery('#whatdoyouselll').show();
+        } else {
+            jQuery('#whatdoyouselll').hide();
+        }
+    });
+});
+//]]>
+</script>

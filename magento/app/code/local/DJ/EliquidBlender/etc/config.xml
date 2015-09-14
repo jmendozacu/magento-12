@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <DJ_EliquidBlender>
+      <version>0.1.0</version>
+    </DJ_EliquidBlender>
+  </modules>
+  <frontend>
+    <routers>
+      <eliquidblender>
+        <use>standard</use>
+          <args>
+            <module>DJ_EliquidBlender</module>
+            <frontName>eliquidblender</frontName>
+          </args>
+      </eliquidblender>
+    </routers>
+		<layout>
+		  <updates>
+			<eliquidblender>
+			  <file>eliquidblender.xml</file>
+			</eliquidblender>
+		  </updates>
+		</layout>
+  </frontend>
+  <global>
+    <helpers>
+      <eliquidblender>
+        <class>DJ_EliquidBlender_Helper</class>
+      </eliquidblender>
+    </helpers>
+	<blocks>
+	  <eliquidblender>
+		<class>DJ_EliquidBlender_Block</class>
+	  </eliquidblender>
+	</blocks>
+  </global>
+  
+</config> 

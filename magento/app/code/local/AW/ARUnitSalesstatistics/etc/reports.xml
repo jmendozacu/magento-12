@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <salesstatistics>
+        <title>Statistics</title>
+        <action>advancedreports_admin/additional_report/index/name/salesstatistics</action>
+        <type>sales</type>
+        <sort_order>85</sort_order>
+    </salesstatistics>
+</reports>

@@ -1,0 +1,114 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php 
+  $session = Mage::getSingleton('customer/session', array('name'=>'frontend'));
+?>
+<div class="footer-container">
+    <div class="footer">
+    	<div class="our_wrap">
+	        <?php //echo $this->getChildHtml() ?>
+			<div class="links">
+				<div class="block-title"><strong><span>My Account</span></strong></div>
+				<ul>
+					<li class="first">
+						<?php if($session->isLoggedIn()){?>
+							<a href="<?php echo $this->getUrl('wishlist/')?>" title="My Wishlist">My Wishlist</a>
+						<?php } else {?>
+							<a href="<?php echo $this->getUrl('customer/account/login/')?>" title="My Wishlist">My Wishlist</a>
+						<?php }?>
+					</li>
+					<li>
+						<a href="<?php echo $this->getUrl('checkout/cart/')?>" title="My Cart">My Cart</a>
+						</li>
+					<li>
+						<a href="<?php echo $this->getUrl('checkout/cart/')?>" title="Checkout">Checkout</a>
+					</li>
+					<li class=" last">
+						<a href="#" class="live-chat" onclick="return SnapABug.startLink();" title="Live Help">Live Help</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="links">
+			    <div class="block-title">
+			        <strong><span>About Us</span></strong>
+			    </div>
+			    <ul>
+					 <li class="first">
+						<a href="<?php echo $this->getUrl('careers/')?>" title="Careers">Careers</a>
+					</li>
+					<li>
+						<a href="<?php echo $this->getUrl('contacts/')?>" title="Contact Us">Contact Us</a>
+					</li>
+					<li class=" last">
+						<a href="<?php echo $this->getUrl('locations-hours/')?>" title="Locations & Hours">Locations &amp; Hours</a>
+					</li>
+					<li class=" last">
+						<a href="<?php echo $this->getUrl('vapormax/')?>" title="VaporMax">VaporMax</a>
+					</li>
+			    </ul>
+			</div>
+
+			<div class="links">
+				<div class="block-title"><strong><span>Site Info</span></strong></div>
+				<ul>
+					<li class="first">
+						<a href="<?php echo $this->getUrl('privacy-policy/')?>" title="Privacy Policy">Privacy Policy</a>
+					</li>
+					<li>
+						<a href="<?php echo $this->getUrl('terms-and-conditions/')?>" title="Terms & Conditions">Terms &amp; Conditions</a>
+					</li>
+					<li class=" last">
+						<a href="<?php echo $this->getUrl('shipping-policy/')?>" title="Shipping Policy">Shipping Policy</a>
+					</li>
+				</ul>
+			</div>
+
+	        <?php echo $this->getChildHtml('newsletter') ?>
+	    </div>
+    </div>
+
+    <div class="cop-roow">
+    	<div class="our_wrap">
+    		<address class="copyright"><?php echo $this->getCopyright() ?></address>
+    		<?php
+	        echo Mage::app()->getLayout()->createBlock('cms/block')->setBlockId('visa-master-express')->toHtml();
+	        ?>
+    	</div>
+    	
+        
+	        
+	    
+   	</div>
+</div>
+
+<div id="AgepopupLink" style="display:none;">
+	<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('age-verification-popup')->toHtml(); ?>
+</div>
+
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('js/homeslider/slippry.css'); ?>" media="screen"/>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/site_footer.js'); ?>"></script>

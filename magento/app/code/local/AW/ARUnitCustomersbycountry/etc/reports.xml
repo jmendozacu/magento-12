@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <customersbycountry>
+        <title>Customers by Country</title>
+        <action>advancedreports_admin/additional_report/index/name/customersbycountry</action>
+        <type>customer</type>
+        <sort_order>15</sort_order>
+    </customersbycountry>
+</reports>

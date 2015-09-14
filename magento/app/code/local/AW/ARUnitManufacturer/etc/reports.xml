@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <manufacturer>
+        <title>by Manufacturer</title>
+        <sort_order>65</sort_order>
+        <type>sales</type>
+        <action>advancedreports_admin/additional_report/index/name/manufacturer</action>
+    </manufacturer>
+</reports>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  	<productfilter_index_index>
+	  	<!-- Set title -->
+	    <reference name="head">
+	        <action method="setTitle">
+	            <title>Productlist</title>
+	        </action>
+	    </reference>
+
+	    <!-- Switch root template to 1 column -->
+	    <!-- <reference name="root">
+	        <action method="setTemplate">
+	            <template>page/1column.phtml</template>
+	        </action>
+	    </reference>
+
+	    <reference name="content">
+
+	    	<block type="catalog/product_list" name="product_list" template="catalog/product/list.phtml">
+                <block type="catalog/product_list_toolbar" name="product_list_toolbar" template="catalog/product/list/toolbar.phtml">
+                    <block type="page/html_pager" name="product_list_toolbar_pager"/>
+                </block>
+                <action method="setToolbarBlockName">
+                    <name>product_list_toolbar</name>
+                </action>
+                <action method="setCollection">
+                    <value helper="productfilter/getProductCollection" />
+                </action>
+                <action method="setAvailableOrders">
+                    <value helper="productfilter/getAvailableOrders" />
+                </action>
+                <action method="setSortBy">
+                    <value>price</value>
+                </action>
+                <action method="setDefaultDirection">
+                    <value>asc</value>
+                </action>
+                <action method="setColumnCount">
+                    <coulumn>5</coulumn>
+                </action>
+            </block>
+	    </reference> -->
+	    <reference name="root">   
+	      <action method="setTemplate"><template>page/1column.phtml</template></action>   
+	    </reference>   
+	    <reference name="content">   
+	      <block type="productfilter/index" name="productfilter_index" template="productfilter/index.phtml"/>
+	    </reference>   
+  	</productfilter_index_index>
+</layout>

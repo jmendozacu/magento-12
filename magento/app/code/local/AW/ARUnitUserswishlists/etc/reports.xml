@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<reports>
+    <userswishlists>
+        <title>Users Wishlists</title>
+        <action>advancedreports_admin/additional_report/index/name/userswishlists</action>
+        <type>customer</type>
+        <sort_order>20</sort_order>
+    </userswishlists>
+</reports>

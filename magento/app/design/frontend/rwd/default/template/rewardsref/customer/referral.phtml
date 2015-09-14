@@ -1,0 +1,14 @@
+<div class="my-account">
+    <div class="referrals dashboard">
+        <div class="page-title">
+            <h1 class="myacn_hd"><span><img alt="" src="<?php echo $this->getSkinUrl('images/myordericon.png'); ?>"></span> <?php echo $this->__('Referral Program') ?></h1>
+    </div>
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+    
+    <?php echo $this->getChildHtml('affiliate'); ?>
+    <?php echo $this->getChildHtml('refer_form'); ?>
+    <?php echo $this->getChildHtml('preferences'); ?>
+    <?php echo $this->getChildHtml('history'); ?>
+    
+    </div>
+</div>

@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+        <Extendware_EWAuthenticator>
+        	<extendware>
+	        	<settings>
+	        		<scopes>
+		        		<main>
+							<tabs>
+						        <main translate="label comment ewhelp" module="ewauthenticator">
+						            <label>Authenticator</label>
+						            <sort_order>100</sort_order>
+						        </main>
+						    </tabs>
+							<sections>
+								<ewauthenticator translate="label comment ewhelp" module="ewauthenticator">
+									<class>separator-top</class>
+									<label>General</label>
+									<tab>main</tab>
+									<frontend_type>text</frontend_type>
+									<sort_order>100</sort_order>
+									<show_in_default>1</show_in_default>
+									<show_in_website>1</show_in_website>
+									<show_in_store>1</show_in_store>
+									<groups>
+										<general translate="label comment ewhelp" module="ewauthenticator">
+						                    <label>General</label>
+						                    <frontend_type>text</frontend_type>
+						                    <sort_order>10</sort_order>
+						                    <show_in_default>1</show_in_default>
+						                    <show_in_website>1</show_in_website>
+						                    <show_in_store>1</show_in_store>
+						                    <fields>
+						                    	<enabled translate="label comment ewhelp">
+						                            <label>Status</label>
+						                            <frontend_type>select</frontend_type>
+						                            <source_model>ewcore/adminhtml_config_data_option_enabledisable</source_model>
+						                            <sort_order>1</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                            <show_in_store>0</show_in_store>
+						                            <comment><![CDATA[If disabled, then logging in will require a password no matter what the configuration is for the user account.]]></comment>
+						                        </enabled>
+												<tolerance_level translate="label comment ewhelp">
+								                    <label>Tolerance Level</label>
+						                            <frontend_type>text</frontend_type>
+						                            <sort_order>10</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                    		<show_in_store>0</show_in_store>
+						                            <validators>
+						                            	<validator>
+						                            		<model>ewcore/data_validator_integer</model>
+						                            		<options>
+						                            			<min_value>1</min_value>
+						                            		</options>
+						                            	</validator>
+						                            </validators>
+						                            <validate>required-entry validate-greater-than-zero</validate>
+						                            <comment><![CDATA[Tolerance is needed because your authenticator application and your server might not be exactly in sync. <b>Warning: </b>Setting this too low can lock you out of the admin.]]></comment>
+						                        </tolerance_level>
+						                        <two_factor_ip_rules translate="label comment ewhelp">
+						                            <label>Two Factor IP Rules</label>
+						                            <frontend_model>ewauthenticator/adminhtml_config_form_field_ipaddress</frontend_model>
+                            						<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+						                            <sort_order>20</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                            <show_in_store>0</show_in_store>
+													<validators>
+						                            	<validator>
+						                            		<model>ewcore/data_validator_serialized_array</model>
+						                            		<options>
+						                            			<splittable_min_items>2</splittable_min_items>
+						                            			<splittable_max_items>2</splittable_max_items>
+						                            			<splittable_item_types>string|ewauthenticator/data_validator_ip</splittable_item_types>
+						                            			<splittable_item_min_length>1</splittable_item_min_length>
+						                            		</options>
+						                            	</validator>
+						                            </validators>
+						                            <comment>Logins from these IP addresses may not need enter the google authenticator code.</comment>
+													<ewhelp><![CDATA[List of IP address rules. A variety of rules are supported, such as 222.222.*.105, 222.222.222.100-205. Input one rule per item.]]></ewhelp>
+						                        </two_factor_ip_rules>
+						                        <required_ip_rules translate="label comment ewhelp">
+						                            <label>Required IP Rules</label>
+						                            <frontend_model>ewauthenticator/adminhtml_config_form_field_ipaddress</frontend_model>
+                            						<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+						                            <sort_order>30</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                            <show_in_store>0</show_in_store>
+													<validators>
+						                            	<validator>
+						                            		<model>ewcore/data_validator_serialized_array</model>
+						                            		<options>
+						                            			<splittable_min_items>2</splittable_min_items>
+						                            			<splittable_max_items>2</splittable_max_items>
+						                            			<splittable_item_types>string|ewauthenticator/data_validator_ip</splittable_item_types>
+						                            			<splittable_item_min_length>1</splittable_item_min_length>
+						                            		</options>
+						                            	</validator>
+						                            </validators>
+						                            <comment><![CDATA[Logins MUST match IP addresses of these rules. This is useful for requiring logins from your office. <b>Warning:</b> Entering rules incorrectly here or losing access to the IP address will make it so logins are not possible while the extension is enabled.]]></comment>
+													<ewhelp><![CDATA[List of IP address rules. A variety of rules are supported, such as 222.222.*.105, 222.222.222.100-205. Input one rule per item.]]></ewhelp>
+						                        </required_ip_rules>
+						                        <smart_input_enabled translate="label comment ewhelp">
+						                            <label>Smart Verification Code Input</label>
+						                            <frontend_type>select</frontend_type>
+						                            <source_model>ewcore/adminhtml_config_data_option_enabledisable</source_model>
+						                            <sort_order>r0</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                            <show_in_store>0</show_in_store>
+						                            <comment><![CDATA[If enabled, then the verification code box will not be shown if the IP address does not require the verification code.]]></comment>
+						                        </smart_input_enabled>
+											</fields>
+										</general>
+										<rate_limiting translate="label comment ewhelp" module="ewauthenticator">
+						                    <label>Rate Limiting</label>
+						                    <frontend_type>text</frontend_type>
+						                    <sort_order>20</sort_order>
+						                    <show_in_default>1</show_in_default>
+						                    <show_in_website>1</show_in_website>
+						                    <show_in_store>1</show_in_store>
+						                    <fields>
+						                    	<enabled translate="label comment ewhelp">
+						                            <label>Status</label>
+						                            <frontend_type>select</frontend_type>
+						                            <source_model>ewcore/adminhtml_config_data_option_enabledisable</source_model>
+						                            <sort_order>10</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                            <show_in_store>0</show_in_store>
+						                            <comment><![CDATA[Enable or disable rate limiting]]></comment>
+						                        </enabled>
+												<max_attempts translate="label comment ewhelp">
+								                    <label>Max Attempts</label>
+						                            <frontend_type>text</frontend_type>
+						                            <sort_order>10</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                    		<show_in_store>0</show_in_store>
+						                            <validators>
+						                            	<validator>
+						                            		<model>ewcore/data_validator_integer</model>
+						                            		<options>
+						                            			<min_value>1</min_value>
+						                            		</options>
+						                            	</validator>
+						                            </validators>
+						                            <validate>required-entry validate-greater-than-zero</validate>
+						                            <comment><![CDATA[The maximum attempts within the period until the IP address will be temporarily restricted from attempting more logins.]]></comment>
+						                        </max_attempts>
+						                        <period_magnitude translate="label comment ewhelp">
+								                    <label>Period Magnitude (secs)</label>
+						                            <frontend_type>text</frontend_type>
+						                            <sort_order>20</sort_order>
+						                            <show_in_default>1</show_in_default>
+						                            <show_in_website>0</show_in_website>
+						                    		<show_in_store>0</show_in_store>
+						                            <validators>
+						                            	<validator>
+						                            		<model>ewcore/data_validator_integer</model>
+						                            		<options>
+						                            			<min_value>1</min_value>
+						                            		</options>
+						                            	</validator>
+						                            </validators>
+						                            <validate>required-entry validate-greater-than-zero</validate>
+						                            <comment><![CDATA[The number of seconds that the current number of attempts is calculated from. If set to 60, then Max Attempts will be compared to the number of attempts within the last 60 seconds.]]></comment>
+						                        </period_magnitude>
+											</fields>
+										</rate_limiting>
+									</groups>
+								</ewauthenticator>
+							</sections>
+						</main>
+					</scopes>
+				</settings>
+			</extendware>
+		</Extendware_EWAuthenticator>
+	</modules>
+</config>

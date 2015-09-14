@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <report>
+                        <children>
+                            <advancedreports>
+                                <children>
+                                    <salesbypaymenttype>
+                                        <title>Sales by Payment Type</title>
+                                        <sort_order>97</sort_order>
+                                    </salesbypaymenttype>
+                                </children>
+                            </advancedreports>
+                        </children>
+                    </report>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

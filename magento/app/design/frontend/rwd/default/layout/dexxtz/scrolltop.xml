@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright [2014] [Dexxtz]
+ *
+ * @package   Dexxtz_Scrolltop
+ * @author    Dexxtz
+ * @license   http://www.apache.org/licenses/LICENSE-2.0
+ */
+-->
+<layout>
+	<default>
+		<!-- <reference name="head">
+			<action method="addCss" ifconfig="dexxtz_scrolltop/general/active"><stylesheet>dexxtz/scrolltop/css/dexxtz.css</stylesheet></action>
+		</reference> -->
+        <reference name="before_body_end">
+			<block type="dexxtz_scrolltop/scrolltop" name="scrolltop" before="-">
+				<action method="setTemplate" ifconfig="dexxtz_scrolltop/general/active"><template>dexxtz/scrolltop/scrolltop.phtml</template></action>
+			</block>
+        </reference>
+    </default> 
+</layout>

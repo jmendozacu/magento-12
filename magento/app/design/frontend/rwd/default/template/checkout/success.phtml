@@ -1,0 +1,197 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<div class="emptcart">
+<div class="page-title">
+    <h1 class="myacn_hd brdbotnon"><span><img src="<?php echo $this->getSkinUrl('images/success.png'); ?>" alt=""/></span> <?php echo $this->__('Your order has been received.') ?></h1>
+</div>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<h2 class="sub-title ordersuc"><?php echo $this->__('Thank you for your purchase!') ?></h2>
+
+
+<?php
+/*********Start Ebay Enterprise Affiliate Network Tracking******/
+    $lastOrderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+    $order = Mage::getSingleton('sales/order');
+    $order->load($lastOrderId);
+    $_totalData = $order->getData();
+    $_currency = $_totalData['order_currency_code'];
+    $_productData = $order->getAllItems();
+    $subtotal = $order->getSubtotal();
+    $pixelDataItem = '';
+    $pixelDataQty = '';
+    $pixelDataAmount = '';
+    $pixelSteelHouseProductIds = array();
+    $pixelSteelHouseQtys = array();
+    $pixelSteelHouseUnitPrices = array();
+
+    $i = 1;
+    foreach ($_productData as $item){
+        if ($item->getProductType() == 'configurable') continue;
+        if ($item->getParentItemId()) {
+            $_total = number_format($item->getParentItem()->getPrice(),2);
+            $_discount = number_format(($item->getParentItem()->getDiscountAmount() / $item->getParentItem()->getQtyOrdered()),2);
+        } else {
+            $_total = number_format($item->getPrice(),2);
+            $_discount = number_format(($item->getDiscountAmount() / $item->getQtyOrdered()),2);
+        }
+        $pixelDataItem .= '&ITEM'.$i.'='.$item->getSku();
+        $pixelDataQty .= '&QTY'.$i.'='.(int)$item->getQtyOrdered();
+        $pixelDataAmount .= '&AMOUNT'.$i.'='.number_format($_total - $_discount,2);
+
+        $pixelSteelHouseProductIds[] = $item->getSku();
+        $pixelSteelHouseQtys[] = (int)$item->getQtyOrdered();
+        $pixelSteelHouseUnitPrices[] = number_format($_total - $_discount,2);
+
+        $i++;
+    }
+    $pixelData = '<iframe src="https://t.pepperjamnetwork.com/track?';
+    $pixelData .="PID=7688";
+    $pixelData .="&INT=ITEMIZED";
+    $pixelData .=$pixelDataItem.$pixelDataQty.$pixelDataAmount;
+    $pixelData .= '&OID='.$this->getOrderId().'&CURRENCY='.$_currency.'" width="1" height="1" frameborder="0"></iframe>';
+    echo $pixelData;
+
+/*********End Ebay Enterprise Affiliate Network Tracking******/
+?>
+
+<!--SteelHouse Conversion Pixel-->
+<!-- Install ONLY on conversion page/event-->
+<script type="text/javascript">
+(function(){
+    var x=null,p,q,m,
+    o="11021",
+    l="<?php echo $this->getOrderId(); ?>",
+    i="<?php echo $subtotal; ?>",
+    c="",
+    k="<?php echo implode(',', $pixelSteelHouseProductIds); ?>",
+    g="<?php echo implode(',', $pixelSteelHouseQtys); ?>",
+    j="<?php echo implode(',', $pixelSteelHouseUnitPrices); ?>",
+    u="",
+    shadditional="";
+    try{p=top.document.referer!==""?encodeURIComponent(top.document.referrer.substring(0,512)):""}catch(n){p=document.referrer!==null?document.referrer.toString().substring(0,512):""}try{q=window&&window.top&&document.location&&window.top.location===document.location?document.location:window&&window.top&&window.top.location&&""!==window.top.location?window.top.location:document.location}catch(b){q=document.location}try{m=parent.location.href!==""?encodeURIComponent(parent.location.href.toString().substring(0,512)):""}catch(z){try{m=q!==null?encodeURIComponent(q.toString().substring(0,512)):""}catch(h){m=""}}var A,y=document.createElement("script"),w=null,v=document.getElementsByTagName("script"),t=Number(v.length)-1,r=document.getElementsByTagName("script")[t];if(typeof A==="undefined"){A=Math.floor(Math.random()*100000000000000000)}w="dx.steelhousemedia.com/spx?conv=1&shaid="+o+"&tdr="+p+"&plh="+m+"&cb="+A+"&shoid="+l+"&shoamt="+i+"&shocur="+c+"&shopid="+k+"&shoq="+g+"&shoup="+j+"&shpil="+u+shadditional;y.type="text/javascript";y.src=("https:"===document.location.protocol?"https://":"http://")+w;r.parentNode.insertBefore(y,r)}());
+</script>
+
+<?PHP 
+//-----------------Get the Order details for the tracking--------------------------
+$order_details = Mage::getModel('sales/order')->loadByIncrementId(Mage::getSingleton('checkout/session')->getLastRealOrderId());
+$idev_subtotal = $order_details->base_subtotal;  
+?>
+<!--Newsletter Sales Tracking -->
+<script type="text/javascript">
+var USI_orderID = '<?php echo $this->getOrderId(); ?>';
+var USI_orderAmt = '<?php echo $idev_subtotal; ?>';
+var USI_headID = document.getElementsByTagName("head")[0];
+var USI_dynScript = document.createElement("script");
+USI_dynScript.setAttribute('type','text/javascript');
+USI_dynScript.src = 'http'+ (document.location.protocol=='https:'?'s://www':'://www')+ '.upsellit.com/upsellitReporting.jsp?command=REPORT&siteID=10862&productID=77&position=1&orderID='+escape(USI_orderID)+'&orderAmt='+escape(USI_orderAmt);
+USI_headID.appendChild(USI_dynScript);
+var USI_dynScript2 = document.createElement("script");
+USI_dynScript2.setAttribute('type','text/javascript');
+USI_dynScript2.src = 'http'+ (document.location.protocol=='https:'?'s://www':'://www')+ '.upsellit.com/hound/sale.jsp?orderID='+escape(USI_orderID)+'&orderAmt='+escape(USI_orderAmt);
+USI_headID.appendChild(USI_dynScript2);
+</script>
+<!--Newsletter Sales Tracking -->
+
+<!-- Start of ReTargeter Tag -->
+<script type="text/javascript" src="https://s3.amazonaws.com/V3-Assets/prod/client_super_tag/json3.js"></script>
+<script type="text/javascript">
+    if( typeof _rt_cgi == "undefined" ){
+    var _rt_cgi = 1878;
+    var _rt_base_url = "https://lt.retargeter.com/";
+    var _rt_js_base_url = "https://s3.amazonaws.com/V3-Assets/prod/client_super_tag/";
+    var _rt_init_src = _rt_js_base_url+"init_super_tag.js";
+    var _rt_refresh_st = false;
+    var _rt_record = function(params){if(typeof document.getElementsByTagName("_rt_data")[0]=="undefined"){setTimeout(function(){_rt_record(params);},25);}};
+    (function() {var scr = document.createElement("script");scr.src = _rt_init_src;document.getElementsByTagName("head")[0].appendChild(scr);})();}
+    </script>
+<!-- End of ReTargeter Tag -->
+<script type="text/javascript">
+    if(!_rt_calls){ var _rt_calls = []; }
+    _rt_calls.push({"type":"segment", "id":[12626]}, {"type":"conversion", "id":[1240], "value":[<?php echo $idev_subtotal; ?>], "order_id":[<?php echo $this->getOrderId(); ?>]});
+</script>
+
+<!-- Start of ve -->
+<img src="//cdsusa.veinteractive.com/DataReceiverService.asmx/Pixel?journeycode=04E9670B-9AFA-4490-B6CA-A1AC28F7377B" width="1" height="1"/>
+
+
+
+<!-- idev pixel -->
+
+<?php
+$idev_subtotal = $order_details->base_subtotal; 
+$idev_discount = $order_details->base_discount_amount;
+$idev_saleamt = $idev_subtotal + $idev_discount;
+$coupon_code = $order_details->coupon_code;
+?>
+<img border="0" src="https://affiliates.vaporin.com/sale.php?profile=54&idev_saleamt=<?PHP echo $idev_saleamt; ?>&idev_ordernum=<?PHP echo $this->getOrderId(); ?>&coupon_code=<?PHP echo $coupon_code; ?>" width="1" height="1">
+
+
+
+<div class="ordersucwrtap addfgh">
+<?php if ($this->getOrderId()):?>
+<?php if ($this->getCanViewOrder()) :?>
+    <p><?php echo $this->__('Your order # is: %s.', sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getViewOrderUrl()), $this->escapeHtml($this->getOrderId()))) ?></p>
+<?php  else :?>
+    <p><?php echo $this->__('Your order # is: %s.', $this->escapeHtml($this->getOrderId())) ?></p>
+<?php endif;?>
+    <p><?php echo $this->__('You will receive an order confirmation email with details of your order and a link to track its progress.') ?></p>
+<?php if ($this->getCanViewOrder() && $this->getCanPrintOrder()) :?>
+    <p>
+        <?php echo $this->__('Click <a href="%s" onclick="this.target=\'_blank\'">here to print</a> a copy of your order confirmation.', $this->getPrintUrl()) ?>
+        <?php echo $this->getChildHtml() ?>
+    </p>
+<?php endif;?>
+<?php endif;?>
+
+<?php if ($this->getAgreementRefId()): ?>
+    <p><?php echo $this->__('Your billing agreement # is: %s.', sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getAgreementUrl()), $this->escapeHtml($this->getAgreementRefId())))?></p>
+<?php endif;?>
+
+<?php if ($profiles = $this->getRecurringProfiles()):?>
+<p><?php echo $this->__('Your recurring payment profiles:'); ?></p>
+<ul class="disc">
+<?php foreach($profiles as $profile):?>
+<?php $profileIdHtml = ($this->getCanViewProfiles() ? sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getProfileUrl($profile)), $this->escapeHtml($this->getObjectData($profile, 'reference_id'))) : $this->escapeHtml($this->getObjectData($profile, 'reference_id')));?>
+    <li><?php echo $this->__('Payment profile # %s: "%s".', $profileIdHtml, $this->escapeHtml($this->getObjectData($profile, 'schedule_description')))?></li>
+<?php endforeach;?>
+</ul>
+<?php endif;?>
+</div>
+<div class="buttons-set">
+    <button type="button" class="button success_btn" title="<?php echo $this->__('Continue Shopping') ?>" onclick="window.location='<?php echo $this->getUrl() ?>'"><span><span><?php echo $this->__('Continue Shopping') ?></span></span></button>
+</div>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    var  cc_type = localStorage.setItem("co-payment-form_networkmerchants_cc_type", "");
+    var  cc_number = localStorage.setItem("co-payment-form_networkmerchants_cc_number", "");
+    var networkmerchants_expiration = localStorage.setItem("co-payment-form_networkmerchants_expiration", "");
+    var networkmerchants_expiration_yr = localStorage.setItem("co-payment-form_networkmerchants_expiration_yr", "");
+    var  networkmerchants_cc_cid = localStorage.setItem("co-payment-form_networkmerchants_cc_cid", "");
+});
+</script>

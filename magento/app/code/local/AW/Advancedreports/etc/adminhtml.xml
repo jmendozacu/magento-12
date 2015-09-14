@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <report>
+                        <children>
+                            <advancedreports>
+                                <title>Advanced Reports</title>
+                                <children>
+                                    <salesoverview>
+                                        <title>Sales Overview</title>
+                                        <sort_order>0</sort_order>
+                                    </salesoverview>
+                                    <bestsellers>
+                                        <title>Bestsellers</title>
+                                        <sort_order>10</sort_order>
+                                    </bestsellers>
+                                    <product>
+                                        <title>Sales by Product</title>
+                                        <sort_order>20</sort_order>
+                                    </product>
+                                    <salesdetailed>
+                                        <title>Sales Detailed</title>
+                                        <sort_order>30</sort_order>
+                                    </salesdetailed>
+                                    <abandoned>
+                                        <title>Abandoned Carts</title>
+                                        <sort_order>40</sort_order>
+                                    </abandoned>
+                                    <stockvssold>
+                                        <title>Stock vs. Sold</title>
+                                        <sort_order>50</sort_order>
+                                    </stockvssold>
+                                    <country>
+                                        <title>Sales by Country</title>
+                                        <sort_order>60</sort_order>
+                                    </country>
+                                    <usergroups>
+                                        <title>Sales by Customer Group</title>
+                                        <sort_order>70</sort_order>
+                                    </usergroups>
+                                    <dayofweek>
+                                        <title>Sales by Day of Week</title>
+                                        <sort_order>80</sort_order>
+                                    </dayofweek>
+                                    <hours>
+                                        <title>Sales by Hour</title>
+                                        <sort_order>90</sort_order>
+                                    </hours>
+                                    <users>
+                                        <title>Users Activity Report</title>
+                                        <sort_order>100</sort_order>
+                                    </users>
+                                    <purchased>
+                                        <title>Products by Customer</title>
+                                        <sort_order>110</sort_order>
+                                    </purchased>
+                                </children>
+                            </advancedreports>
+                        </children>
+                    </report>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <advancedreports>
+                                        <title>Advanced Reports</title>
+                                    </advancedreports>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+    <menu>
+        <report>
+            <children>
+                <advancedreports translate="title" module="advancedreports">
+                    <title>Advanced Reports</title>
+                    <sort_order>-1</sort_order>
+                    <action>advancedreports_admin/dashboard</action>
+                </advancedreports>
+            </children>
+        </report>
+    </menu>
+</config>

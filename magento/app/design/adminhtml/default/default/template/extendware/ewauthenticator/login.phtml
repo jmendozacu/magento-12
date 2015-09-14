@@ -1,0 +1,4 @@
+<?php if (Mage::helper('ewauthenticator/config')->isSmartInputEnabled() === false or Mage::helper('ewauthenticator')->isIpWhitelistedForTwoFactor($_SERVER['REMOTE_ADDR']) === false): ?>
+<div class="input-box input-right"><label for="verification_code"><?php echo Mage::helper('adminhtml')->__('Verification Code:') ?></label><br/><input type="password" id="verification_code" name="verification_code" value="" class="input-text" /></div>
+<div class="clear"></div>
+<?php endif; ?>
